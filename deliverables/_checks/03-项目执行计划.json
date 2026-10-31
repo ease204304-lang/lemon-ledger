@@ -1,0 +1,368 @@
+{
+  "format": "docx",
+  "verdict": "pass",
+  "checks": [
+    {
+      "id": "package",
+      "status": "pass"
+    }
+  ],
+  "summary": {
+    "paragraphs": 2920,
+    "tables": [
+      {
+        "rows": 11,
+        "columns": 2
+      },
+      {
+        "rows": 2,
+        "columns": 4
+      },
+      {
+        "rows": 6,
+        "columns": 2
+      },
+      {
+        "rows": 8,
+        "columns": 4
+      },
+      {
+        "rows": 6,
+        "columns": 4
+      },
+      {
+        "rows": 4,
+        "columns": 4
+      },
+      {
+        "rows": 7,
+        "columns": 6
+      },
+      {
+        "rows": 9,
+        "columns": 6
+      },
+      {
+        "rows": 7,
+        "columns": 2
+      },
+      {
+        "rows": 7,
+        "columns": 9
+      },
+      {
+        "rows": 9,
+        "columns": 10
+      },
+      {
+        "rows": 9,
+        "columns": 10
+      },
+      {
+        "rows": 8,
+        "columns": 10
+      },
+      {
+        "rows": 10,
+        "columns": 10
+      },
+      {
+        "rows": 10,
+        "columns": 10
+      },
+      {
+        "rows": 9,
+        "columns": 10
+      },
+      {
+        "rows": 8,
+        "columns": 10
+      },
+      {
+        "rows": 7,
+        "columns": 10
+      },
+      {
+        "rows": 9,
+        "columns": 10
+      },
+      {
+        "rows": 10,
+        "columns": 10
+      },
+      {
+        "rows": 8,
+        "columns": 10
+      },
+      {
+        "rows": 13,
+        "columns": 5
+      },
+      {
+        "rows": 8,
+        "columns": 7
+      },
+      {
+        "rows": 7,
+        "columns": 2
+      },
+      {
+        "rows": 14,
+        "columns": 9
+      },
+      {
+        "rows": 14,
+        "columns": 6
+      },
+      {
+        "rows": 4,
+        "columns": 4
+      },
+      {
+        "rows": 7,
+        "columns": 4
+      },
+      {
+        "rows": 9,
+        "columns": 4
+      },
+      {
+        "rows": 8,
+        "columns": 4
+      },
+      {
+        "rows": 9,
+        "columns": 4
+      },
+      {
+        "rows": 9,
+        "columns": 4
+      },
+      {
+        "rows": 9,
+        "columns": 4
+      },
+      {
+        "rows": 8,
+        "columns": 4
+      },
+      {
+        "rows": 12,
+        "columns": 9
+      },
+      {
+        "rows": 5,
+        "columns": 3
+      },
+      {
+        "rows": 9,
+        "columns": 5
+      },
+      {
+        "rows": 4,
+        "columns": 6
+      },
+      {
+        "rows": 5,
+        "columns": 6
+      },
+      {
+        "rows": 9,
+        "columns": 4
+      },
+      {
+        "rows": 9,
+        "columns": 6
+      },
+      {
+        "rows": 8,
+        "columns": 3
+      },
+      {
+        "rows": 13,
+        "columns": 6
+      },
+      {
+        "rows": 6,
+        "columns": 7
+      },
+      {
+        "rows": 5,
+        "columns": 3
+      },
+      {
+        "rows": 5,
+        "columns": 5
+      },
+      {
+        "rows": 5,
+        "columns": 4
+      },
+      {
+        "rows": 13,
+        "columns": 3
+      },
+      {
+        "rows": 13,
+        "columns": 8
+      },
+      {
+        "rows": 14,
+        "columns": 5
+      },
+      {
+        "rows": 5,
+        "columns": 6
+      },
+      {
+        "rows": 19,
+        "columns": 3
+      },
+      {
+        "rows": 21,
+        "columns": 4
+      }
+    ],
+    "sections": [
+      {
+        "page_twips": {
+          "w": "11906",
+          "h": "16838"
+        },
+        "margins_twips": {
+          "top": "1247",
+          "right": "1247",
+          "bottom": "1134",
+          "left": "1247",
+          "header": "624",
+          "footer": "624",
+          "gutter": "0"
+        }
+      },
+      {
+        "page_twips": {
+          "w": "16838",
+          "h": "11906",
+          "orient": "landscape"
+        },
+        "margins_twips": {
+          "top": "907",
+          "right": "907",
+          "bottom": "850",
+          "left": "907",
+          "header": "624",
+          "footer": "624",
+          "gutter": "0"
+        }
+      },
+      {
+        "page_twips": {
+          "w": "11906",
+          "h": "16838"
+        },
+        "margins_twips": {
+          "top": "1247",
+          "right": "1247",
+          "bottom": "1134",
+          "left": "1247",
+          "header": "624",
+          "footer": "624",
+          "gutter": "0"
+        }
+      },
+      {
+        "page_twips": {
+          "w": "16838",
+          "h": "11906",
+          "orient": "landscape"
+        },
+        "margins_twips": {
+          "top": "907",
+          "right": "907",
+          "bottom": "850",
+          "left": "907",
+          "header": "624",
+          "footer": "624",
+          "gutter": "0"
+        }
+      },
+      {
+        "page_twips": {
+          "w": "11906",
+          "h": "16838"
+        },
+        "margins_twips": {
+          "top": "1247",
+          "right": "1247",
+          "bottom": "1134",
+          "left": "1247",
+          "header": "624",
+          "footer": "624",
+          "gutter": "0"
+        }
+      },
+      {
+        "page_twips": {
+          "w": "16838",
+          "h": "11906",
+          "orient": "landscape"
+        },
+        "margins_twips": {
+          "top": "907",
+          "right": "907",
+          "bottom": "850",
+          "left": "907",
+          "header": "624",
+          "footer": "624",
+          "gutter": "0"
+        }
+      },
+      {
+        "page_twips": {
+          "w": "11906",
+          "h": "16838"
+        },
+        "margins_twips": {
+          "top": "1247",
+          "right": "1247",
+          "bottom": "1134",
+          "left": "1247",
+          "header": "624",
+          "footer": "624",
+          "gutter": "0"
+        }
+      },
+      {
+        "page_twips": {
+          "w": "16838",
+          "h": "11906",
+          "orient": "landscape"
+        },
+        "margins_twips": {
+          "top": "907",
+          "right": "907",
+          "bottom": "850",
+          "left": "907",
+          "header": "624",
+          "footer": "624",
+          "gutter": "0"
+        }
+      },
+      {
+        "page_twips": {
+          "w": "11906",
+          "h": "16838"
+        },
+        "margins_twips": {
+          "top": "1247",
+          "right": "1247",
+          "bottom": "1134",
+          "left": "1247",
+          "header": "624",
+          "footer": "624",
+          "gutter": "0"
+        }
+      }
+    ]
+  }
+}
