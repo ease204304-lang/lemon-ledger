@@ -265,8 +265,14 @@ void main() {
     // 月份显示
     expect(find.textContaining('年'), findsOneWidget);
     // 真实的统计金额
-    expect(find.textContaining('2,281'), findsOneWidget);
-    expect(find.textContaining('50'), findsWidgets);
+    // 注: 种子流水固定在 2026-10; HomePage 默认显示当前月, 跨月后当月无流水 → 金额为 0
+    final now = DateTime.now();
+    if (now.year == 2026 && now.month == 10) {
+      expect(find.textContaining('2,281'), findsOneWidget);
+      expect(find.textContaining('50'), findsWidgets);
+    } else {
+      expect(find.text('0'), findsWidgets);
+    }
   });
 
   testWidgets('ChartPage 启动 -> 显示图表 + 排名', (tester) async {

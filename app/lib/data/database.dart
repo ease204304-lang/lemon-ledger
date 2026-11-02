@@ -5,6 +5,7 @@
 /// v3: + tag 表 (标签)
 /// v4: + category.pinned (常用分类)
 /// v5: + tag.category_id + tx_tag 关联表 (标签统计, U1.9 收尾)
+/// v6: 分类清单重整 (用户指定: 支出 15 类 / 收入 8 类)
 library;
 
 import 'package:path/path.dart' as p;
@@ -29,7 +30,7 @@ class AppDatabase {
     final path = p.join(dir.path, 'lemon_ledger.db');
     return openDatabase(
       path,
-      version: 5,
+      version: 6,
       onCreate: _onCreate,
       onUpgrade: _onUpgrade,
     );
@@ -96,7 +97,8 @@ class AppDatabase {
     await batch.commit(noResult: true);
 
     // v4: 5 个常用分类 (鲨鱼记账风格)
-    const pinnedIds = ['cat.credit', 'cat.food', 'cat.transport', 'cat.snack', 'cat.salary'];
+    // v6: 按新清单 — 支出 4 (信用卡 餐饮 零食 交通) + 收入 1 (工资)
+    const pinnedIds = ['cat.credit', 'cat.food', 'cat.snack', 'cat.transport', 'cat.salary'];
     for (final id in pinnedIds) {
       await db.rawUpdate('UPDATE category SET pinned = 1 WHERE id = ?', [id]);
     }
@@ -127,9 +129,10 @@ class AppDatabase {
   Future<void> _backfillTagsFromTxs(Database db) async {
     // 演示标签词表 (取自种子备注中出现的高频词)
     // 注: 不含 "收入" — 会与记帐页类型 chip 同名, 显示混淆
+    // v6: "旅行" → "旅游" (随分类改名), "咖啡" 归属改到 餐饮
     const seedTagNames = [
       '餐饮', '交通', '停车费', '单车', '充电', '咖啡', '信托',
-      '日用', '孩子', '旅行', '医疗',
+      '日用', '孩子', '旅游', '医疗',
     ];
     final txs = await db.query('tx',
         columns: ['id', 'epoch_day', 'category_id', 'note', 'created_at'],
@@ -260,6 +263,91 @@ class AppDatabase {
       //    立刻看到 11 个演示标签 + 饼图有数据 (而非空态)
       await _backfillTagsFromTxs(db);
     }
+    if (from < 6) {
+      // v5 -> v6: 分类清单重整 (用户指定清单)
+      await _migrateToV6Categories(db);
+    }
+  }
+
+  /// v5 -> v6: 分类清单重整
+  ///
+  /// 目标 (用户指定):
+  ///   支出 14 类: 信用卡 餐饮 娱乐 零食 交通 住房 旅游 医疗 运动 汽车 孩子 日用 投资 其他
+  ///   收入  8 类: 工资 奖金 补贴 兼职 投资 退款 收礼 其他 (不变)
+  ///
+  /// 原则 (保护用户数据):
+  ///   1. **不删任何分类** — 被移除的分类只置 archived=1 (软删),
+  ///      否则用户历史流水的 category_id 会变成悬空引用, 报表金额丢失。
+  ///   2. 改名 (旅行→旅游 / 车费→汽车) 走 UPDATE, 保留 id → 历史流水自动跟着变。
+  ///   3. 新增分类 (娱乐 / 运动 / 投资支出) 走 INSERT ... ON CONFLICT IGNORE。
+  ///   4. 支出「投资」用独立 id (cat.invest_exp), 与收入「投资」(cat.invest) 区分;
+  ///      原挂在 cat.invest 上的支出流水迁到 cat.invest_exp (修正类型不一致 bug)。
+  ///   5. 常用分类 (pinned) 重置为新清单的常用项。
+  ///   6. **所有**保留分类的 sort_order 按新清单重排 (否则旧库顺序错乱)。
+  Future<void> _migrateToV6Categories(Database db) async {
+    // 1) 先新增分类 (支出侧) — 必须在 sort_order 对齐之前, 否则新 id 无行可更新
+    const newCats = <Map<String, Object?>>[
+      {'id': 'cat.entertain', 'name': '娱乐', 'icon_key': 'entertain', 'type': 0, 'sort_order': 2, 'archived': 0},
+      {'id': 'cat.sport', 'name': '运动', 'icon_key': 'sport', 'type': 0, 'sort_order': 8, 'archived': 0},
+      {'id': 'cat.invest_exp', 'name': '投资', 'icon_key': 'invest', 'type': 0, 'sort_order': 12, 'archived': 0},
+    ];
+    for (final c in newCats) {
+      await db.insert('category', c, conflictAlgorithm: ConflictAlgorithm.ignore);
+    }
+
+    // 2) 全量对齐 name + sort_order (改名 + 重排一次做完)
+    //    依据 seedCategories() 的当前顺序, 保证新旧库显示一致
+    final seedOrder = <String, (String, int)>{
+      for (final c in seedCategories())
+        if (!c.archived) c.id: (c.name, c.sortOrder),
+    };
+    for (final e in seedOrder.entries) {
+      await db.rawUpdate(
+          'UPDATE category SET name = ?, sort_order = ? WHERE id = ?',
+          [e.value.$1, e.value.$2, e.key]);
+    }
+
+    // 3) 归档被移除的分类 (软删, 保留历史流水可查)
+    const removedIds = [
+      'cat.market',   // 超市
+      'cat.fruit',    // 水果
+      'cat.drink',    // 饮品
+      'cat.dress',    // 服饰
+      'cat.beauty',   // 美妆
+      'cat.phone',    // 通讯
+      'cat.house',    // 居家
+      'cat.book',     // 学习
+      'cat.education',// 教育
+      'cat.pet',      // 宠物
+      'cat.digital',  // 数码
+    ];
+    for (final id in removedIds) {
+      await db.rawUpdate(
+          'UPDATE category SET archived = 1, pinned = 0 WHERE id = ?', [id]);
+    }
+
+    // 4) 修正「投资」类型不一致 bug:
+    //    支出「投资 - 信托」818 元原本挂在收入类 cat.invest 上 → 迁到 cat.invest_exp
+    await db.rawUpdate(
+        "UPDATE tx SET category_id = 'cat.invest_exp' "
+        "WHERE category_id = 'cat.invest' AND type = 0");
+    //    咖啡原本在 cat.drink (已归档) → 迁到 cat.food
+    await db.rawUpdate(
+        "UPDATE tx SET category_id = 'cat.food' "
+        "WHERE category_id = 'cat.drink' AND note LIKE '%咖啡%'");
+
+    // 5) 重置常用分类 (新清单: 支出 4 + 收入 1)
+    await db.rawUpdate('UPDATE category SET pinned = 0');
+    const pinnedIds = ['cat.credit', 'cat.food', 'cat.snack', 'cat.transport', 'cat.salary'];
+    for (final id in pinnedIds) {
+      await db.rawUpdate('UPDATE category SET pinned = 1 WHERE id = ?', [id]);
+    }
+
+    // 6) 归档分类上的标签归属要跟着改 (tag.category_id 指向归档分类会让标签行查不到)
+    await db.rawUpdate('''
+      UPDATE tag SET category_id = NULL
+      WHERE category_id IN (${removedIds.map((_) => '?').join(',')})
+    ''', removedIds);
   }
 
   /// 关闭（仅在测试或重置时使用）

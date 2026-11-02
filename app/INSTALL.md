@@ -1,7 +1,7 @@
-# 小猪记账 v1.9.0 — 安装与运行
+# 小猪记账 v1.10.0 — 安装与运行
 
-> 当前版本: **v1.9.0 (build 28)** · 2026-10-31
-> APK: `D:\DSH\Account\app\build\app\outputs\flutter-apk\app-release.apk` (54.3 MB)
+> 当前版本: **v1.10.0 (build 29)** · 2026-11-01
+> APK: `D:\DSH\Account\app\build\app\outputs\flutter-apk\app-release.apk` (54.4 MB)
 
 ---
 

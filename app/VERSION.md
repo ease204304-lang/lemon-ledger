@@ -1,5 +1,90 @@
 # 柠檬记账 版本历史
 
+## v1.10.0 (2026-11-01) — 分类清单重整: 支出 14 类 + 收入 8 类 (DB v6)
+
+### 用户需求
+> 支出：信用卡、餐饮、娱乐、零食、交通、住房、旅游、医疗、运动、汽车、孩子
+> 后续追加：日用、投资；保留：其他
+
+### 最终分类清单
+
+**支出 14 类** (记帐页 5 列网格, 按此顺序):
+```
+信用卡  餐饮  娱乐  零食  交通
+住房    旅游  医疗  运动  汽车
+孩子    日用  投资  其他
+```
+**常用 (置顶列)**: 信用卡 · 餐饮 · 零食 · 交通
+
+**收入 8 类** (维持不变):
+```
+工资  奖金  补贴  兼职
+投资  退款  收礼  其他
+```
+**常用 (置顶列)**: 工资
+
+### 变更明细
+
+| 类别 | 操作 | id |
+|---|---|---|
+| 信用卡 / 餐饮 / 零食 / 交通 / 住房 / 医疗 / 孩子 / 日用 / 其他 | 保留 (改名+重排) | id 不变 |
+| 旅行 → **旅游** | 改名 | `cat.travel` |
+| 车费 → **汽车** | 改名 | `cat.car` |
+| **娱乐** | 新增 | `cat.entertain` (icon: movie, 紫) |
+| **运动** | 新增 | `cat.sport` (icon: fitness_center, 青) |
+| **投资** (支出) | 新增 | `cat.invest_exp` (与收入 `cat.invest` 区分) |
+| 超市 / 水果 / 饮品 / 服饰 / 美妆 / 通讯 / 居家 / 学习 / 教育 / 宠物 / 数码 | **归档** (archived=1, 不删) | id 保留 |
+
+### 🔴 同时修复: `cat.invest` 类型不一致 bug
+
+**问题**: 种子流水 `t.010` (818.00 元「投资 - 信托」) 挂在 `cat.invest` 上, 但该分类是**收入类**
+→ 支出排行榜出现一笔挂在收入类下的支出, 图表分类占比失真。
+
+**修复**:
+- 支出「投资」用独立 id `cat.invest_exp` (与收入 `cat.invest` 同名不同类)
+- 迁移时把 `type=expense AND category_id='cat.invest'` 的历史流水迁到 `cat.invest_exp`
+- 新种子流水直接挂 `cat.invest_exp`
+
+### DB v6 迁移 (`_migrateToV6Categories`)
+
+**原则: 保护用户数据**
+1. **不删任何分类** — 被移除的分类只置 `archived=1` (软删),
+   否则用户历史流水的 `category_id` 变悬空引用 → 报表金额丢失
+2. 改名走 UPDATE (id 不变) → 历史流水自动跟随
+3. 新增分类走 `INSERT ... ON CONFLICT IGNORE`
+4. **所有**保留分类的 `sort_order` 按新清单重排 (否则旧库显示顺序错乱)
+5. `pinned` 重置为新清单常用项
+6. 归档分类上的 `tag.category_id` 置 NULL (否则标签行查不到)
+
+### 连带改动
+
+| 文件 | 改动 |
+|---|---|
+| `lib/data/seed.dart` | 分类清单重整 + 种子流水适配 (818→`cat.invest_exp`, 咖啡→`cat.food`, 旅游改名) |
+| `lib/data/database.dart` | schema v5→v6 + `_migrateToV6Categories` + pinned/seedTagNames 适配 |
+| `lib/widgets/icons.dart` | 新增 `entertain`/`sport` 色板+图标; 移除 9 个已删类的图标 |
+| `lib/services/nlu_service.dart` | 语音关键词映射重整 (咖啡→餐饮, 电影→娱乐, 健身→运动, 股票→投资支出) |
+| `test/db_v6_migration_test.dart` | **新文件** (10 用例) — v5→v6 迁移全链路验证 |
+| `test/golden_test.dart` | 分类断言重写 (v6 清单 + 改名 + pinned) |
+| `test/widget_test.dart` | 支出类数 22→14 + 新增"分类名顺序"断言 |
+| `test/nlu_test.dart` | 饮品/服饰 → 餐饮/娱乐 |
+| `test/mine_reset_test.dart` / `import_json_test.dart` | 分类数 30→22 |
+| `test/tag_stats_test.dart` | `cat.drink` → `cat.food` |
+
+### 附带修复: 5 个日期依赖测试 (跨月失效的遗留 bug)
+
+系统日期从 2026-10-31 跨到 11-01 后, 种子流水 (2026-10-05..09) 落到 HomePage 当前月之外,
+5 个写死 "10月" 的测试开始失败。已改为**跟随系统日期**或按月条件断言:
+`month_picker_test` / `home_save_flow_test` / `day_keys_test` / `ui_test`
+
+### 验证
+- `flutter analyze`: 0 errors
+- `flutter test`: **174/174 通过** (161 + 3 v6 清单 + 10 迁移)
+- Release APK: 54.4 MB
+- 模拟器 e2e: 2 张截图 (`docs/screenshots/v1.10.0/`)
+
+---
+
 ## v1.9.0 (2026-10-31) — 记一笔界面重设计: 分类 2/3 + 键盘 1/3 + 金额显示屏
 
 ### 用户需求

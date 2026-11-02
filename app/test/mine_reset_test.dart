@@ -47,10 +47,11 @@ void main() {
     await AppDatabase.instance.close();
   });
 
-  test('重置前 DB 有种子 (30 分类 + 18 流水)', () async {
+  test('重置前 DB 有种子 (22 分类 + 18 流水)', () async {
     final cats = await CategoryRepository.instance.all();
     final txs = await TxRepository.instance.all();
-    expect(cats.length, 30);
+    // v6: 分类清单重整 → 支出 14 + 收入 8 = 22
+    expect(cats.length, 22);
     expect(txs.length, 18);
   });
 
@@ -99,7 +100,7 @@ void main() {
     await AppDatabase.instance.resetForDebug();
     await AppDatabase.instance.resetForDebug();
     final cats = await CategoryRepository.instance.all();
-    expect(cats.length, 30);
+    expect(cats.length, 22);
   });
 
   // ----- U3 二次确认对话框: ValueListenableBuilder 行为 -----

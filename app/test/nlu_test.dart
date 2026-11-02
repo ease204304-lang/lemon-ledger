@@ -46,9 +46,9 @@ void main() {
       expect(r.categoryId, equals('cat.transport'));
     });
 
-    test('饮品: 咖啡', () async {
+    test('咖啡: 归入餐饮 (v6 移除饮品类)', () async {
       final r = await nlu.parse('买咖啡7块');
-      expect(r.categoryId, equals('cat.drink'));
+      expect(r.categoryId, equals('cat.food'));
     });
 
     test('工资: 收工资', () async {
@@ -64,9 +64,9 @@ void main() {
       expect(r.categoryId, isIn(['cat.transport']));
     });
 
-    test('服饰: 衣服', () async {
-      final r = await nlu.parse('买了一件衣服');
-      expect(r.categoryId, equals('cat.dress'));
+    test('娱乐: 电影 (v6 新增娱乐类)', () async {
+      final r = await nlu.parse('看电影60');
+      expect(r.categoryId, equals('cat.entertain'));
     });
   });
 
@@ -131,10 +131,11 @@ void main() {
       expect(r.categoryId, equals('cat.food'));
     });
 
-    test('"10月5号买咖啡7块" → 7 / 饮品 / 10-05', () async {
+    test('"10月5号买咖啡7块" → 7 / 餐饮 / 10-05', () async {
       final r = await nlu.parse('10月5号买咖啡7块');
       expect(r.amount, equals(7.0));
-      expect(r.categoryId, equals('cat.drink'));
+      // v6: 饮品类已移除, 咖啡归入 餐饮
+      expect(r.categoryId, equals('cat.food'));
       expect(r.date?.month, equals(10));
       expect(r.date?.day, equals(5));
     });

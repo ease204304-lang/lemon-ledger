@@ -116,7 +116,7 @@ void main() {
       final stats = await TagService.instance
           .statsByTag(TxType.expense, day0, day4, sortBy: TagSortBy.time);
       // 10-09 使用的: 信托/停车费/单车/充电/咖啡/餐饮 (day4)
-      // 10-05 使用的: 日用/孩子/旅行/医疗/交通(note)/餐饮
+      // 10-05 使用的: 日用/孩子/旅游/医疗/交通(note)/餐饮
       final day4Tags = stats.where((s) => s.lastUsedDay == day4).map((s) => s.name).toSet();
       expect(day4Tags, containsAll(['信托', '停车费', '单车', '充电', '咖啡']));
       // 排序: lastUsedDay 降序
@@ -149,7 +149,7 @@ void main() {
   group('syncForTx (保存流水同步标签)', () {
     // 注意: 先插 tx 行再 sync (statsByTag 走 tx_tag JOIN tx)
     test('整体备注成为标签 + 建关联', () async {
-      final tx = mkTx('new.1', day4, 'cat.drink', 1500, '一点点');
+      final tx = mkTx('new.1', day4, 'cat.food', 1500, '一点点');
       await TxRepository.instance.insert(tx);
       await TagService.instance.syncForTx(tx);
       final db = await AppDatabase.instance.db;
@@ -169,11 +169,11 @@ void main() {
 
     test('备注含已有标签 → 命中关联 + 整体也是新标签 + 频次 bump', () async {
       // 已有标签: 星巴克 (先建)
-      final tx1 = mkTx('new.2', day4, 'cat.drink', 3500, '星巴克');
+      final tx1 = mkTx('new.2', day4, 'cat.food', 3500, '星巴克');
       await TxRepository.instance.insert(tx1);
       await TagService.instance.syncForTx(tx1);
       // 再存一笔备注含 "星巴克" 的
-      final tx2 = mkTx('new.3', day4, 'cat.drink', 4200, '星巴克 拿铁');
+      final tx2 = mkTx('new.3', day4, 'cat.food', 4200, '星巴克 拿铁');
       await TxRepository.instance.insert(tx2);
       await TagService.instance.syncForTx(tx2);
       final db = await AppDatabase.instance.db;
@@ -196,7 +196,7 @@ void main() {
     });
 
     test('编辑流水 (二次 sync) 不产生重复关联', () async {
-      final tx = mkTx('new.4', day4, 'cat.drink', 1000, '咖啡');
+      final tx = mkTx('new.4', day4, 'cat.food', 1000, '咖啡');
       await TxRepository.instance.insert(tx);
       await TagService.instance.syncForTx(tx);
       // 改备注再同步
@@ -213,7 +213,7 @@ void main() {
     });
 
     test('空备注: 只清关联, 不建标签', () async {
-      final tx = mkTx('new.5', day4, 'cat.drink', 900, '');
+      final tx = mkTx('new.5', day4, 'cat.food', 900, '');
       await TagService.instance.syncForTx(tx);
       final db = await AppDatabase.instance.db;
       final links = await db.query('tx_tag',

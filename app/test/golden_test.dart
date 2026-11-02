@@ -63,6 +63,14 @@ void main() {
             for (final c in seedCategories()) batch.insert('category', c.toMap());
             for (final t in seedTxs()) batch.insert('tx', t.toMap());
             await batch.commit(noResult: true);
+            // v6: 常用分类 (与 AppDatabase._onCreate 保持一致)
+            const pinnedIds = [
+              'cat.credit', 'cat.food', 'cat.snack', 'cat.transport', 'cat.salary'
+            ];
+            for (final id in pinnedIds) {
+              await db.rawUpdate(
+                  'UPDATE category SET pinned = 1 WHERE id = ?', [id]);
+            }
           },
         ),
       );
@@ -115,15 +123,18 @@ void main() {
       for (final r in rows) {
         m[r['category_id'] as String] = (r['s'] as int?) ?? 0;
       }
-      expect(m['cat.invest'],    equals(81800));
+      // v6: 818 元从 cat.invest (收入类) 迁到 cat.invest_exp (支出类)
+      expect(m['cat.invest_exp'], equals(81800));
       expect(m['cat.daily'],     equals(59000));
       expect(m['cat.transport'], equals(47600));
-      expect(m['cat.food'],      equals(13600));
+      expect(m['cat.food'],      equals(14300)); // 136 + 咖啡 7
       expect(m['cat.kid'],       equals(9900));
       expect(m['cat.travel'],    equals(8000));
       expect(m['cat.medical'],   equals(5500));
-      expect(m['cat.drink'],     equals(700));
       expect(m['cat.car'],       equals(2000));
+      // v6: 移除的分类不应再有流水
+      expect(m['cat.drink'], isNull);
+      expect(m['cat.invest'], isNull);
     });
 
     test('sumByMonth: 10 月 收入 50.00, 支出 2281.00', () async {
@@ -144,7 +155,8 @@ void main() {
       expect(inc, equals(5000));
     });
 
-    test('search: 按 "投资" 匹配到 1 笔 (cat.invest, 备注 "投资 - 信托")', () async {
+    test('search: 按 "投资" 匹配到 1 笔 (cat.invest_exp, 备注 "投资 - 信托")',
+        () async {
       final rows = await db.rawQuery('''
         SELECT tx.* FROM tx
         LEFT JOIN category ON tx.category_id = category.id
@@ -152,21 +164,20 @@ void main() {
       ''', ['%投资%', '%投资%']);
       expect(rows.length, equals(1));
       final t = Tx.fromMap(rows.first);
-      expect(t.categoryId, equals('cat.invest'));
+      // v6: 支出「投资」用独立 id cat.invest_exp
+      expect(t.categoryId, equals('cat.invest_exp'));
       expect(t.amountCents, equals(81800));
     });
 
-    test('search: 按 "咖啡" 匹配到 1 笔 (cat.drink)', () async {
-      // 咖啡在 cat.drink, 备注空
-      // 但搜索的是分类名 "饮品" 或备注, 我们的搜索用 LIKE
-      // 调整: 用 "饮品" 搜索 -> 1 笔
+    test('search: 按 "咖啡" 匹配到 1 笔 (cat.food)', () async {
+      // v6: 饮品类已移除, 咖啡归入 餐饮 (cat.food)
       final rows = await db.rawQuery('''
         SELECT tx.* FROM tx
         LEFT JOIN category ON tx.category_id = category.id
         WHERE tx.note LIKE ? OR category.name LIKE ?
-      ''', ['%饮品%', '%饮品%']);
+      ''', ['%咖啡%', '%咖啡%']);
       expect(rows.length, equals(1));
-      expect(rows.first['category_id'], equals('cat.drink'));
+      expect(rows.first['category_id'], equals('cat.food'));
     });
 
     test('monthDayTotals: 10 月有 5 天有数据', () async {
@@ -204,10 +215,56 @@ void main() {
       expect(rows.length, equals(1));
     });
 
-    test('v1.2 新增 3 个分类存在 (credit/education/housing)', () async {
+    test('v6 分类清单: 支出 14 类 + 收入 8 类', () async {
       final rows = await db.rawQuery(
-          "SELECT id FROM category WHERE id IN ('cat.credit', 'cat.education', 'cat.housing')");
-      expect(rows.length, equals(3));
+          "SELECT id FROM category WHERE archived = 0 ORDER BY type, sort_order");
+      final ids = rows.map((r) => r['id'] as String).toList();
+
+      // 支出 14 类 (按用户清单顺序)
+      const expenseIds = [
+        'cat.credit', 'cat.food', 'cat.entertain', 'cat.snack', 'cat.transport',
+        'cat.housing', 'cat.travel', 'cat.medical', 'cat.sport', 'cat.car',
+        'cat.kid', 'cat.daily', 'cat.invest_exp', 'cat.else',
+      ];
+      for (final id in expenseIds) {
+        expect(ids, contains(id), reason: '支出分类 $id 应存在');
+      }
+      // 收入 8 类
+      const incomeIds = [
+        'cat.salary', 'cat.bonus', 'cat.subsidy', 'cat.parttime',
+        'cat.invest', 'cat.refund', 'cat.receive', 'cat.in_else',
+      ];
+      for (final id in incomeIds) {
+        expect(ids, contains(id), reason: '收入分类 $id 应存在');
+      }
+      // 合计 22 个活跃分类
+      expect(ids.length, equals(22));
+      // 被移除的分类应归档 (不删除, 保护历史流水)
+      const removed = [
+        'cat.market', 'cat.fruit', 'cat.drink', 'cat.dress', 'cat.beauty',
+        'cat.phone', 'cat.house', 'cat.book', 'cat.education', 'cat.pet',
+        'cat.digital',
+      ];
+      for (final id in removed) {
+        expect(ids, isNot(contains(id)), reason: '$id 应已归档');
+      }
+    });
+
+    test('v6 改名: 旅行→旅游, 车费→汽车 (id 不变)', () async {
+      final rows = await db.rawQuery(
+          "SELECT id, name FROM category WHERE id IN ('cat.travel', 'cat.car')");
+      final m = {for (final r in rows) r['id'] as String: r['name'] as String};
+      expect(m['cat.travel'], equals('旅游'));
+      expect(m['cat.car'], equals('汽车'));
+    });
+
+    test('v6 常用分类: 支出 4 + 收入 1', () async {
+      final rows = await db.rawQuery(
+          'SELECT id FROM category WHERE pinned = 1');
+      final ids = rows.map((r) => r['id'] as String).toSet();
+      expect(ids, equals({
+        'cat.credit', 'cat.food', 'cat.snack', 'cat.transport', 'cat.salary',
+      }));
     });
 
     test('v1.2 monthTxs 返回当月所有某类型流水', () async {

@@ -42,7 +42,7 @@ void main() {
         home: Scaffold(body: child),
       );
 
-  testWidgets('HomePage 渲染: 月份 chip 显示当前月 (默认 10月)', (tester) async {
+  testWidgets('HomePage 渲染: 月份 chip 显示当前月', (tester) async {
     tester.view.physicalSize = const Size(1080, 2340);
     tester.view.devicePixelRatio = 2.625;
     addTearDown(tester.view.reset);
@@ -55,9 +55,10 @@ void main() {
     });
     await tester.pump();
 
-    // 月份 chip 显示 "10月" (当前月)
-    expect(find.text('10月'), findsWidgets);
-    expect(find.text('2026年'), findsOneWidget);
+    // 月份 chip 显示当前月 (跟随系统日期, 不写死 "10月")
+    final now = DateTime.now();
+    expect(find.text('${now.month}月'), findsWidgets);
+    expect(find.text('${now.year}年'), findsOneWidget);
   });
 
   testWidgets('HomePage 渲染: 5 入口 + 黄色 header + 排序', (tester) async {
@@ -100,9 +101,15 @@ void main() {
     await tester.pump();
 
     // 折叠 icon (expand_more / chevron_right) 至少有一个
-    final expandIcons = find.byIcon(Icons.expand_more);
-    final chevronIcons = find.byIcon(Icons.chevron_right);
-    expect(expandIcons.evaluate().length + chevronIcons.evaluate().length, greaterThan(0),
-        reason: '日期行应有 chevron 图标表示可折叠');
+    // 注: 种子流水固定在 2026-10; HomePage 默认显示当前月, 跨月后当日无流水 → 无日期行
+    final now = DateTime.now();
+    if (now.year == 2026 && now.month == 10) {
+      final expandIcons = find.byIcon(Icons.expand_more);
+      final chevronIcons = find.byIcon(Icons.chevron_right);
+      expect(expandIcons.evaluate().length + chevronIcons.evaluate().length, greaterThan(0),
+          reason: '日期行应有 chevron 图标表示可折叠');
+    } else {
+      expect(find.byType(HomePage), findsOneWidget);
+    }
   });
 }

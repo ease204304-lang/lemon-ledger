@@ -106,13 +106,13 @@ void main() {
   // ---- 1. roundtrip ----
 
   test('roundtrip: 导出 → replace 导入 → 分类/流水数量与内容一致', () async {
-    // DB 里有种子 (30 分类 + 18 流水)
+    // DB 里有种子 (22 分类 + 18 流水)
     final exported = await BackupService.instance.exportJson();
     final beforeTxs = await TxRepository.instance.all();
     final beforeCats =
         await CategoryRepository.instance.all(includeArchived: true);
     expect(beforeTxs.length, 18);
-    expect(beforeCats.length, 30);
+    expect(beforeCats.length, 22);
 
     // 改一条数据, 让 replace 有可见差异
     final db = await AppDatabase.instance.db;
@@ -126,12 +126,12 @@ void main() {
 
     // replace 模式: 全部是 insert (先清空)
     expect(result.transactionsInserted, 18);
-    expect(result.categoriesInserted, 30);
+    expect(result.categoriesInserted, 22);
     final afterTxs = await TxRepository.instance.all();
     final afterCats =
         await CategoryRepository.instance.all(includeArchived: true);
     expect(afterTxs.length, 18);
-    expect(afterCats.length, 30);
+    expect(afterCats.length, 22);
     // 内容恢复
     final t1 = await TxRepository.instance.byId('t.001');
     expect(t1!.amountCents, beforeTxs.firstWhere((t) => t.id == 't.001').amountCents);
@@ -271,7 +271,7 @@ void main() {
     }
     // 失败后 DB 未被清空 (事务回滚)
     expect(await _count('tx'), 18);
-    expect(await _count('category'), 30);
+    expect(await _count('category'), 22);
   });
 
   // ---- 8. merge ----
@@ -298,9 +298,9 @@ void main() {
     expect(result.transactionsReplaced, 1); // t.001
     expect(result.transactionsMerged, 1);
 
-    // 数量: 18 + 2 = 20 笔, 30 + 1 = 31 分类
+    // 数量: 18 + 2 = 20 笔, 22 + 1 = 23 分类
     expect(await _count('tx'), 20);
-    expect(await _count('category'), 31);
+    expect(await _count('category'), 23);
 
     // t.001 被覆盖为 1 分
     final t1 = await TxRepository.instance.byId('t.001');
@@ -354,7 +354,7 @@ void main() {
     }
     // 关键: 数据没被清空 (外键校验在事务前, 但即使事务内失败也应回滚)
     expect(await _count('tx'), 18);
-    expect(await _count('category'), 30);
+    expect(await _count('category'), 22);
   });
 
   // ---- 10. peek ----

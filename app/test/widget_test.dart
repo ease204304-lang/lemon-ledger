@@ -50,14 +50,13 @@ void main() {
         byCat[t.categoryId] = (byCat[t.categoryId] ?? 0) + t.amountCents;
       }
       final expected = <String, int>{
-        'cat.invest':   81800,
+        'cat.invest_exp':81800,  // v6: 支出投资 (原 cat.invest)
         'cat.daily':    59000,
         'cat.transport':47600,  // 162+152+97+3+62
-        'cat.food':     13600,  // 59+53+15+9
+        'cat.food':     14300,  // 59+53+15+9+咖啡7
         'cat.kid':       9900,
         'cat.travel':    8000,
         'cat.medical':   5500,
-        'cat.drink':      700,
         'cat.car':       2000,  // 5+15
       };
       // 排序后比较
@@ -84,9 +83,20 @@ void main() {
       expect(sum, closeTo(100.0, 0.1));
     });
 
-    test('seed 包含 22 支出 + 8 收入 分类 (v1.2 增 3)', () {
-      expect(cats.where((c) => c.type == TxType.expense).length, equals(22));
+    test('seed 包含 14 支出 + 8 收入 分类 (v6 按用户清单重整)', () {
+      expect(cats.where((c) => c.type == TxType.expense).length, equals(14));
       expect(cats.where((c) => c.type == TxType.income).length, equals(8));
+    });
+
+    test('v6 支出分类名 = 用户清单顺序', () {
+      final names = cats
+          .where((c) => c.type == TxType.expense)
+          .map((c) => c.name)
+          .toList();
+      expect(names, equals([
+        '信用卡', '餐饮', '娱乐', '零食', '交通', '住房', '旅游',
+        '医疗', '运动', '汽车', '孩子', '日用', '投资', '其他',
+      ]));
     });
   });
 
