@@ -1,0 +1,411 @@
+{
+  "data": {
+    "total_amount": "2855.00",
+    "total_count": 8,
+    "chart": [
+      {
+        "tag_id": "tag_1e9d6ee49d764247",
+        "name": "标签7",
+        "amount": "700.00",
+        "ratio": "24.52",
+        "count": 1,
+        "is_unset": false,
+        "drilldown": {
+          "book_id": "book_9ab8d193fc024c2b",
+          "start_date": "2026-11-01",
+          "end_date": "2026-11-07",
+          "timezone": "Asia/Shanghai",
+          "type": "expense",
+          "tag_ids": [
+            "tag_1e9d6ee49d764247"
+          ],
+          "tag_match": "any"
+        }
+      },
+      {
+        "tag_id": "tag_24bd8195a2cb47ce",
+        "name": "标签6",
+        "amount": "600.00",
+        "ratio": "21.02",
+        "count": 1,
+        "is_unset": false,
+        "drilldown": {
+          "book_id": "book_9ab8d193fc024c2b",
+          "start_date": "2026-11-01",
+          "end_date": "2026-11-07",
+          "timezone": "Asia/Shanghai",
+          "type": "expense",
+          "tag_ids": [
+            "tag_24bd8195a2cb47ce"
+          ],
+          "tag_match": "any"
+        }
+      },
+      {
+        "tag_id": "tag_5407dfae9841410c",
+        "name": "标签5",
+        "amount": "500.00",
+        "ratio": "17.51",
+        "count": 1,
+        "is_unset": false,
+        "drilldown": {
+          "book_id": "book_9ab8d193fc024c2b",
+          "start_date": "2026-11-01",
+          "end_date": "2026-11-07",
+          "timezone": "Asia/Shanghai",
+          "type": "expense",
+          "tag_ids": [
+            "tag_5407dfae9841410c"
+          ],
+          "tag_match": "any"
+        }
+      },
+      {
+        "tag_id": "tag_6d5526f431f54819",
+        "name": "标签4",
+        "amount": "400.00",
+        "ratio": "14.01",
+        "count": 1,
+        "is_unset": false,
+        "drilldown": {
+          "book_id": "book_9ab8d193fc024c2b",
+          "start_date": "2026-11-01",
+          "end_date": "2026-11-07",
+          "timezone": "Asia/Shanghai",
+          "type": "expense",
+          "tag_ids": [
+            "tag_6d5526f431f54819"
+          ],
+          "tag_match": "any"
+        }
+      },
+      {
+        "tag_id": "tag_5958bd72123a4505",
+        "name": "标签3",
+        "amount": "300.00",
+        "ratio": "10.51",
+        "count": 1,
+        "is_unset": false,
+        "drilldown": {
+          "book_id": "book_9ab8d193fc024c2b",
+          "start_date": "2026-11-01",
+          "end_date": "2026-11-07",
+          "timezone": "Asia/Shanghai",
+          "type": "expense",
+          "tag_ids": [
+            "tag_5958bd72123a4505"
+          ],
+          "tag_match": "any"
+        }
+      },
+      {
+        "tag_id": "OTHER",
+        "name": "其他",
+        "amount": "300.00",
+        "ratio": "10.51",
+        "count": 2,
+        "is_unset": false,
+        "is_other": true,
+        "member_tag_ids": [
+          "tag_e439c3942ad74759",
+          "tag_f426e5e5e84f49e8"
+        ],
+        "drilldown": {
+          "book_id": "book_9ab8d193fc024c2b",
+          "start_date": "2026-11-01",
+          "end_date": "2026-11-07",
+          "timezone": "Asia/Shanghai",
+          "type": "expense",
+          "tag_ids": [
+            "tag_e439c3942ad74759",
+            "tag_f426e5e5e84f49e8"
+          ],
+          "tag_match": "any"
+        }
+      },
+      {
+        "tag_id": "未设置标签",
+        "name": "未设置标签",
+        "amount": "55.00",
+        "ratio": "1.93",
+        "count": 1,
+        "is_unset": true,
+        "drilldown": {
+          "book_id": "book_9ab8d193fc024c2b",
+          "start_date": "2026-11-01",
+          "end_date": "2026-11-07",
+          "timezone": "Asia/Shanghai",
+          "type": "expense",
+          "tag_ids": [
+            "未设置标签"
+          ],
+          "tag_match": "unset"
+        }
+      }
+    ],
+    "chart_limit": 5,
+    "leaderboard": [
+      {
+        "tag_id": "tag_1e9d6ee49d764247",
+        "name": "标签7",
+        "amount": "700.00",
+        "ratio": "24.52",
+        "count": 1,
+        "last_transaction_date": "2026-11-01",
+        "progress": "24.52",
+        "is_unset": false,
+        "drilldown": {
+          "book_id": "book_9ab8d193fc024c2b",
+          "start_date": "2026-11-01",
+          "end_date": "2026-11-07",
+          "timezone": "Asia/Shanghai",
+          "type": "expense",
+          "tag_ids": [
+            "tag_1e9d6ee49d764247"
+          ],
+          "tag_match": "any"
+        }
+      },
+      {
+        "tag_id": "tag_24bd8195a2cb47ce",
+        "name": "标签6",
+        "amount": "600.00",
+        "ratio": "21.02",
+        "count": 1,
+        "last_transaction_date": "2026-11-01",
+        "progress": "21.02",
+        "is_unset": false,
+        "drilldown": {
+          "book_id": "book_9ab8d193fc024c2b",
+          "start_date": "2026-11-01",
+          "end_date": "2026-11-07",
+          "timezone": "Asia/Shanghai",
+          "type": "expense",
+          "tag_ids": [
+            "tag_24bd8195a2cb47ce"
+          ],
+          "tag_match": "any"
+        }
+      },
+      {
+        "tag_id": "tag_5407dfae9841410c",
+        "name": "标签5",
+        "amount": "500.00",
+        "ratio": "17.51",
+        "count": 1,
+        "last_transaction_date": "2026-11-01",
+        "progress": "17.51",
+        "is_unset": false,
+        "drilldown": {
+          "book_id": "book_9ab8d193fc024c2b",
+          "start_date": "2026-11-01",
+          "end_date": "2026-11-07",
+          "timezone": "Asia/Shanghai",
+          "type": "expense",
+          "tag_ids": [
+            "tag_5407dfae9841410c"
+          ],
+          "tag_match": "any"
+        }
+      },
+      {
+        "tag_id": "tag_6d5526f431f54819",
+        "name": "标签4",
+        "amount": "400.00",
+        "ratio": "14.01",
+        "count": 1,
+        "last_transaction_date": "2026-11-01",
+        "progress": "14.01",
+        "is_unset": false,
+        "drilldown": {
+          "book_id": "book_9ab8d193fc024c2b",
+          "start_date": "2026-11-01",
+          "end_date": "2026-11-07",
+          "timezone": "Asia/Shanghai",
+          "type": "expense",
+          "tag_ids": [
+            "tag_6d5526f431f54819"
+          ],
+          "tag_match": "any"
+        }
+      },
+      {
+        "tag_id": "tag_5958bd72123a4505",
+        "name": "标签3",
+        "amount": "300.00",
+        "ratio": "10.51",
+        "count": 1,
+        "last_transaction_date": "2026-11-01",
+        "progress": "10.51",
+        "is_unset": false,
+        "drilldown": {
+          "book_id": "book_9ab8d193fc024c2b",
+          "start_date": "2026-11-01",
+          "end_date": "2026-11-07",
+          "timezone": "Asia/Shanghai",
+          "type": "expense",
+          "tag_ids": [
+            "tag_5958bd72123a4505"
+          ],
+          "tag_match": "any"
+        }
+      },
+      {
+        "tag_id": "未设置标签",
+        "name": "未设置标签",
+        "amount": "55.00",
+        "ratio": "1.93",
+        "count": 1,
+        "last_transaction_date": "2026-11-01",
+        "progress": "1.93",
+        "is_unset": true,
+        "drilldown": {
+          "book_id": "book_9ab8d193fc024c2b",
+          "start_date": "2026-11-01",
+          "end_date": "2026-11-07",
+          "timezone": "Asia/Shanghai",
+          "type": "expense",
+          "tag_ids": [
+            "未设置标签"
+          ],
+          "tag_match": "unset"
+        }
+      }
+    ],
+    "items": [
+      {
+        "tag_id": "tag_1e9d6ee49d764247",
+        "name": "标签7",
+        "amount": "700.00",
+        "ratio": "24.52",
+        "count": 1,
+        "last_transaction_date": "2026-11-01",
+        "progress": "24.52",
+        "is_unset": false,
+        "drilldown": {
+          "book_id": "book_9ab8d193fc024c2b",
+          "start_date": "2026-11-01",
+          "end_date": "2026-11-07",
+          "timezone": "Asia/Shanghai",
+          "type": "expense",
+          "tag_ids": [
+            "tag_1e9d6ee49d764247"
+          ],
+          "tag_match": "any"
+        }
+      },
+      {
+        "tag_id": "tag_24bd8195a2cb47ce",
+        "name": "标签6",
+        "amount": "600.00",
+        "ratio": "21.02",
+        "count": 1,
+        "last_transaction_date": "2026-11-01",
+        "progress": "21.02",
+        "is_unset": false,
+        "drilldown": {
+          "book_id": "book_9ab8d193fc024c2b",
+          "start_date": "2026-11-01",
+          "end_date": "2026-11-07",
+          "timezone": "Asia/Shanghai",
+          "type": "expense",
+          "tag_ids": [
+            "tag_24bd8195a2cb47ce"
+          ],
+          "tag_match": "any"
+        }
+      },
+      {
+        "tag_id": "tag_5407dfae9841410c",
+        "name": "标签5",
+        "amount": "500.00",
+        "ratio": "17.51",
+        "count": 1,
+        "last_transaction_date": "2026-11-01",
+        "progress": "17.51",
+        "is_unset": false,
+        "drilldown": {
+          "book_id": "book_9ab8d193fc024c2b",
+          "start_date": "2026-11-01",
+          "end_date": "2026-11-07",
+          "timezone": "Asia/Shanghai",
+          "type": "expense",
+          "tag_ids": [
+            "tag_5407dfae9841410c"
+          ],
+          "tag_match": "any"
+        }
+      },
+      {
+        "tag_id": "tag_6d5526f431f54819",
+        "name": "标签4",
+        "amount": "400.00",
+        "ratio": "14.01",
+        "count": 1,
+        "last_transaction_date": "2026-11-01",
+        "progress": "14.01",
+        "is_unset": false,
+        "drilldown": {
+          "book_id": "book_9ab8d193fc024c2b",
+          "start_date": "2026-11-01",
+          "end_date": "2026-11-07",
+          "timezone": "Asia/Shanghai",
+          "type": "expense",
+          "tag_ids": [
+            "tag_6d5526f431f54819"
+          ],
+          "tag_match": "any"
+        }
+      },
+      {
+        "tag_id": "tag_5958bd72123a4505",
+        "name": "标签3",
+        "amount": "300.00",
+        "ratio": "10.51",
+        "count": 1,
+        "last_transaction_date": "2026-11-01",
+        "progress": "10.51",
+        "is_unset": false,
+        "drilldown": {
+          "book_id": "book_9ab8d193fc024c2b",
+          "start_date": "2026-11-01",
+          "end_date": "2026-11-07",
+          "timezone": "Asia/Shanghai",
+          "type": "expense",
+          "tag_ids": [
+            "tag_5958bd72123a4505"
+          ],
+          "tag_match": "any"
+        }
+      },
+      {
+        "tag_id": "未设置标签",
+        "name": "未设置标签",
+        "amount": "55.00",
+        "ratio": "1.93",
+        "count": 1,
+        "last_transaction_date": "2026-11-01",
+        "progress": "1.93",
+        "is_unset": true,
+        "drilldown": {
+          "book_id": "book_9ab8d193fc024c2b",
+          "start_date": "2026-11-01",
+          "end_date": "2026-11-07",
+          "timezone": "Asia/Shanghai",
+          "type": "expense",
+          "tag_ids": [
+            "未设置标签"
+          ],
+          "tag_match": "unset"
+        }
+      }
+    ],
+    "has_more": true,
+    "remaining_count": 2
+  },
+  "meta": {
+    "snapshot_version": 9751,
+    "condition_key": "tags|{\"book_id\":\"book_9ab8d193fc024c2b\",\"category_ids\":[],\"comparison_enabled\":false,\"counterparty_ids\":[],\"end_date\":\"2026-11-07\",\"expense_category_ids\":[],\"expense_category_mode\":\"ALL\",\"granularity\":\"day\",\"income_category_ids\":[],\"income_category_mode\":\"ALL\",\"sort\":\"amount\",\"sort_order\":\"desc\",\"start_date\":\"2026-11-01\",\"tag_ids\":[],\"tag_role\":\"all\",\"timezone\":\"Asia/Shanghai\",\"type\":\"expense\"}",
+    "generated_at": "2026-11-07T15:56:33Z"
+  }
+}

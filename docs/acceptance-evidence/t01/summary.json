@@ -1,0 +1,25 @@
+{
+  "data": {
+    "type": "balance",
+    "income": "10000.00",
+    "expense": "3000.00",
+    "balance": "7000.00",
+    "balance_rate": "70.00",
+    "income_count": 1,
+    "expense_count": 1,
+    "count": 2,
+    "days": 7,
+    "daily_average": "1000.00",
+    "average_daily_income": "1428.57",
+    "average_daily_expense": "428.57",
+    "average_daily_balance": "1000.00",
+    "granularity": "day",
+    "start_date": "2026-11-01",
+    "end_date": "2026-11-07"
+  },
+  "meta": {
+    "snapshot_version": 3728,
+    "condition_key": "summary|{\"book_id\":\"book_fd89f247575a44d1\",\"category_ids\":[],\"comparison_enabled\":false,\"counterparty_ids\":[],\"end_date\":\"2026-11-07\",\"expense_category_ids\":[],\"expense_category_mode\":\"ALL\",\"granularity\":\"day\",\"income_category_ids\":[],\"income_category_mode\":\"ALL\",\"sort\":\"amount\",\"sort_order\":\"desc\",\"start_date\":\"2026-11-01\",\"tag_ids\":[],\"tag_role\":\"all\",\"timezone\":\"Asia/Shanghai\",\"type\":\"balance\"}",
+    "generated_at": "2026-11-07T15:56:12Z"
+  }
+}

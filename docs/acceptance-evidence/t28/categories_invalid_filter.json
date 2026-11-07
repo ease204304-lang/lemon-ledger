@@ -1,0 +1,12 @@
+{
+  "status": 400,
+  "body": {
+    "error": {
+      "code": "INVALID_FILTER",
+      "message": "SELECTED 模式必须提供分类 ID。",
+      "request_id": "req_b3d39b7741a6408c",
+      "field": "category_ids",
+      "reason": "selected_without_ids"
+    }
+  }
+}

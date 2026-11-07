@@ -1,0 +1,7 @@
+{
+  "path": "/api/statistics/summary/export",
+  "status": 404,
+  "body": {
+    "detail": "Not Found"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "status": 400,
+  "body": {
+    "error": {
+      "code": "INVALID_FILTER",
+      "message": "交易金额必须大于零。",
+      "request_id": "req_5e7b33e4f861472c",
+      "field": "amount",
+      "reason": "non_positive_amount",
+      "amount": "-40.00"
+    }
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "status": 200,
+  "body": {
+    "data": {
+      "total": 0,
+      "items": []
+    },
+    "meta": {
+      "snapshot_version": 0,
+      "condition_key": "anomalies:book_52081e0b4cae41f1",
+      "generated_at": "2026-11-07T15:56:34Z"
+    }
+  }
+}

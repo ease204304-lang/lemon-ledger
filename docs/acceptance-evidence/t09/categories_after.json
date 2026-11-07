@@ -1,0 +1,37 @@
+{
+  "data": {
+    "level": 1,
+    "total_amount": "300.00",
+    "total_count": 1,
+    "items": [
+      {
+        "category_id": "cat_5f538e94003440fb",
+        "parent_id": "cat_5f538e94003440fb",
+        "name": "餐饮",
+        "amount": "300.00",
+        "amount_display": null,
+        "ratio": "100.00",
+        "count": 1,
+        "last_transaction_date": "2026-11-01",
+        "progress": "100.00",
+        "drilldown": {
+          "book_id": "book_c05a6a3d083c43c4",
+          "start_date": "2026-11-01",
+          "end_date": "2026-11-07",
+          "timezone": "Asia/Shanghai",
+          "type": "expense",
+          "category_ids": [
+            "cat_5f538e94003440fb"
+          ]
+        }
+      }
+    ],
+    "has_more": false,
+    "remaining_count": 0
+  },
+  "meta": {
+    "snapshot_version": 4735,
+    "condition_key": "categories:1|{\"book_id\":\"book_c05a6a3d083c43c4\",\"category_ids\":[],\"comparison_enabled\":false,\"counterparty_ids\":[],\"end_date\":\"2026-11-07\",\"expense_category_ids\":[],\"expense_category_mode\":\"ALL\",\"granularity\":\"day\",\"income_category_ids\":[],\"income_category_mode\":\"ALL\",\"sort\":\"amount\",\"sort_order\":\"desc\",\"start_date\":\"2026-11-01\",\"tag_ids\":[],\"tag_role\":\"all\",\"timezone\":\"Asia/Shanghai\",\"type\":\"expense\"}",
+    "generated_at": "2026-11-07T15:56:12Z"
+  }
+}

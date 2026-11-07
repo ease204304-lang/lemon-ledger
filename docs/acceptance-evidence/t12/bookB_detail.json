@@ -1,0 +1,16 @@
+{
+  "data": {
+    "total": 0,
+    "page": 1,
+    "page_size": 20,
+    "total_pages": 0,
+    "total_amount": "0.00",
+    "groups": [],
+    "items": []
+  },
+  "meta": {
+    "snapshot_version": 0,
+    "condition_key": "{\"book_id\":\"book_002beebd8317454c\",\"category_ids\":[],\"comparison_enabled\":false,\"counterparty_ids\":[],\"end_date\":\"2026-11-07\",\"expense_category_ids\":[],\"expense_category_mode\":\"ALL\",\"granularity\":\"day\",\"income_category_ids\":[],\"income_category_mode\":\"ALL\",\"sort\":\"amount\",\"sort_order\":\"desc\",\"start_date\":\"2026-11-01\",\"tag_ids\":[],\"tag_role\":\"all\",\"timezone\":\"Asia/Shanghai\",\"type\":\"expense\"}|p1:20",
+    "generated_at": "2026-11-07T15:56:13Z"
+  }
+}

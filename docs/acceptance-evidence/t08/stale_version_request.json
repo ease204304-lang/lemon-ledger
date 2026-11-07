@@ -1,0 +1,14 @@
+{
+  "status": 409,
+  "body": {
+    "error": {
+      "code": "SNAPSHOT_STALE",
+      "message": "快照版本已过期，请刷新统计视图或从第一页重查明细。",
+      "request_id": "req_ced67f38017d468d",
+      "field": "snapshot_version",
+      "reason": "requested=2734, current=3734",
+      "snapshot_version": 3734,
+      "requested_version": 2734
+    }
+  }
+}

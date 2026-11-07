@@ -1,0 +1,25 @@
+{
+  "data": {
+    "type": "balance",
+    "income": "0.00",
+    "expense": "100.00",
+    "balance": "-100.00",
+    "balance_rate": null,
+    "income_count": 0,
+    "expense_count": 1,
+    "count": 1,
+    "days": 7,
+    "daily_average": "-14.29",
+    "average_daily_income": "0.00",
+    "average_daily_expense": "14.29",
+    "average_daily_balance": "-14.29",
+    "granularity": "day",
+    "start_date": "2026-11-01",
+    "end_date": "2026-11-07"
+  },
+  "meta": {
+    "snapshot_version": 3738,
+    "condition_key": "summary|{\"book_id\":\"book_b2b0508c531e4bb5\",\"category_ids\":[],\"comparison_enabled\":false,\"counterparty_ids\":[],\"end_date\":\"2026-11-07\",\"expense_category_ids\":[\"cat_c5936fbb9e5a457a\"],\"expense_category_mode\":\"SELECTED\",\"granularity\":\"day\",\"income_category_ids\":[],\"income_category_mode\":\"ALL\",\"sort\":\"amount\",\"sort_order\":\"desc\",\"start_date\":\"2026-11-01\",\"tag_ids\":[],\"tag_role\":\"all\",\"timezone\":\"Asia/Shanghai\",\"type\":\"balance\"}",
+    "generated_at": "2026-11-07T15:56:13Z"
+  }
+}

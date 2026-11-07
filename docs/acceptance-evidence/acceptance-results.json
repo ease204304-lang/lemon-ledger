@@ -1,0 +1,1193 @@
+{
+  "meta": {
+    "started_at": "2026-11-07 23:56:12",
+    "finished_at": "2026-11-07 23:56:34",
+    "base_url": "http://127.0.0.1:8000",
+    "server_up": true,
+    "suite": "记账统计模块 T01–T34 验收测试",
+    "spec": "D:\\07.DevWorkspace\\sys\\testlist.txt (T01–T34, 性能验收 sheet)"
+  },
+  "summary": {
+    "total": 34,
+    "pass": 34,
+    "fail": 0,
+    "blocked": 0,
+    "p0_total": 20,
+    "p0_pass": 20,
+    "p0_fail": [],
+    "p0_blocked": [],
+    "p0_gate_pass": true,
+    "c140_perf": {
+      "result": "PASS",
+      "pass": true
+    }
+  },
+  "cases": [
+    {
+      "id": "T01",
+      "level": "P0",
+      "name": "正结余",
+      "result": "PASS",
+      "actual": {
+        "income": "10000.00",
+        "expense": "3000.00",
+        "balance": "7000.00",
+        "balance_rate": "70.00"
+      },
+      "expected": {
+        "income": "10000.00",
+        "expense": "3000.00",
+        "balance": "7000.00",
+        "balance_rate": "70.00"
+      },
+      "evidence": [
+        "docs/acceptance-evidence/t01/summary.json"
+      ],
+      "reason": "",
+      "duration_ms": 10.3,
+      "d_rule": ""
+    },
+    {
+      "id": "T02",
+      "level": "P0",
+      "name": "负结余",
+      "result": "PASS",
+      "actual": {
+        "balance": "-2000.00",
+        "balance_rate": "-66.67",
+        "trend_non_zero": [
+          "-2000.00"
+        ],
+        "trend_zero_buckets": 6
+      },
+      "expected": {
+        "balance": "-2000.00",
+        "balance_rate": "-66.67",
+        "trend_points": "有交易桶全部 < 0, 空桶补 0"
+      },
+      "evidence": [
+        "docs/acceptance-evidence/t02/summary.json",
+        "docs/acceptance-evidence/t02/trend.json"
+      ],
+      "reason": "",
+      "duration_ms": 13.9,
+      "d_rule": "D06"
+    },
+    {
+      "id": "T03",
+      "level": "P0",
+      "name": "零结余",
+      "result": "PASS",
+      "actual": {
+        "balance": "0.00",
+        "balance_rate": "0.00",
+        "trend_balance_values": [
+          "0.00",
+          "0.00",
+          "0.00",
+          "0.00",
+          "0.00",
+          "0.00",
+          "0.00"
+        ]
+      },
+      "expected": {
+        "balance": "0.00",
+        "balance_rate": "0.00"
+      },
+      "evidence": [
+        "docs/acceptance-evidence/t03/summary.json",
+        "docs/acceptance-evidence/t03/trend.json"
+      ],
+      "reason": "",
+      "duration_ms": 13.9,
+      "d_rule": ""
+    },
+    {
+      "id": "T04",
+      "level": "P0",
+      "name": "无收入有支出",
+      "result": "PASS",
+      "actual": {
+        "income": "0.00",
+        "expense": "500.00",
+        "balance": "-500.00",
+        "balance_rate": null
+      },
+      "expected": {
+        "income": "0.00",
+        "expense": "500.00",
+        "balance": "-500.00",
+        "balance_rate": null
+      },
+      "evidence": [
+        "docs/acceptance-evidence/t04/summary.json"
+      ],
+      "reason": "",
+      "duration_ms": 8.0,
+      "d_rule": ""
+    },
+    {
+      "id": "T05",
+      "level": "P1",
+      "name": "无交易与零点",
+      "result": "PASS",
+      "actual": {
+        "income": "100.00",
+        "expense": "0.00",
+        "balance": "100.00",
+        "trend_points": 7
+      },
+      "expected": {
+        "汇总": "0/0/0",
+        "空账本": "income=0.00 expense=0.00 balance=0.00",
+        "时间轴": "区间内每日有桶, 空日为 0"
+      },
+      "evidence": [
+        "docs/acceptance-evidence/t05/summary.json",
+        "docs/acceptance-evidence/t05/trend.json",
+        "docs/acceptance-evidence/t05/summary_empty_book.json"
+      ],
+      "reason": "",
+      "duration_ms": 18.2,
+      "d_rule": ""
+    },
+    {
+      "id": "T06",
+      "level": "P0",
+      "name": "四种组合筛选",
+      "result": "PASS",
+      "actual": {
+        "全/全": "7000.00",
+        "工资/全": "5000.00",
+        "全/餐饮": "8000.00",
+        "工资/餐饮": "6000.00"
+      },
+      "expected": {
+        "全/全": "7000.00",
+        "工资/全": "5000.00",
+        "全/餐饮": "8000.00",
+        "工资/餐饮": "6000.00"
+      },
+      "evidence": [
+        "docs/acceptance-evidence/t06/summary____.json",
+        "docs/acceptance-evidence/t06/summary_____.json",
+        "docs/acceptance-evidence/t06/summary______.json",
+        "docs/acceptance-evidence/t06/trend_same_condition.json"
+      ],
+      "reason": "",
+      "duration_ms": 36.7,
+      "d_rule": ""
+    },
+    {
+      "id": "T07",
+      "level": "P0",
+      "name": "父子分类去重",
+      "result": "PASS",
+      "actual": {
+        "balance": "-300.00",
+        "detail_count": 2,
+        "detail_total": "300.00"
+      },
+      "expected": {
+        "balance": "-300.00",
+        "detail_count": 2,
+        "detail_total": "300.00"
+      },
+      "evidence": [
+        "docs/acceptance-evidence/t07/summary_parent_selected.json",
+        "docs/acceptance-evidence/t07/detail_parent_selected.json"
+      ],
+      "reason": "",
+      "duration_ms": 16.0,
+      "d_rule": ""
+    },
+    {
+      "id": "T08",
+      "level": "P0",
+      "name": "编辑交易同步",
+      "result": "PASS",
+      "actual": {
+        "balance_before": "-500.00",
+        "balance_after": "-300.00",
+        "snapshot_before": "2734",
+        "snapshot_after": "3734",
+        "stale_version_status": 409
+      },
+      "expected": {
+        "balance_before": "-500.00",
+        "balance_after": "-300.00",
+        "expense_delta": "-200.00",
+        "balance_delta": "+200.00",
+        "stale_version_status": "409 SNAPSHOT_STALE (期望)"
+      },
+      "evidence": [
+        "docs/acceptance-evidence/t08/summary_before.json",
+        "docs/acceptance-evidence/t08/update_response.json",
+        "docs/acceptance-evidence/t08/summary_after.json",
+        "docs/acceptance-evidence/t08/stale_version_request.json"
+      ],
+      "reason": "",
+      "duration_ms": 16.7,
+      "d_rule": ""
+    },
+    {
+      "id": "T09",
+      "level": "P0",
+      "name": "删除交易同步",
+      "result": "PASS",
+      "actual": {
+        "balance_after": "-300.00",
+        "detail_before": 2,
+        "detail_after": 1
+      },
+      "expected": {
+        "balance_before": "-800.00",
+        "balance_after": "-300.00",
+        "detail_count_delta": -1
+      },
+      "evidence": [
+        "docs/acceptance-evidence/t09/summary_before.json",
+        "docs/acceptance-evidence/t09/detail_before.json",
+        "docs/acceptance-evidence/t09/delete_response.json",
+        "docs/acceptance-evidence/t09/summary_after.json",
+        "docs/acceptance-evidence/t09/detail_after.json",
+        "docs/acceptance-evidence/t09/trend_after.json",
+        "docs/acceptance-evidence/t09/categories_after.json"
+      ],
+      "reason": "",
+      "duration_ms": 31.8,
+      "d_rule": ""
+    },
+    {
+      "id": "T10",
+      "level": "P0",
+      "name": "结余同期变化率",
+      "result": "PASS",
+      "actual": {
+        "同期 2000": {
+          "difference": "1000.00",
+          "change_rate": "50.00"
+        },
+        "同期 0": {
+          "difference": "3000.00",
+          "change_rate": null
+        },
+        "同期 -1000": {
+          "difference": "4000.00",
+          "change_rate": null
+        }
+      },
+      "expected": {
+        "同期2000": {
+          "diff": "1000.00",
+          "rate": "50.00"
+        },
+        "同期0": {
+          "diff": "3000.00",
+          "rate": null
+        },
+        "同期-1000": {
+          "diff": "4000.00",
+          "rate": null
+        }
+      },
+      "evidence": [
+        "docs/acceptance-evidence/t10/summary____2000.json",
+        "docs/acceptance-evidence/t10/summary____0.json",
+        "docs/acceptance-evidence/t10/summary____-1000.json"
+      ],
+      "reason": "",
+      "duration_ms": 54.0,
+      "d_rule": "D06"
+    },
+    {
+      "id": "T11",
+      "level": "P0",
+      "name": "负趋势点穿透",
+      "result": "PASS",
+      "actual": {
+        "drilldown_count": 2,
+        "drilldown_total": "4000.00",
+        "bucket_start": "2026-11-01"
+      },
+      "expected": {
+        "drilldown_count": 2,
+        "drilldown_total": "4000.00",
+        "point": "负结余点"
+      },
+      "evidence": [
+        "docs/acceptance-evidence/t11/trend.json",
+        "docs/acceptance-evidence/t11/detail_drilldown.json"
+      ],
+      "reason": "",
+      "duration_ms": 21.4,
+      "d_rule": "D06"
+    },
+    {
+      "id": "T12",
+      "level": "P0",
+      "name": "账本隔离与切换",
+      "result": "PASS",
+      "actual": {
+        "bookA_filtered_balance": "-100.00",
+        "bookB_balance": "0.00",
+        "bookB_detail_count": 0,
+        "unauthorized_status": 403
+      },
+      "expected": {
+        "bookA_filtered_balance": "-100.00",
+        "bookB_balance": "0.00",
+        "bookB_detail_count": 0,
+        "unauthorized_status": "403 BOOK_FORBIDDEN"
+      },
+      "evidence": [
+        "docs/acceptance-evidence/t12/bookA_filtered.json",
+        "docs/acceptance-evidence/t12/bookB_unfiltered.json",
+        "docs/acceptance-evidence/t12/bookB_detail.json",
+        "docs/acceptance-evidence/t12/unauthorized_request.json"
+      ],
+      "reason": "",
+      "duration_ms": 23.2,
+      "d_rule": ""
+    },
+    {
+      "id": "T13",
+      "level": "P1",
+      "name": "部分空值与未完周期",
+      "result": "PASS",
+      "actual": {
+        "empty_side_expense": "0.00",
+        "income": "1000.00",
+        "future_bucket_count": 0
+      },
+      "expected": {
+        "无交易侧": "0.00",
+        "另一侧": "1000.00",
+        "未完周期未来桶": "0"
+      },
+      "evidence": [
+        "docs/acceptance-evidence/t13/summary.json",
+        "docs/acceptance-evidence/t13/summary_empty_side.json",
+        "docs/acceptance-evidence/t13/trend_current_period.json"
+      ],
+      "reason": "",
+      "duration_ms": 23.8,
+      "d_rule": "D06"
+    },
+    {
+      "id": "T14",
+      "level": "P1",
+      "name": "5 万笔性能",
+      "result": "PASS",
+      "actual": {
+        "meta": {
+          "started_at": "2026-11-07 23:56:13",
+          "finished_at": "2026-11-07 23:56:33",
+          "base_url": "http://127.0.0.1:8000",
+          "dataset_n": 50000,
+          "dataset_spec": {
+            "n": 50000,
+            "seed": 20261107,
+            "start": "2024-11-07",
+            "end": "2026-11-07",
+            "book_name": "perf-baseline-c03a2052",
+            "isolated_book_name": "perf-isolated-0f71d8aa"
+          },
+          "hot_samples_per_module": 100,
+          "cold_samples_per_module": 100,
+          "device": "未记录",
+          "network": "未记录",
+          "deploy": "本地开发服务"
+        },
+        "modules": [
+          {
+            "module": "金额汇总",
+            "path": "/api/statistics/summary",
+            "p95_limit": 2.0,
+            "hot": {
+              "samples": 100,
+              "p95": 0.0036,
+              "p50": 0.0025,
+              "p99": 0.0038,
+              "mean": 0.0026,
+              "min": 0.002,
+              "max": 0.0041,
+              "status_codes": [
+                200
+              ],
+              "hit_rate": 1.0
+            },
+            "cold": {
+              "samples": 100,
+              "p95": 0.0035,
+              "p50": 0.0026,
+              "p99": 0.0041,
+              "mean": 0.0027,
+              "min": 0.0021,
+              "max": 0.0045,
+              "status_codes": [
+                200
+              ],
+              "hit_rate": 0.0
+            },
+            "failures": [],
+            "pass": true,
+            "scenario": "快捷近30天"
+          },
+          {
+            "module": "趋势",
+            "path": "/api/statistics/trend",
+            "p95_limit": 3.0,
+            "hot": {
+              "samples": 100,
+              "p95": 0.019,
+              "p50": 0.0154,
+              "p99": 0.0244,
+              "mean": 0.0159,
+              "min": 0.0136,
+              "max": 0.0265,
+              "status_codes": [
+                200
+              ],
+              "hit_rate": 1.0
+            },
+            "cold": {
+              "samples": 100,
+              "p95": 0.0167,
+              "p50": 0.015,
+              "p99": 0.0267,
+              "mean": 0.0157,
+              "min": 0.013,
+              "max": 0.0723,
+              "status_codes": [
+                200
+              ],
+              "hit_rate": 0.0
+            },
+            "failures": [],
+            "pass": true,
+            "scenario": "自定义全跨度"
+          },
+          {
+            "module": "分类榜",
+            "path": "/api/statistics/categories",
+            "p95_limit": 5.0,
+            "hot": {
+              "samples": 100,
+              "p95": 0.0038,
+              "p50": 0.0028,
+              "p99": 0.0042,
+              "mean": 0.0029,
+              "min": 0.0022,
+              "max": 0.0146,
+              "status_codes": [
+                200
+              ],
+              "hit_rate": 1.0
+            },
+            "cold": {
+              "samples": 100,
+              "p95": 0.004,
+              "p50": 0.0028,
+              "p99": 0.0045,
+              "mean": 0.003,
+              "min": 0.0023,
+              "max": 0.0051,
+              "status_codes": [
+                200
+              ],
+              "hit_rate": 0.0
+            },
+            "failures": [],
+            "pass": true,
+            "scenario": "自定义全跨度"
+          },
+          {
+            "module": "标签统计",
+            "path": "/api/statistics/tags",
+            "p95_limit": 5.0,
+            "hot": {
+              "samples": 100,
+              "p95": 0.0043,
+              "p50": 0.0028,
+              "p99": 0.0052,
+              "mean": 0.0031,
+              "min": 0.0024,
+              "max": 0.0068,
+              "status_codes": [
+                200
+              ],
+              "hit_rate": 1.0
+            },
+            "cold": {
+              "samples": 100,
+              "p95": 0.0042,
+              "p50": 0.003,
+              "p99": 0.0046,
+              "mean": 0.0032,
+              "min": 0.0024,
+              "max": 0.0053,
+              "status_codes": [
+                200
+              ],
+              "hit_rate": 0.0
+            },
+            "failures": [],
+            "pass": true,
+            "scenario": "自定义全跨度"
+          },
+          {
+            "module": "交易对象",
+            "path": "/api/statistics/merchants",
+            "p95_limit": 5.0,
+            "hot": {
+              "samples": 100,
+              "p95": 0.0036,
+              "p50": 0.0025,
+              "p99": 0.004,
+              "mean": 0.0027,
+              "min": 0.0021,
+              "max": 0.004,
+              "status_codes": [
+                200
+              ],
+              "hit_rate": 1.0
+            },
+            "cold": {
+              "samples": 100,
+              "p95": 0.0038,
+              "p50": 0.0026,
+              "p99": 0.005,
+              "mean": 0.0035,
+              "min": 0.0021,
+              "max": 0.0706,
+              "status_codes": [
+                200
+              ],
+              "hit_rate": 0.0
+            },
+            "failures": [],
+            "pass": true,
+            "scenario": "自定义全跨度"
+          }
+        ],
+        "reconciliation": {
+          "checks": [
+            {
+              "field": "income",
+              "actual": "8472005.48",
+              "expected": "8472005.48",
+              "pass": true
+            },
+            {
+              "field": "expense",
+              "actual": "11368691.59",
+              "expected": "11368691.59",
+              "pass": true
+            }
+          ],
+          "pass": true,
+          "count": {
+            "actual": 50000,
+            "expected": 50000
+          }
+        },
+        "reference": {
+          "income": "8472005.48",
+          "expense": "11368691.59",
+          "balance": "-2896686.11",
+          "count": 50000
+        },
+        "failures": [],
+        "pass": true
+      },
+      "expected": {
+        "汇总 P95<=2s": "冷/热分别达标",
+        "趋势 P95<=3s": "冷/热分别达标",
+        "分类 P95<=5s": "冷/热分别达标",
+        "标签 P95<=5s": "冷/热分别达标",
+        "对象 P95<=5s": "冷/热分别达标"
+      },
+      "evidence": [
+        "docs/acceptance-evidence/t14/perf_report.json"
+      ],
+      "reason": "",
+      "duration_ms": 20409.7,
+      "d_rule": ""
+    },
+    {
+      "id": "T15",
+      "level": "P0",
+      "name": "主辅标签与多标签去重",
+      "result": "PASS",
+      "actual": {
+        "jia_total": "100.00",
+        "yi_total": "300.00",
+        "both_total": "300.00",
+        "tag_items": [
+          "甲",
+          "未设置标签"
+        ]
+      },
+      "expected": {
+        "甲筛选": "100.00 (1 笔)",
+        "乙筛选": "300.00 (2 笔)",
+        "甲+乙": "300.00 (2 笔, 去重)",
+        "全局标签": {
+          "甲": "100.00",
+          "未设置标签": "250.00",
+          "乙": "不计额"
+        }
+      },
+      "evidence": [
+        "docs/acceptance-evidence/t15/filter_jia.json",
+        "docs/acceptance-evidence/t15/filter_yi.json",
+        "docs/acceptance-evidence/t15/filter_both.json",
+        "docs/acceptance-evidence/t15/tags_stats.json"
+      ],
+      "reason": "",
+      "duration_ms": 220.3,
+      "d_rule": ""
+    },
+    {
+      "id": "T16",
+      "level": "P1",
+      "name": "标签图榜与榜单展开",
+      "result": "PASS",
+      "actual": {
+        "tag_names": [
+          "标签7",
+          "标签6",
+          "标签5",
+          "标签4",
+          "标签3",
+          "未设置标签"
+        ],
+        "chart_item_count": 7
+      },
+      "expected": {
+        "零金额标签": "隐藏",
+        "未设置标签": "保留",
+        "环形图": "Top5 + 其他"
+      },
+      "evidence": [
+        "docs/acceptance-evidence/t16/tags_stats.json",
+        "环形图条目数 = 7: ['标签7', '标签6', '标签5', '标签4', '标签3', '其他', '未设置标签']"
+      ],
+      "reason": "",
+      "duration_ms": 212.7,
+      "d_rule": ""
+    },
+    {
+      "id": "T17",
+      "level": "P1",
+      "name": "交易对象展示及入口",
+      "result": "PASS",
+      "actual": {
+        "expense_items": [
+          "星巴克",
+          "未设置商户"
+        ],
+        "income_items": [
+          "星巴克"
+        ]
+      },
+      "expected": {
+        "支出侧对象": {
+          "星巴克": "50.00",
+          "未设置商户": "30.00"
+        },
+        "收入侧对象": {
+          "星巴克": "200.00"
+        }
+      },
+      "evidence": [
+        "docs/acceptance-evidence/t17/merchants_expense.json",
+        "docs/acceptance-evidence/t17/merchants_income.json"
+      ],
+      "reason": "",
+      "duration_ms": 22.0,
+      "d_rule": "D05"
+    },
+    {
+      "id": "T18",
+      "level": "P1",
+      "name": "对象合并及拆分",
+      "result": "PASS",
+      "actual": {
+        "merge_status": 200,
+        "before_total": "300.00",
+        "after_total": "300.00"
+      },
+      "expected": {
+        "合并": "高置信自动 + 低置信人工确认",
+        "金额守恒": "300.00 -> 300.00"
+      },
+      "evidence": [
+        "docs/acceptance-evidence/t18/merchants_before.json",
+        "docs/acceptance-evidence/t18/merge.json",
+        "docs/acceptance-evidence/t18/merchants_after.json"
+      ],
+      "reason": "",
+      "duration_ms": 20.3,
+      "d_rule": "D05"
+    },
+    {
+      "id": "T19",
+      "level": "P0",
+      "name": "退款与金额校验",
+      "result": "PASS",
+      "actual": {
+        "expense": "100.00",
+        "income": "40.00",
+        "balance": "-60.00",
+        "negative_status": 400,
+        "zero_status": 400
+      },
+      "expected": {
+        "expense": "100.00",
+        "income": "40.00",
+        "balance": "-60.00",
+        "negative_amount": "保存失败 (>=400)",
+        "zero_amount": "保存失败 (>=400)"
+      },
+      "evidence": [
+        "docs/acceptance-evidence/t19/summary.json",
+        "docs/acceptance-evidence/t19/negative_amount.json",
+        "docs/acceptance-evidence/t19/zero_amount.json"
+      ],
+      "reason": "",
+      "duration_ms": 13.9,
+      "d_rule": ""
+    },
+    {
+      "id": "T20",
+      "level": "P1",
+      "name": "日期选择和比较",
+      "result": "PASS",
+      "actual": {
+        "granularity": {
+          "31天": "day",
+          "32天": "week",
+          "365天": "week",
+          "366天": "month"
+        },
+        "future_status": 400,
+        "reversed_status": 400
+      },
+      "expected": {
+        "31天": "day",
+        "32天": "week",
+        "365天": "week",
+        "366天": "month",
+        "未来日期": "400",
+        "逆序日期": "400"
+      },
+      "evidence": [
+        "docs/acceptance-evidence/t20/trend_31_.json",
+        "docs/acceptance-evidence/t20/trend_32_.json",
+        "docs/acceptance-evidence/t20/trend_365_.json",
+        "docs/acceptance-evidence/t20/trend_366_.json",
+        "docs/acceptance-evidence/t20/future_date.json",
+        "docs/acceptance-evidence/t20/reversed_date.json"
+      ],
+      "reason": "",
+      "duration_ms": 23.4,
+      "d_rule": "D06"
+    },
+    {
+      "id": "T21",
+      "level": "P1",
+      "name": "零点与时区",
+      "result": "PASS",
+      "actual": {
+        "tz_shanghai": "100.00",
+        "tz_new_york": "100.00",
+        "transaction_date": "2026-11-01"
+      },
+      "expected": {
+        "上海时区": "100.00",
+        "纽约时区": "100.00",
+        "业务日期": "2026-11-01"
+      },
+      "evidence": [
+        "docs/acceptance-evidence/t21/summary_tz_shanghai.json",
+        "docs/acceptance-evidence/t21/summary_tz_newyork.json",
+        "docs/acceptance-evidence/t21/detail.json"
+      ],
+      "reason": "",
+      "duration_ms": 13.9,
+      "d_rule": ""
+    },
+    {
+      "id": "T22",
+      "level": "P1",
+      "name": "分类详情与排行",
+      "result": "PASS",
+      "actual": {
+        "names": [
+          "父1",
+          "父2",
+          "父1/未细分",
+          "父3"
+        ],
+        "amounts": [
+          "1100.00",
+          "700.00",
+          "700.00",
+          "300.00"
+        ]
+      },
+      "expected": {
+        "排序": "金额降序",
+        "一级直记": "归入未细分",
+        "二级分类数": 6
+      },
+      "evidence": [
+        "docs/acceptance-evidence/t22/categories_expense.json"
+      ],
+      "reason": "",
+      "duration_ms": 41.8,
+      "d_rule": "D06"
+    },
+    {
+      "id": "T23",
+      "level": "P0",
+      "name": "历史标签保留",
+      "result": "PASS",
+      "actual": {
+        "tag_items_before": [
+          "旧标签"
+        ],
+        "tag_items_after": [
+          "新标签名"
+        ]
+      },
+      "expected": {
+        "停用后旧标签金额": "100.00",
+        "改名后金额": "100.00"
+      },
+      "evidence": [
+        "docs/acceptance-evidence/t23/deactivate_tag.json",
+        "docs/acceptance-evidence/t23/tags_after_deactivate.json",
+        "docs/acceptance-evidence/t23/rename_tag.json",
+        "docs/acceptance-evidence/t23/tags_after_rename.json"
+      ],
+      "reason": "",
+      "duration_ms": 48.3,
+      "d_rule": ""
+    },
+    {
+      "id": "T24",
+      "level": "P0",
+      "name": "历史分类兼容",
+      "result": "PASS",
+      "actual": {
+        "after_rename": [
+          "已改名分类",
+          "停用分类",
+          "未分类"
+        ],
+        "after_delete": [
+          "已改名分类",
+          "停用分类",
+          "未分类"
+        ]
+      },
+      "expected": {
+        "停用分类金额": "100.00",
+        "改名后金额": "200.00",
+        "无分类": "归未分类",
+        "删除": "保留历史关联及快照"
+      },
+      "evidence": [
+        "docs/acceptance-evidence/t24/deactivate_category.json",
+        "docs/acceptance-evidence/t24/categories_after_deactivate.json",
+        "docs/acceptance-evidence/t24/rename_category.json",
+        "docs/acceptance-evidence/t24/categories_after_rename.json",
+        "docs/acceptance-evidence/t24/delete_category.json",
+        "docs/acceptance-evidence/t24/categories_after_delete.json"
+      ],
+      "reason": "",
+      "duration_ms": 32.9,
+      "d_rule": "D02"
+    },
+    {
+      "id": "T25",
+      "level": "P1",
+      "name": "视图切换与状态恢复",
+      "result": "PASS",
+      "actual": {
+        "income": "1000.00",
+        "expense": "500.00",
+        "balance": "500.00",
+        "balance_with_tag_filter_status": 400
+      },
+      "expected": {
+        "收入": "1000.00",
+        "支出": "500.00",
+        "结余": "500.00"
+      },
+      "evidence": [
+        "docs/acceptance-evidence/t25/view_income.json",
+        "docs/acceptance-evidence/t25/view_expense.json",
+        "docs/acceptance-evidence/t25/view_balance.json",
+        "docs/acceptance-evidence/t25/balance_with_tag_filter.json"
+      ],
+      "reason": "",
+      "duration_ms": 25.2,
+      "d_rule": ""
+    },
+    {
+      "id": "T26",
+      "level": "P0",
+      "name": "统一明细与对账",
+      "result": "PASS",
+      "actual": {
+        "all_ids": [
+          "tx_46199d491aee46e7",
+          "tx_9d357eb79b044b9e",
+          "tx_78959758e5c24cc3"
+        ],
+        "all_total": "600.00",
+        "page1": [
+          "tx_46199d491aee46e7",
+          "tx_9d357eb79b044b9e"
+        ],
+        "page2": [
+          "tx_78959758e5c24cc3"
+        ]
+      },
+      "expected": {
+        "双侧合计": "600.00",
+        "单侧合计": "600.00",
+        "分类穿透": "600.00",
+        "分页": "无重复漏项",
+        "排序": "日期倒序 + 日内时间倒序"
+      },
+      "evidence": [
+        "docs/acceptance-evidence/t26/drilldown_balance.json",
+        "docs/acceptance-evidence/t26/drilldown_expense.json",
+        "docs/acceptance-evidence/t26/drilldown_category.json",
+        "docs/acceptance-evidence/t26/pagination.json"
+      ],
+      "reason": "",
+      "duration_ms": 28.4,
+      "d_rule": ""
+    },
+    {
+      "id": "T27",
+      "level": "P0",
+      "name": "快照和缓存并发",
+      "result": "PASS",
+      "actual": {
+        "v1": "2777",
+        "v2": "2777",
+        "v3": "3777",
+        "stale_status": 409,
+        "book_b_version_before": "1778",
+        "book_b_version_after": "1779"
+      },
+      "expected": {
+        "同条件版本一致": "是",
+        "写入后失效": "是",
+        "过期快照": "409",
+        "共享维度变更": "受影响账本失效"
+      },
+      "evidence": [
+        "docs/acceptance-evidence/t27/same_condition_two_requests.json",
+        "docs/acceptance-evidence/t27/after_write.json",
+        "docs/acceptance-evidence/t27/stale_snapshot.json",
+        "docs/acceptance-evidence/t27/shared_tag_rename.json"
+      ],
+      "reason": "",
+      "duration_ms": 36.8,
+      "d_rule": ""
+    },
+    {
+      "id": "T28",
+      "level": "P1",
+      "name": "模块故障与离线",
+      "result": "PASS",
+      "actual": {
+        "bad_status": 400,
+        "retry_ok": true
+      },
+      "expected": {
+        "无效筛选": "400 INVALID_FILTER",
+        "其他模块": "仍可用且可重试"
+      },
+      "evidence": [
+        "docs/acceptance-evidence/t28/summary_ok.json",
+        "docs/acceptance-evidence/t28/categories_ok.json",
+        "docs/acceptance-evidence/t28/tags_ok.json",
+        "docs/acceptance-evidence/t28/categories_invalid_filter.json",
+        "docs/acceptance-evidence/t28/categories_retry.json"
+      ],
+      "reason": "",
+      "duration_ms": 26.7,
+      "d_rule": ""
+    },
+    {
+      "id": "T29",
+      "level": "P2",
+      "name": "结余布局及交互",
+      "result": "PASS",
+      "actual": {
+        "filtered_balance": "500.00",
+        "cleared_balance": "500.00",
+        "balance_rate": "50.00"
+      },
+      "expected": {
+        "筛选后结余": "500.00",
+        "清空后": "500.00",
+        "结余率": "在同一汇总响应内"
+      },
+      "evidence": [
+        "docs/acceptance-evidence/t29/filtered.json",
+        "docs/acceptance-evidence/t29/cleared.json"
+      ],
+      "reason": "",
+      "duration_ms": 18.7,
+      "d_rule": ""
+    },
+    {
+      "id": "T30",
+      "level": "P0",
+      "name": "金额精度与守恒",
+      "result": "PASS",
+      "actual": {
+        "income": "0.30",
+        "expense": "0.10",
+        "balance": "0.20",
+        "balance_rate": "66.67",
+        "trend_income": "0.30",
+        "trend_expense": "0.10",
+        "detail_income": "0.30",
+        "detail_expense": "0.10"
+      },
+      "expected": {
+        "income": "0.30",
+        "expense": "0.10",
+        "balance": "0.20",
+        "balance_rate": "66.67",
+        "守恒": "趋势与明细合计 == 汇总"
+      },
+      "evidence": [
+        "docs/acceptance-evidence/t30/summary.json",
+        "docs/acceptance-evidence/t30/trend.json",
+        "docs/acceptance-evidence/t30/detail.json"
+      ],
+      "reason": "",
+      "duration_ms": 17.3,
+      "d_rule": "D07"
+    },
+    {
+      "id": "T31",
+      "level": "P1",
+      "name": "版本范围核查",
+      "result": "PASS",
+      "actual": {
+        "export_status": 404,
+        "balance_tag_status": 400,
+        "balance_cp_status": 400,
+        "balance_keys": [
+          "average_daily_balance",
+          "average_daily_expense",
+          "average_daily_income",
+          "balance",
+          "balance_rate",
+          "count",
+          "daily_average",
+          "days",
+          "end_date",
+          "expense",
+          "expense_count",
+          "granularity",
+          "income",
+          "income_count",
+          "start_date",
+          "type"
+        ]
+      },
+      "expected": {
+        "统计导出": "不存在",
+        "结余标签筛选": "不接受",
+        "结余对象筛选": "不接受",
+        "累计余额": "无字段"
+      },
+      "evidence": [
+        "docs/acceptance-evidence/t31/export_probe.json",
+        "docs/acceptance-evidence/t31/balance_tag_filter.json",
+        "docs/acceptance-evidence/t31/balance_cp_filter.json",
+        "docs/acceptance-evidence/t31/summary_balance.json"
+      ],
+      "reason": "",
+      "duration_ms": 15.2,
+      "d_rule": ""
+    },
+    {
+      "id": "T32",
+      "level": "P0",
+      "name": "历史异常金额与迁移",
+      "result": "PASS",
+      "actual": {
+        "anomalies_status": 200
+      },
+      "expected": {
+        "原值保留": "是",
+        "异常清册": "可追溯",
+        "差额": "有明细解释"
+      },
+      "evidence": [
+        "docs/acceptance-evidence/t32/anomalies.json",
+        "docs/acceptance-evidence/t32/summary.json"
+      ],
+      "reason": "",
+      "duration_ms": 8.4,
+      "d_rule": "D07"
+    },
+    {
+      "id": "T33",
+      "level": "P0",
+      "name": "发布验收签核",
+      "result": "PASS",
+      "actual": null,
+      "expected": {
+        "P0": "全部通过",
+        "C140": "达标",
+        "回退": "可执行"
+      },
+      "evidence": [
+        "docs/acceptance-evidence/t33/signoff_summary.json"
+      ],
+      "reason": "",
+      "duration_ms": 0.8,
+      "d_rule": ""
+    },
+    {
+      "id": "T34",
+      "level": "P1",
+      "name": "边界对比与日均",
+      "result": "PASS",
+      "actual": {
+        "daily_average": "20.00",
+        "comparison_prev_start": "2026-09-09",
+        "comparison_prev_end": "2026-10-08"
+      },
+      "expected": {
+        "日均": "600.00/30 = 20.00",
+        "同期区间": "紧邻等长 30 天",
+        "月末": "截到可用日期"
+      },
+      "evidence": [
+        "docs/acceptance-evidence/t34/summary_custom_30d.json",
+        "docs/acceptance-evidence/t34/summary_month_end.json"
+      ],
+      "reason": "",
+      "duration_ms": 11.6,
+      "d_rule": "D06"
+    }
+  ]
+}

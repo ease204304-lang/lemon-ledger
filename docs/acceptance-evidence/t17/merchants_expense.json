@@ -1,0 +1,55 @@
+{
+  "data": {
+    "total_amount": "80.00",
+    "total_count": 2,
+    "items": [
+      {
+        "counterparty_id": "cp_5891fd7a70154612",
+        "name": "星巴克",
+        "amount": "50.00",
+        "ratio": "62.50",
+        "count": 1,
+        "last_transaction_date": "2026-11-01",
+        "progress": "62.50",
+        "is_unset": false,
+        "drilldown": {
+          "book_id": "book_1f4701bb9f474463",
+          "start_date": "2026-11-01",
+          "end_date": "2026-11-07",
+          "timezone": "Asia/Shanghai",
+          "type": "expense",
+          "counterparty_ids": [
+            "cp_5891fd7a70154612"
+          ]
+        }
+      },
+      {
+        "counterparty_id": "未设置商户",
+        "name": "未设置商户",
+        "amount": "30.00",
+        "ratio": "37.50",
+        "count": 1,
+        "last_transaction_date": "2026-11-01",
+        "progress": "37.50",
+        "is_unset": true,
+        "drilldown": {
+          "book_id": "book_1f4701bb9f474463",
+          "start_date": "2026-11-01",
+          "end_date": "2026-11-07",
+          "timezone": "Asia/Shanghai",
+          "type": "expense",
+          "counterparty_ids": [
+            "未设置商户"
+          ]
+        }
+      }
+    ],
+    "has_more": false,
+    "remaining_count": 0
+  },
+  "meta": {
+    "snapshot_version": 4753,
+    "condition_key": "merchants|{\"book_id\":\"book_1f4701bb9f474463\",\"category_ids\":[],\"comparison_enabled\":false,\"counterparty_ids\":[],\"end_date\":\"2026-11-07\",\"expense_category_ids\":[],\"expense_category_mode\":\"ALL\",\"granularity\":\"day\",\"income_category_ids\":[],\"income_category_mode\":\"ALL\",\"sort\":\"amount\",\"sort_order\":\"desc\",\"start_date\":\"2026-11-01\",\"tag_ids\":[],\"tag_role\":\"all\",\"timezone\":\"Asia/Shanghai\",\"type\":\"expense\"}",
+    "generated_at": "2026-11-07T15:56:33Z"
+  }
+}

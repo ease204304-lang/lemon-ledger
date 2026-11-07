@@ -1,0 +1,14 @@
+{
+  "status": 200,
+  "body": {
+    "data": {
+      "id": "cat_50483029fefc4a7d",
+      "status": "deleted"
+    },
+    "meta": {
+      "snapshot_version": 0,
+      "condition_key": "cat:cat_50483029fefc4a7d",
+      "generated_at": "2026-11-07T15:56:34Z"
+    }
+  }
+}

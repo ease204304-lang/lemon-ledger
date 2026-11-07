@@ -1,0 +1,14 @@
+{
+  "status": 400,
+  "body": {
+    "error": {
+      "code": "INVALID_FILTER",
+      "message": "开始日期不得晚于结束日期。",
+      "request_id": "req_afea8935eb70496c",
+      "field": "start_date",
+      "reason": "date_reversed",
+      "start_date": "2026-11-17",
+      "end_date": "2026-11-07"
+    }
+  }
+}

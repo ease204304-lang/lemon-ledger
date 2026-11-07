@@ -1,0 +1,222 @@
+{
+  "meta": {
+    "started_at": "2026-11-07 23:56:13",
+    "finished_at": "2026-11-07 23:56:33",
+    "base_url": "http://127.0.0.1:8000",
+    "dataset_n": 50000,
+    "dataset_spec": {
+      "n": 50000,
+      "seed": 20261107,
+      "start": "2024-11-07",
+      "end": "2026-11-07",
+      "book_name": "perf-baseline-c03a2052",
+      "isolated_book_name": "perf-isolated-0f71d8aa"
+    },
+    "hot_samples_per_module": 100,
+    "cold_samples_per_module": 100,
+    "device": "未记录",
+    "network": "未记录",
+    "deploy": "本地开发服务"
+  },
+  "modules": [
+    {
+      "module": "金额汇总",
+      "path": "/api/statistics/summary",
+      "p95_limit": 2.0,
+      "hot": {
+        "samples": 100,
+        "p95": 0.0036,
+        "p50": 0.0025,
+        "p99": 0.0038,
+        "mean": 0.0026,
+        "min": 0.002,
+        "max": 0.0041,
+        "status_codes": [
+          200
+        ],
+        "hit_rate": 1.0
+      },
+      "cold": {
+        "samples": 100,
+        "p95": 0.0035,
+        "p50": 0.0026,
+        "p99": 0.0041,
+        "mean": 0.0027,
+        "min": 0.0021,
+        "max": 0.0045,
+        "status_codes": [
+          200
+        ],
+        "hit_rate": 0.0
+      },
+      "failures": [],
+      "pass": true,
+      "scenario": "快捷近30天"
+    },
+    {
+      "module": "趋势",
+      "path": "/api/statistics/trend",
+      "p95_limit": 3.0,
+      "hot": {
+        "samples": 100,
+        "p95": 0.019,
+        "p50": 0.0154,
+        "p99": 0.0244,
+        "mean": 0.0159,
+        "min": 0.0136,
+        "max": 0.0265,
+        "status_codes": [
+          200
+        ],
+        "hit_rate": 1.0
+      },
+      "cold": {
+        "samples": 100,
+        "p95": 0.0167,
+        "p50": 0.015,
+        "p99": 0.0267,
+        "mean": 0.0157,
+        "min": 0.013,
+        "max": 0.0723,
+        "status_codes": [
+          200
+        ],
+        "hit_rate": 0.0
+      },
+      "failures": [],
+      "pass": true,
+      "scenario": "自定义全跨度"
+    },
+    {
+      "module": "分类榜",
+      "path": "/api/statistics/categories",
+      "p95_limit": 5.0,
+      "hot": {
+        "samples": 100,
+        "p95": 0.0038,
+        "p50": 0.0028,
+        "p99": 0.0042,
+        "mean": 0.0029,
+        "min": 0.0022,
+        "max": 0.0146,
+        "status_codes": [
+          200
+        ],
+        "hit_rate": 1.0
+      },
+      "cold": {
+        "samples": 100,
+        "p95": 0.004,
+        "p50": 0.0028,
+        "p99": 0.0045,
+        "mean": 0.003,
+        "min": 0.0023,
+        "max": 0.0051,
+        "status_codes": [
+          200
+        ],
+        "hit_rate": 0.0
+      },
+      "failures": [],
+      "pass": true,
+      "scenario": "自定义全跨度"
+    },
+    {
+      "module": "标签统计",
+      "path": "/api/statistics/tags",
+      "p95_limit": 5.0,
+      "hot": {
+        "samples": 100,
+        "p95": 0.0043,
+        "p50": 0.0028,
+        "p99": 0.0052,
+        "mean": 0.0031,
+        "min": 0.0024,
+        "max": 0.0068,
+        "status_codes": [
+          200
+        ],
+        "hit_rate": 1.0
+      },
+      "cold": {
+        "samples": 100,
+        "p95": 0.0042,
+        "p50": 0.003,
+        "p99": 0.0046,
+        "mean": 0.0032,
+        "min": 0.0024,
+        "max": 0.0053,
+        "status_codes": [
+          200
+        ],
+        "hit_rate": 0.0
+      },
+      "failures": [],
+      "pass": true,
+      "scenario": "自定义全跨度"
+    },
+    {
+      "module": "交易对象",
+      "path": "/api/statistics/merchants",
+      "p95_limit": 5.0,
+      "hot": {
+        "samples": 100,
+        "p95": 0.0036,
+        "p50": 0.0025,
+        "p99": 0.004,
+        "mean": 0.0027,
+        "min": 0.0021,
+        "max": 0.004,
+        "status_codes": [
+          200
+        ],
+        "hit_rate": 1.0
+      },
+      "cold": {
+        "samples": 100,
+        "p95": 0.0038,
+        "p50": 0.0026,
+        "p99": 0.005,
+        "mean": 0.0035,
+        "min": 0.0021,
+        "max": 0.0706,
+        "status_codes": [
+          200
+        ],
+        "hit_rate": 0.0
+      },
+      "failures": [],
+      "pass": true,
+      "scenario": "自定义全跨度"
+    }
+  ],
+  "reconciliation": {
+    "checks": [
+      {
+        "field": "income",
+        "actual": "8472005.48",
+        "expected": "8472005.48",
+        "pass": true
+      },
+      {
+        "field": "expense",
+        "actual": "11368691.59",
+        "expected": "11368691.59",
+        "pass": true
+      }
+    ],
+    "pass": true,
+    "count": {
+      "actual": 50000,
+      "expected": 50000
+    }
+  },
+  "reference": {
+    "income": "8472005.48",
+    "expense": "11368691.59",
+    "balance": "-2896686.11",
+    "count": 50000
+  },
+  "failures": [],
+  "pass": true
+}

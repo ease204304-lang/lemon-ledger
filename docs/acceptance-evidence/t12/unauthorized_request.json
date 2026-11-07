@@ -1,0 +1,10 @@
+{
+  "status": 403,
+  "body": {
+    "error": {
+      "code": "BOOK_FORBIDDEN",
+      "message": "账本不存在: book_nonexistent_9999",
+      "request_id": "req_a1d3467a9a7b40c7"
+    }
+  }
+}

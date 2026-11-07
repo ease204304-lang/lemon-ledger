@@ -1,0 +1,127 @@
+{
+  "data": {
+    "total": 3,
+    "page": 1,
+    "page_size": 20,
+    "total_pages": 1,
+    "total_amount": "0.40",
+    "groups": [
+      {
+        "date": "2026-11-01",
+        "count": 3,
+        "amount": "0.40",
+        "items": [
+          {
+            "id": "tx_e266690a10ef4a71",
+            "type": "income",
+            "amount": "0.20",
+            "currency": "CNY",
+            "transaction_date": "2026-11-01",
+            "transaction_time": "12:00:00",
+            "category_id": null,
+            "category_name": "未分类",
+            "category_path": "未分类",
+            "counterparty_id": null,
+            "counterparty_name": "未设置商户",
+            "note": "acc-test",
+            "created_at": "2026-11-07T15:56:34+00:00",
+            "updated_at": "2026-11-07T15:56:34+00:00",
+            "amount_anomaly": false
+          },
+          {
+            "id": "tx_7c82666d28374366",
+            "type": "expense",
+            "amount": "0.10",
+            "currency": "CNY",
+            "transaction_date": "2026-11-01",
+            "transaction_time": "12:00:00",
+            "category_id": null,
+            "category_name": "未分类",
+            "category_path": "未分类",
+            "counterparty_id": null,
+            "counterparty_name": "未设置商户",
+            "note": "acc-test",
+            "created_at": "2026-11-07T15:56:34+00:00",
+            "updated_at": "2026-11-07T15:56:34+00:00",
+            "amount_anomaly": false
+          },
+          {
+            "id": "tx_1b9d4a1f95084cc9",
+            "type": "income",
+            "amount": "0.10",
+            "currency": "CNY",
+            "transaction_date": "2026-11-01",
+            "transaction_time": "12:00:00",
+            "category_id": null,
+            "category_name": "未分类",
+            "category_path": "未分类",
+            "counterparty_id": null,
+            "counterparty_name": "未设置商户",
+            "note": "acc-test",
+            "created_at": "2026-11-07T15:56:34+00:00",
+            "updated_at": "2026-11-07T15:56:34+00:00",
+            "amount_anomaly": false
+          }
+        ]
+      }
+    ],
+    "items": [
+      {
+        "id": "tx_e266690a10ef4a71",
+        "type": "income",
+        "amount": "0.20",
+        "currency": "CNY",
+        "transaction_date": "2026-11-01",
+        "transaction_time": "12:00:00",
+        "category_id": null,
+        "category_name": "未分类",
+        "category_path": "未分类",
+        "counterparty_id": null,
+        "counterparty_name": "未设置商户",
+        "note": "acc-test",
+        "created_at": "2026-11-07T15:56:34+00:00",
+        "updated_at": "2026-11-07T15:56:34+00:00",
+        "amount_anomaly": false
+      },
+      {
+        "id": "tx_7c82666d28374366",
+        "type": "expense",
+        "amount": "0.10",
+        "currency": "CNY",
+        "transaction_date": "2026-11-01",
+        "transaction_time": "12:00:00",
+        "category_id": null,
+        "category_name": "未分类",
+        "category_path": "未分类",
+        "counterparty_id": null,
+        "counterparty_name": "未设置商户",
+        "note": "acc-test",
+        "created_at": "2026-11-07T15:56:34+00:00",
+        "updated_at": "2026-11-07T15:56:34+00:00",
+        "amount_anomaly": false
+      },
+      {
+        "id": "tx_1b9d4a1f95084cc9",
+        "type": "income",
+        "amount": "0.10",
+        "currency": "CNY",
+        "transaction_date": "2026-11-01",
+        "transaction_time": "12:00:00",
+        "category_id": null,
+        "category_name": "未分类",
+        "category_path": "未分类",
+        "counterparty_id": null,
+        "counterparty_name": "未设置商户",
+        "note": "acc-test",
+        "created_at": "2026-11-07T15:56:34+00:00",
+        "updated_at": "2026-11-07T15:56:34+00:00",
+        "amount_anomaly": false
+      }
+    ]
+  },
+  "meta": {
+    "snapshot_version": 0,
+    "condition_key": "{\"book_id\":\"book_b64abce1433d412c\",\"category_ids\":[],\"comparison_enabled\":false,\"counterparty_ids\":[],\"end_date\":\"2026-11-07\",\"expense_category_ids\":[],\"expense_category_mode\":\"ALL\",\"granularity\":\"day\",\"income_category_ids\":[],\"income_category_mode\":\"ALL\",\"sort\":\"amount\",\"sort_order\":\"desc\",\"start_date\":\"2026-11-01\",\"tag_ids\":[],\"tag_role\":\"all\",\"timezone\":\"Asia/Shanghai\",\"type\":\"balance\"}|p1:20",
+    "generated_at": "2026-11-07T15:56:34Z"
+  }
+}

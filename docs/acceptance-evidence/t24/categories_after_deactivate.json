@@ -1,0 +1,79 @@
+{
+  "data": {
+    "level": 1,
+    "total_amount": "350.00",
+    "total_count": 3,
+    "items": [
+      {
+        "category_id": "cat_50483029fefc4a7d",
+        "parent_id": "cat_50483029fefc4a7d",
+        "name": "待改名分类",
+        "amount": "200.00",
+        "amount_display": null,
+        "ratio": "57.14",
+        "count": 1,
+        "last_transaction_date": "2026-11-01",
+        "progress": "57.14",
+        "drilldown": {
+          "book_id": "book_e27b8f9fcf5a4375",
+          "start_date": "2026-11-01",
+          "end_date": "2026-11-07",
+          "timezone": "Asia/Shanghai",
+          "type": "expense",
+          "category_ids": [
+            "cat_50483029fefc4a7d"
+          ]
+        }
+      },
+      {
+        "category_id": "cat_56c6b0be84d047f0",
+        "parent_id": "cat_56c6b0be84d047f0",
+        "name": "停用分类",
+        "amount": "100.00",
+        "amount_display": null,
+        "ratio": "28.57",
+        "count": 1,
+        "last_transaction_date": "2026-11-01",
+        "progress": "28.57",
+        "drilldown": {
+          "book_id": "book_e27b8f9fcf5a4375",
+          "start_date": "2026-11-01",
+          "end_date": "2026-11-07",
+          "timezone": "Asia/Shanghai",
+          "type": "expense",
+          "category_ids": [
+            "cat_56c6b0be84d047f0"
+          ]
+        }
+      },
+      {
+        "category_id": null,
+        "parent_id": null,
+        "name": "未分类",
+        "amount": "50.00",
+        "amount_display": null,
+        "ratio": "14.29",
+        "count": 1,
+        "last_transaction_date": "2026-11-01",
+        "progress": "14.29",
+        "drilldown": {
+          "book_id": "book_e27b8f9fcf5a4375",
+          "start_date": "2026-11-01",
+          "end_date": "2026-11-07",
+          "timezone": "Asia/Shanghai",
+          "type": "expense",
+          "category_ids": [
+            "未分类"
+          ]
+        }
+      }
+    ],
+    "has_more": false,
+    "remaining_count": 0
+  },
+  "meta": {
+    "snapshot_version": 4771,
+    "condition_key": "categories:1|{\"book_id\":\"book_e27b8f9fcf5a4375\",\"category_ids\":[],\"comparison_enabled\":false,\"counterparty_ids\":[],\"end_date\":\"2026-11-07\",\"expense_category_ids\":[],\"expense_category_mode\":\"ALL\",\"granularity\":\"day\",\"income_category_ids\":[],\"income_category_mode\":\"ALL\",\"sort\":\"amount\",\"sort_order\":\"desc\",\"start_date\":\"2026-11-01\",\"tag_ids\":[],\"tag_role\":\"all\",\"timezone\":\"Asia/Shanghai\",\"type\":\"expense\"}",
+    "generated_at": "2026-11-07T15:56:34Z"
+  }
+}

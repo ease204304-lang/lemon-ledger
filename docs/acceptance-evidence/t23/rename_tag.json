@@ -1,0 +1,18 @@
+{
+  "status": 200,
+  "body": {
+    "data": {
+      "id": "tag_bcf434730a2a4415",
+      "name": "新标签名",
+      "status": "inactive",
+      "scope": "both",
+      "created_at": "2026-11-07T15:56:34+00:00",
+      "updated_at": "2026-11-07T15:56:34+00:00"
+    },
+    "meta": {
+      "snapshot_version": 0,
+      "condition_key": "tag:tag_bcf434730a2a4415",
+      "generated_at": "2026-11-07T15:56:34Z"
+    }
+  }
+}

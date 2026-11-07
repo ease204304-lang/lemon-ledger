@@ -54,3 +54,12 @@ sys/
 
 # Large binary artifacts (keep APK out of git)
 *.apk
+
+# Python
+__pycache__/
+*.pyc
+server/*.db
+server/*.db-wal
+server/*.db-shm
+server/data/
+acceptance/.stub.*

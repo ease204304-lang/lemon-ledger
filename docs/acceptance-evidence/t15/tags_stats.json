@@ -1,0 +1,142 @@
+{
+  "data": {
+    "total_amount": "350.00",
+    "total_count": 3,
+    "chart": [
+      {
+        "tag_id": "tag_b22b0313dad84a2e",
+        "name": "甲",
+        "amount": "100.00",
+        "ratio": "28.57",
+        "count": 1,
+        "is_unset": false,
+        "drilldown": {
+          "book_id": "book_266cb72433ab48b0",
+          "start_date": "2026-11-01",
+          "end_date": "2026-11-07",
+          "timezone": "Asia/Shanghai",
+          "type": "expense",
+          "tag_ids": [
+            "tag_b22b0313dad84a2e"
+          ],
+          "tag_match": "any"
+        }
+      },
+      {
+        "tag_id": "未设置标签",
+        "name": "未设置标签",
+        "amount": "250.00",
+        "ratio": "71.43",
+        "count": 2,
+        "is_unset": true,
+        "drilldown": {
+          "book_id": "book_266cb72433ab48b0",
+          "start_date": "2026-11-01",
+          "end_date": "2026-11-07",
+          "timezone": "Asia/Shanghai",
+          "type": "expense",
+          "tag_ids": [
+            "未设置标签"
+          ],
+          "tag_match": "unset"
+        }
+      }
+    ],
+    "chart_limit": 5,
+    "leaderboard": [
+      {
+        "tag_id": "tag_b22b0313dad84a2e",
+        "name": "甲",
+        "amount": "100.00",
+        "ratio": "28.57",
+        "count": 1,
+        "last_transaction_date": "2026-11-01",
+        "progress": "28.57",
+        "is_unset": false,
+        "drilldown": {
+          "book_id": "book_266cb72433ab48b0",
+          "start_date": "2026-11-01",
+          "end_date": "2026-11-07",
+          "timezone": "Asia/Shanghai",
+          "type": "expense",
+          "tag_ids": [
+            "tag_b22b0313dad84a2e"
+          ],
+          "tag_match": "any"
+        }
+      },
+      {
+        "tag_id": "未设置标签",
+        "name": "未设置标签",
+        "amount": "250.00",
+        "ratio": "71.43",
+        "count": 2,
+        "last_transaction_date": "2026-11-01",
+        "progress": "71.43",
+        "is_unset": true,
+        "drilldown": {
+          "book_id": "book_266cb72433ab48b0",
+          "start_date": "2026-11-01",
+          "end_date": "2026-11-07",
+          "timezone": "Asia/Shanghai",
+          "type": "expense",
+          "tag_ids": [
+            "未设置标签"
+          ],
+          "tag_match": "unset"
+        }
+      }
+    ],
+    "items": [
+      {
+        "tag_id": "tag_b22b0313dad84a2e",
+        "name": "甲",
+        "amount": "100.00",
+        "ratio": "28.57",
+        "count": 1,
+        "last_transaction_date": "2026-11-01",
+        "progress": "28.57",
+        "is_unset": false,
+        "drilldown": {
+          "book_id": "book_266cb72433ab48b0",
+          "start_date": "2026-11-01",
+          "end_date": "2026-11-07",
+          "timezone": "Asia/Shanghai",
+          "type": "expense",
+          "tag_ids": [
+            "tag_b22b0313dad84a2e"
+          ],
+          "tag_match": "any"
+        }
+      },
+      {
+        "tag_id": "未设置标签",
+        "name": "未设置标签",
+        "amount": "250.00",
+        "ratio": "71.43",
+        "count": 2,
+        "last_transaction_date": "2026-11-01",
+        "progress": "71.43",
+        "is_unset": true,
+        "drilldown": {
+          "book_id": "book_266cb72433ab48b0",
+          "start_date": "2026-11-01",
+          "end_date": "2026-11-07",
+          "timezone": "Asia/Shanghai",
+          "type": "expense",
+          "tag_ids": [
+            "未设置标签"
+          ],
+          "tag_match": "unset"
+        }
+      }
+    ],
+    "has_more": false,
+    "remaining_count": 0
+  },
+  "meta": {
+    "snapshot_version": 4743,
+    "condition_key": "tags|{\"book_id\":\"book_266cb72433ab48b0\",\"category_ids\":[],\"comparison_enabled\":false,\"counterparty_ids\":[],\"end_date\":\"2026-11-07\",\"expense_category_ids\":[],\"expense_category_mode\":\"ALL\",\"granularity\":\"day\",\"income_category_ids\":[],\"income_category_mode\":\"ALL\",\"sort\":\"amount\",\"sort_order\":\"desc\",\"start_date\":\"2026-11-01\",\"tag_ids\":[],\"tag_role\":\"all\",\"timezone\":\"Asia/Shanghai\",\"type\":\"expense\"}",
+    "generated_at": "2026-11-07T15:56:33Z"
+  }
+}

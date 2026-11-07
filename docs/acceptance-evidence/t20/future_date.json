@@ -1,0 +1,14 @@
+{
+  "status": 400,
+  "body": {
+    "error": {
+      "code": "INVALID_FILTER",
+      "message": "结束日期不得晚于今天。",
+      "request_id": "req_8b7cf05fde9448f2",
+      "field": "end_date",
+      "reason": "future_date",
+      "end_date": "2026-11-17",
+      "today": "2026-11-07"
+    }
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "status": 200,
+  "body": {
+    "data": {
+      "id": "tag_dd0ee9e47d434bc0",
+      "name": "共享标签改",
+      "status": "active",
+      "scope": "both",
+      "created_at": "2026-11-07T15:56:34+00:00",
+      "updated_at": "2026-11-07T15:56:34+00:00"
+    },
+    "meta": {
+      "snapshot_version": 0,
+      "condition_key": "tag:tag_dd0ee9e47d434bc0",
+      "generated_at": "2026-11-07T15:56:34Z"
+    }
+  }
+}

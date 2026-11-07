@@ -1,0 +1,100 @@
+{
+  "data": {
+    "level": 1,
+    "total_amount": "2800.00",
+    "total_count": 7,
+    "items": [
+      {
+        "category_id": "cat_251a198b552042d5",
+        "parent_id": "cat_251a198b552042d5",
+        "name": "父1",
+        "amount": "1100.00",
+        "amount_display": null,
+        "ratio": "39.29",
+        "count": 2,
+        "last_transaction_date": "2026-11-01",
+        "progress": "39.29",
+        "drilldown": {
+          "book_id": "book_a80340c2669347f2",
+          "start_date": "2026-11-01",
+          "end_date": "2026-11-07",
+          "timezone": "Asia/Shanghai",
+          "type": "expense",
+          "category_ids": [
+            "cat_251a198b552042d5"
+          ]
+        }
+      },
+      {
+        "category_id": "cat_881dc9efbdc34032",
+        "parent_id": "cat_881dc9efbdc34032",
+        "name": "父2",
+        "amount": "700.00",
+        "amount_display": null,
+        "ratio": "25.00",
+        "count": 2,
+        "last_transaction_date": "2026-11-01",
+        "progress": "25.00",
+        "drilldown": {
+          "book_id": "book_a80340c2669347f2",
+          "start_date": "2026-11-01",
+          "end_date": "2026-11-07",
+          "timezone": "Asia/Shanghai",
+          "type": "expense",
+          "category_ids": [
+            "cat_881dc9efbdc34032"
+          ]
+        }
+      },
+      {
+        "category_id": "cat_251a198b552042d5",
+        "parent_id": "cat_251a198b552042d5",
+        "name": "父1/未细分",
+        "amount": "700.00",
+        "amount_display": null,
+        "ratio": "25.00",
+        "count": 1,
+        "last_transaction_date": "2026-11-01",
+        "progress": "25.00",
+        "drilldown": {
+          "book_id": "book_a80340c2669347f2",
+          "start_date": "2026-11-01",
+          "end_date": "2026-11-07",
+          "timezone": "Asia/Shanghai",
+          "type": "expense",
+          "category_ids": [
+            "cat_251a198b552042d5"
+          ]
+        }
+      },
+      {
+        "category_id": "cat_ea26cdce66734b1f",
+        "parent_id": "cat_ea26cdce66734b1f",
+        "name": "父3",
+        "amount": "300.00",
+        "amount_display": null,
+        "ratio": "10.71",
+        "count": 2,
+        "last_transaction_date": "2026-11-01",
+        "progress": "10.71",
+        "drilldown": {
+          "book_id": "book_a80340c2669347f2",
+          "start_date": "2026-11-01",
+          "end_date": "2026-11-07",
+          "timezone": "Asia/Shanghai",
+          "type": "expense",
+          "category_ids": [
+            "cat_ea26cdce66734b1f"
+          ]
+        }
+      }
+    ],
+    "has_more": false,
+    "remaining_count": 0
+  },
+  "meta": {
+    "snapshot_version": 8765,
+    "condition_key": "categories:1|{\"book_id\":\"book_a80340c2669347f2\",\"category_ids\":[],\"comparison_enabled\":false,\"counterparty_ids\":[],\"end_date\":\"2026-11-07\",\"expense_category_ids\":[],\"expense_category_mode\":\"ALL\",\"granularity\":\"day\",\"income_category_ids\":[],\"income_category_mode\":\"ALL\",\"sort\":\"amount\",\"sort_order\":\"desc\",\"start_date\":\"2026-11-01\",\"tag_ids\":[],\"tag_role\":\"all\",\"timezone\":\"Asia/Shanghai\",\"type\":\"expense\"}",
+    "generated_at": "2026-11-07T15:56:34Z"
+  }
+}

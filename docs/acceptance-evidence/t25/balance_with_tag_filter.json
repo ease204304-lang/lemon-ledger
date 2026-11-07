@@ -1,0 +1,12 @@
+{
+  "status": 400,
+  "body": {
+    "error": {
+      "code": "INVALID_FILTER",
+      "message": "结余视图不支持 tag 维度筛选。",
+      "request_id": "req_f70bbe64001147bb",
+      "field": "tag_ids",
+      "reason": "dimension_not_supported"
+    }
+  }
+}
