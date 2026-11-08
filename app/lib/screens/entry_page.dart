@@ -45,6 +45,9 @@ class _EntryPageState extends State<EntryPage> {
   DateTime _date = DateTime.now();
   List<Tag> _tags = const [];
   final _noteCtrl = TextEditingController();
+  // v1.11.0: 显式管理备注框焦点, 避免进入页面时自动获焦 → 系统输入法弹出
+  // → 盖住本页自带的数字键盘。
+  final _noteFocus = FocusNode(debugLabel: 'entry-note');
   bool _showAllCategories = false; // 常用 ↔ 全部
 
   @override
@@ -60,11 +63,16 @@ class _EntryPageState extends State<EntryPage> {
         setState(() => _note = _noteCtrl.text);
       }
     });
+    // 页面打开后主动把焦点移出任何文本框 (系统输入法随之收起)
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) _noteFocus.unfocus();
+    });
   }
 
   @override
   void dispose() {
     _noteCtrl.dispose();
+    _noteFocus.dispose();
     super.dispose();
   }
 
@@ -94,7 +102,9 @@ class _EntryPageState extends State<EntryPage> {
       _amount = toYuanString(tx.amountCents);
       _note = tx.note;
       _noteCtrl.text = tx.note;
-      _noteCtrl.selection = TextSelection.collapsed(offset: tx.note.length);
+      // v1.11.0: 不给备注框设置光标位置, 避免它自动获焦 → 系统输入法弹出
+      // → 把本页自带的数字键盘顶出可视区。
+      _noteCtrl.selection = const TextSelection.collapsed(offset: -1);
       _date = DateTime.fromMillisecondsSinceEpoch(tx.epochDay * 86400000);
     });
     final cat = await CategoryRepository.instance.byId(tx.categoryId);
@@ -240,11 +250,16 @@ class _EntryPageState extends State<EntryPage> {
                 // 点标签: 追加到备注 (空格衔接; _note 由 controller listener 同步)
                 final cur = _noteCtrl.text.trim();
                 _noteCtrl.text = cur.isEmpty ? name : '$cur $name';
+                // v1.11.0: 写完备注立刻让备注框失焦, 否则系统输入法会弹出
+                // 把本页自带的数字键盘顶掉 (用户表现为「数字键盘点了没反应」)。
+                _noteCtrl.selection = const TextSelection.collapsed(offset: -1);
+                FocusManager.instance.primaryFocus?.unfocus();
               },
             ),
             // 4. 备注 (1 行, 30px)
             EntryShortNote(
               controller: _noteCtrl,
+              focusNode: _noteFocus,
               onAddTag: () async {
                 final t = _note.trim();
                 if (t.isEmpty) {

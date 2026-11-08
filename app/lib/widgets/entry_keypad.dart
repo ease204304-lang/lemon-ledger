@@ -54,11 +54,18 @@ class EntryKeypad extends StatelessWidget {
       ['.', '0', 'del', '='], // 改动 3: = 列是合并保存
     ];
     return Container(
-      color: L.surface,
+      // v1.11.0: 系统输入法弹出时 Scaffold 会压缩可用高度, 键盘内容可能超出。
+      // 用 clipBehavior 裁掉溢出部分而不是抛 RenderFlex overflow 异常。
+      decoration: const BoxDecoration(color: L.surface),
+      clipBehavior: Clip.hardEdge,
       child: Column(
         children: [
           // v1.9.0: 金额显示屏 (大字, U2 实时求值, 圆圈位置)
-          _AmountDisplay(amount: amount),
+          // v1.11.0: Flexible(loose) — 空间不足时显示屏先被压缩,
+          // 而不是撑破 Column 抛 RenderFlex overflow。
+          Flexible(
+            child: _AmountDisplay(amount: amount),
+          ),
           // 键盘 4×4
           for (final row in rows)
             Expanded(
@@ -102,8 +109,27 @@ class EntryKeypad extends StatelessWidget {
     );
   }
 
+  /// 收起系统输入法 + 取消当前文本框焦点。
+  ///
+  /// 记账页自带数字键盘。若备注框仍持有焦点, 系统输入法会处于弹出状态并
+  /// 占掉下半屏, 把本页自带的数字键盘盖住 —— 用户点数字键时毫无反应。
+  /// 这里在按数字键时主动让焦点离开文本框, 系统输入法随即收起,
+  /// 自带键盘立即可用。
+  ///
+  /// 无需 context: FocusManager 是全局单例, 对任意来源的焦点都生效。
+  void _dismissSystemKeyboard() {
+    final focus = FocusManager.instance.primaryFocus;
+    if (focus == null) return;
+    if (!focus.hasFocus && !focus.hasPrimaryFocus) return;
+    focus.unfocus();
+  }
+
   /// 处理单键按下
   void _onKey(String k) {
+    // v1.11.0: 按数字键时收起系统输入法并让备注框失焦。
+    // 备注框若持有焦点, 系统输入法会弹出并把本页自带的数字键盘顶出可视区,
+    // 导致用户「点了没反应」(备注框自动获焦 / 用户刚点过备注时必现)。
+    _dismissSystemKeyboard();
     if (k == 'del') {
       onDelete();
       return;

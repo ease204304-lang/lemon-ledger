@@ -9,10 +9,13 @@ import '../theme/tokens.dart';
 class EntryShortNote extends StatelessWidget {
   final TextEditingController controller;
   final VoidCallback onAddTag;
+  /// v1.11.0: 显式焦点节点 (页面侧控制「不自动获焦」)
+  final FocusNode? focusNode;
   const EntryShortNote({
     super.key,
     required this.controller,
     required this.onAddTag,
+    this.focusNode,
   });
 
   @override
@@ -27,6 +30,11 @@ class EntryShortNote extends StatelessWidget {
           Expanded(
             child: TextField(
               controller: controller,
+              focusNode: focusNode,
+              // v1.11.0: 不自动获焦, 避免系统输入法一进页面就弹出
+              // 把本页自带的数字键盘盖住。
+              autofocus: false,
+              textInputAction: TextInputAction.done,
               decoration: const InputDecoration(
                 hintText: '备注 (输入后点 + 可保存为标签)',
                 isDense: true,
