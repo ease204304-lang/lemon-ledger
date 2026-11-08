@@ -1,6 +1,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <!-- 语音记账: 录音权限 -->
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <!-- v1.12.0 统计服务: 访问自建统计服务端 (REST API) -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <!-- Android 11+ queries (Android STT 包名) -->
     <queries>
         <intent>
@@ -9,9 +12,10 @@
     </queries>
 
     <application
-        android:label="小猪记账 v1.10.0"
+        android:label="小猪记账 v1.12.0"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/ic_launcher"
+        android:usesCleartextTraffic="true">
         <activity
             android:name=".MainActivity"
             android:exported="true"

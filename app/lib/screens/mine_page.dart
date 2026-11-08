@@ -14,6 +14,7 @@ import '../theme/tokens.dart';
 import '../widgets/top_tab_bar.dart';
 import 'import_data_dialog.dart';
 import 'quick_entry_sheet.dart';
+import 'stats_settings_page.dart';
 
 
 class MinePage extends ConsumerWidget {
@@ -55,7 +56,7 @@ class MinePage extends ConsumerWidget {
                         Text('小猪记账', style: TextStyle(
                             fontSize: 16, fontWeight: FontWeight.w600, color: L.textPrimary)),
                         SizedBox(height: 2),
-                        Text('v1.10.0', style: TextStyle(
+                        Text('v1.12.0', style: TextStyle(
                             fontSize: 12, color: L.textTertiary)),
                       ],
                     ),
@@ -78,6 +79,14 @@ class MinePage extends ConsumerWidget {
               }),
               _Item('字号', '小 / 中 / 大', Icons.text_fields_outlined, () {
                 _setFontScale(context, ref);
+              }),
+            ]),
+            const SizedBox(height: 12),
+            // 统计服务 (v1.12.0: 服务端报表 + 数据同步)
+            _Section(items: [
+              _Item('统计服务', '服务端报表 / 数据同步 (v1.12)', Icons.insights_outlined, () {
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (_) => const StatsSettingsPage()));
               }),
             ]),
             const SizedBox(height: 12),
@@ -111,9 +120,9 @@ class MinePage extends ConsumerWidget {
             ]),
             const SizedBox(height: 12),
             _Section(items: [
-              _Item('关于', '小猪记账 v1.10.0', Icons.info_outline, () {
+              _Item('关于', '小猪记账 v1.12.0', Icons.info_outline, () {
                 showAboutDialog(context: context, applicationName: '小猪记账',
-                    applicationVersion: '1.5.0', applicationIcon: const Icon(Icons.savings));
+                    applicationVersion: '1.12.0', applicationIcon: const Icon(Icons.savings));
               }),
               _Item('重置数据', '清空全部流水与分类', Icons.restart_alt, () async {
                 final controller = TextEditingController();

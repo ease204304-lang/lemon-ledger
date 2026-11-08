@@ -1,12 +1,12 @@
 {
   "data": {
     "granularity": "month",
-    "start_date": "2025-11-07",
-    "end_date": "2026-11-07",
+    "start_date": "2025-11-08",
+    "end_date": "2026-11-08",
     "bucket_count": 13,
     "points": [
       {
-        "bucket_start": "2025-11-07",
+        "bucket_start": "2025-11-08",
         "bucket_end": "2025-11-30",
         "income": "0.00",
         "expense": "0.00",
@@ -14,8 +14,8 @@
         "income_count": 0,
         "expense_count": 0,
         "drilldown": {
-          "book_id": "book_eea588a6560941d5",
-          "start_date": "2025-11-07",
+          "book_id": "book_343bbe2441ba4d67",
+          "start_date": "2025-11-08",
           "end_date": "2025-11-30",
           "timezone": "Asia/Shanghai",
           "type": "balance"
@@ -30,7 +30,7 @@
         "income_count": 0,
         "expense_count": 0,
         "drilldown": {
-          "book_id": "book_eea588a6560941d5",
+          "book_id": "book_343bbe2441ba4d67",
           "start_date": "2025-12-01",
           "end_date": "2025-12-31",
           "timezone": "Asia/Shanghai",
@@ -46,7 +46,7 @@
         "income_count": 0,
         "expense_count": 0,
         "drilldown": {
-          "book_id": "book_eea588a6560941d5",
+          "book_id": "book_343bbe2441ba4d67",
           "start_date": "2026-01-01",
           "end_date": "2026-01-31",
           "timezone": "Asia/Shanghai",
@@ -62,7 +62,7 @@
         "income_count": 0,
         "expense_count": 0,
         "drilldown": {
-          "book_id": "book_eea588a6560941d5",
+          "book_id": "book_343bbe2441ba4d67",
           "start_date": "2026-02-01",
           "end_date": "2026-02-28",
           "timezone": "Asia/Shanghai",
@@ -78,7 +78,7 @@
         "income_count": 0,
         "expense_count": 0,
         "drilldown": {
-          "book_id": "book_eea588a6560941d5",
+          "book_id": "book_343bbe2441ba4d67",
           "start_date": "2026-03-01",
           "end_date": "2026-03-31",
           "timezone": "Asia/Shanghai",
@@ -94,7 +94,7 @@
         "income_count": 0,
         "expense_count": 0,
         "drilldown": {
-          "book_id": "book_eea588a6560941d5",
+          "book_id": "book_343bbe2441ba4d67",
           "start_date": "2026-04-01",
           "end_date": "2026-04-30",
           "timezone": "Asia/Shanghai",
@@ -110,7 +110,7 @@
         "income_count": 0,
         "expense_count": 0,
         "drilldown": {
-          "book_id": "book_eea588a6560941d5",
+          "book_id": "book_343bbe2441ba4d67",
           "start_date": "2026-05-01",
           "end_date": "2026-05-31",
           "timezone": "Asia/Shanghai",
@@ -126,7 +126,7 @@
         "income_count": 0,
         "expense_count": 0,
         "drilldown": {
-          "book_id": "book_eea588a6560941d5",
+          "book_id": "book_343bbe2441ba4d67",
           "start_date": "2026-06-01",
           "end_date": "2026-06-30",
           "timezone": "Asia/Shanghai",
@@ -142,7 +142,7 @@
         "income_count": 0,
         "expense_count": 0,
         "drilldown": {
-          "book_id": "book_eea588a6560941d5",
+          "book_id": "book_343bbe2441ba4d67",
           "start_date": "2026-07-01",
           "end_date": "2026-07-31",
           "timezone": "Asia/Shanghai",
@@ -158,7 +158,7 @@
         "income_count": 0,
         "expense_count": 0,
         "drilldown": {
-          "book_id": "book_eea588a6560941d5",
+          "book_id": "book_343bbe2441ba4d67",
           "start_date": "2026-08-01",
           "end_date": "2026-08-31",
           "timezone": "Asia/Shanghai",
@@ -174,7 +174,7 @@
         "income_count": 0,
         "expense_count": 0,
         "drilldown": {
-          "book_id": "book_eea588a6560941d5",
+          "book_id": "book_343bbe2441ba4d67",
           "start_date": "2026-09-01",
           "end_date": "2026-09-30",
           "timezone": "Asia/Shanghai",
@@ -190,7 +190,7 @@
         "income_count": 0,
         "expense_count": 0,
         "drilldown": {
-          "book_id": "book_eea588a6560941d5",
+          "book_id": "book_343bbe2441ba4d67",
           "start_date": "2026-10-01",
           "end_date": "2026-10-31",
           "timezone": "Asia/Shanghai",
@@ -199,16 +199,16 @@
       },
       {
         "bucket_start": "2026-11-01",
-        "bucket_end": "2026-11-07",
+        "bucket_end": "2026-11-08",
         "income": "0.00",
         "expense": "0.00",
         "balance": "0.00",
         "income_count": 0,
         "expense_count": 0,
         "drilldown": {
-          "book_id": "book_eea588a6560941d5",
+          "book_id": "book_343bbe2441ba4d67",
           "start_date": "2026-11-01",
-          "end_date": "2026-11-07",
+          "end_date": "2026-11-08",
           "timezone": "Asia/Shanghai",
           "type": "balance"
         }
@@ -216,8 +216,8 @@
     ]
   },
   "meta": {
-    "snapshot_version": 1756,
-    "condition_key": "trend|{\"book_id\":\"book_eea588a6560941d5\",\"category_ids\":[],\"comparison_enabled\":false,\"counterparty_ids\":[],\"end_date\":\"2026-11-07\",\"expense_category_ids\":[],\"expense_category_mode\":\"ALL\",\"granularity\":\"month\",\"income_category_ids\":[],\"income_category_mode\":\"ALL\",\"sort\":\"amount\",\"sort_order\":\"desc\",\"start_date\":\"2025-11-07\",\"tag_ids\":[],\"tag_role\":\"all\",\"timezone\":\"Asia/Shanghai\",\"type\":\"balance\"}",
-    "generated_at": "2026-11-07T15:56:33Z"
+    "snapshot_version": 1865,
+    "condition_key": "trend|{\"book_id\":\"book_343bbe2441ba4d67\",\"category_ids\":[],\"comparison_enabled\":false,\"counterparty_ids\":[],\"end_date\":\"2026-11-08\",\"expense_category_ids\":[],\"expense_category_mode\":\"ALL\",\"granularity\":\"month\",\"income_category_ids\":[],\"income_category_mode\":\"ALL\",\"sort\":\"amount\",\"sort_order\":\"desc\",\"start_date\":\"2025-11-08\",\"tag_ids\":[],\"tag_role\":\"all\",\"timezone\":\"Asia/Shanghai\",\"type\":\"balance\"}",
+    "generated_at": "2026-11-08T01:11:13Z"
   }
 }

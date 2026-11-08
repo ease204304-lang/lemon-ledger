@@ -912,17 +912,39 @@ def create_transaction(request: Request, body: Dict[str, Any]):
     txid = _new_id("tx")
     now = _now_iso()
     conn = get_conn()
+    # client_ref 幂等: 客户端同步用本地流水 id 作幂等键, 重复上传直接返回已有记录
+    client_ref = body.get("client_ref")
+    if client_ref:
+        client_ref = str(client_ref)
+        existing = fetch_one(
+            'SELECT * FROM "transaction" WHERE client_ref = ?', (client_ref,)
+        )
+        if existing is not None:
+            return _envelope(
+                {
+                    "id": existing["id"], "transaction_id": existing["id"],
+                    "book_id": existing["book_id"], "type": existing["type"],
+                    "amount": existing["amount"],
+                    "transaction_date": existing["transaction_date"],
+                    "transaction_time": existing["transaction_time"],
+                    "category_id": existing["category_id"],
+                    "counterparty_id": existing["counterparty_id"],
+                    "note": existing["note"] or "",
+                    "deduplicated": True,
+                },
+                f"tx:{existing['id']}", 0,
+            )
     # 写锁: 序列化整个写事务 (INSERT + 标签 + 版本 bump + 缓存失效),
     # 避免 16 线程并发下 SQLite 写锁竞争导致 database is locked / 长等待。
     with write_lock:
         conn.execute(
             'INSERT INTO "transaction" (id, book_id, type, amount, currency, transaction_date, '
             "transaction_time, category_id, category_name_snapshot, counterparty_id, "
-            "counterparty_name_snapshot, note, amount_anomaly, created_at, updated_at) "
-            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, ?, ?)",
+            "counterparty_name_snapshot, client_ref, note, amount_anomaly, created_at, updated_at) "
+            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, ?, ?)",
             (txid, book_id, ttype, money_str(amount), body.get("currency") or "CNY",
              tx_date, tx_time, category_id, cat_snapshot, counterparty_id, cp_snapshot,
-             body.get("note") or "", now, now),
+             client_ref, body.get("note") or "", now, now),
         )
         # 标签关联: primary -> main; tag_ids -> aux (C58: 每笔最多一个 main)
         if primary_tag_id:

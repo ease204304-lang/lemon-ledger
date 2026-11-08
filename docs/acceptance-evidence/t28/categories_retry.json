@@ -15,9 +15,9 @@
         "last_transaction_date": "2026-11-01",
         "progress": "100.00",
         "drilldown": {
-          "book_id": "book_3269772605b54bd3",
+          "book_id": "book_a9d8bb81f9934941",
           "start_date": "2026-11-01",
-          "end_date": "2026-11-07",
+          "end_date": "2026-11-08",
           "timezone": "Asia/Shanghai",
           "type": "expense",
           "category_ids": [
@@ -30,8 +30,8 @@
     "remaining_count": 0
   },
   "meta": {
-    "snapshot_version": 2779,
-    "condition_key": "categories:1|{\"book_id\":\"book_3269772605b54bd3\",\"category_ids\":[],\"comparison_enabled\":false,\"counterparty_ids\":[],\"end_date\":\"2026-11-07\",\"expense_category_ids\":[],\"expense_category_mode\":\"ALL\",\"granularity\":\"day\",\"income_category_ids\":[],\"income_category_mode\":\"ALL\",\"sort\":\"amount\",\"sort_order\":\"desc\",\"start_date\":\"2026-11-01\",\"tag_ids\":[],\"tag_role\":\"all\",\"timezone\":\"Asia/Shanghai\",\"type\":\"expense\"}",
-    "generated_at": "2026-11-07T15:56:34Z"
+    "snapshot_version": 2888,
+    "condition_key": "categories:1|{\"book_id\":\"book_a9d8bb81f9934941\",\"category_ids\":[],\"comparison_enabled\":false,\"counterparty_ids\":[],\"end_date\":\"2026-11-08\",\"expense_category_ids\":[],\"expense_category_mode\":\"ALL\",\"granularity\":\"day\",\"income_category_ids\":[],\"income_category_mode\":\"ALL\",\"sort\":\"amount\",\"sort_order\":\"desc\",\"start_date\":\"2026-11-01\",\"tag_ids\":[],\"tag_role\":\"all\",\"timezone\":\"Asia/Shanghai\",\"type\":\"expense\"}",
+    "generated_at": "2026-11-08T01:11:13Z"
   }
 }

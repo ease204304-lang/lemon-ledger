@@ -2,13 +2,13 @@
   "status": 200,
   "body": {
     "data": {
-      "id": "cat_50483029fefc4a7d",
+      "id": "cat_a9052a3b5fb34ed2",
       "status": "deleted"
     },
     "meta": {
       "snapshot_version": 0,
-      "condition_key": "cat:cat_50483029fefc4a7d",
-      "generated_at": "2026-11-07T15:56:34Z"
+      "condition_key": "cat:cat_a9052a3b5fb34ed2",
+      "generated_at": "2026-11-08T01:11:13Z"
     }
   }
 }

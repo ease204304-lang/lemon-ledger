@@ -8,18 +8,18 @@
     "income_count": 0,
     "expense_count": 2,
     "count": 2,
-    "days": 7,
-    "daily_average": "-42.86",
+    "days": 8,
+    "daily_average": "-37.50",
     "average_daily_income": "0.00",
-    "average_daily_expense": "42.86",
-    "average_daily_balance": "-42.86",
+    "average_daily_expense": "37.50",
+    "average_daily_balance": "-37.50",
     "granularity": "day",
     "start_date": "2026-11-01",
-    "end_date": "2026-11-07"
+    "end_date": "2026-11-08"
   },
   "meta": {
-    "snapshot_version": 3734,
-    "condition_key": "summary|{\"book_id\":\"book_32de520443ee4226\",\"category_ids\":[],\"comparison_enabled\":false,\"counterparty_ids\":[],\"end_date\":\"2026-11-07\",\"expense_category_ids\":[\"cat_55298f00df544f73\",\"cat_619a712107c74114\"],\"expense_category_mode\":\"SELECTED\",\"granularity\":\"day\",\"income_category_ids\":[],\"income_category_mode\":\"ALL\",\"sort\":\"amount\",\"sort_order\":\"desc\",\"start_date\":\"2026-11-01\",\"tag_ids\":[],\"tag_role\":\"all\",\"timezone\":\"Asia/Shanghai\",\"type\":\"balance\"}",
-    "generated_at": "2026-11-07T15:56:12Z"
+    "snapshot_version": 3843,
+    "condition_key": "summary|{\"book_id\":\"book_e927debff0ac4962\",\"category_ids\":[],\"comparison_enabled\":false,\"counterparty_ids\":[],\"end_date\":\"2026-11-08\",\"expense_category_ids\":[\"cat_7c17f2191a394c11\",\"cat_f59a539988b445a9\"],\"expense_category_mode\":\"SELECTED\",\"granularity\":\"day\",\"income_category_ids\":[],\"income_category_mode\":\"ALL\",\"sort\":\"amount\",\"sort_order\":\"desc\",\"start_date\":\"2026-11-01\",\"tag_ids\":[],\"tag_role\":\"all\",\"timezone\":\"Asia/Shanghai\",\"type\":\"balance\"}",
+    "generated_at": "2026-11-08T01:10:53Z"
   }
 }

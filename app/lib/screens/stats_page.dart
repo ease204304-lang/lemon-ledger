@@ -12,18 +12,20 @@ import 'package:flutter/material.dart';
 
 import '../services/stats_api.dart';
 import '../services/stats_controller.dart';
+import '../services/stats_sync.dart';
 import '../theme/tokens.dart';
 import '../widgets/date_picker_dialog.dart';
 import '../widgets/stats/balance_view.dart';
 import '../widgets/stats/category_filter_sheet.dart';
 import '../widgets/stats/stats_widgets.dart';
+import 'stats_settings_page.dart';
 
 /// 统计页 (替换/并入原 ChartPage)
 class StatsPage extends StatefulWidget {
-  final ValueChanged<int> onNavigate;
+  final ValueChanged<int>? onNavigate;
   final StatsController? controller;
 
-  const StatsPage({super.key, required this.onNavigate, this.controller});
+  const StatsPage({super.key, this.onNavigate, this.controller});
 
   @override
   State<StatsPage> createState() => _StatsPageState();
@@ -38,6 +40,15 @@ class _StatsPageState extends State<StatsPage> {
     super.initState();
     _c = widget.controller ?? StatsController();
     _c.addListener(_onChanged);
+    _initBookAndRefresh();
+  }
+
+  /// 绑定同步层创建的服务端账本后再刷新 (v1.12.0)
+  Future<void> _initBookAndRefresh() async {
+    final bookId = await StatsSyncService.instance.getBookId();
+    if (mounted && bookId != null) {
+      _c.bookId = bookId;
+    }
     _c.refresh();
   }
 
@@ -193,6 +204,27 @@ class _StatsPageState extends State<StatsPage> {
               message: _c.error!,
               onRetry: () => _c.refresh(),
             ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: L.pageH),
+              child: FilledButton.tonal(
+                onPressed: () => Navigator.of(context).push(
+                  MaterialPageRoute(
+                      builder: (_) => const StatsSettingsPage()),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.settings_outlined, size: 18),
+                    const SizedBox(width: 6),
+                    const Flexible(
+                      child: Text('打开统计服务设置 (连接服务端 / 同步数据)',
+                          overflow: TextOverflow.ellipsis),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
           ],
         ),
       );

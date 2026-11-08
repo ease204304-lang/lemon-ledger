@@ -14,9 +14,32 @@ library;
 
 import 'package:flutter/material.dart';
 
+import '../../services/stats_api.dart';
 import '../../services/stats_controller.dart';
 import '../../theme/tokens.dart';
 import 'stats_widgets.dart';
+
+/// 十进制字符串 → double (仅用于显示/比较, 不参与金额计算)
+double _toDouble(String? s) {
+  if (s == null || s.isEmpty) return 0;
+  return double.tryParse(s) ?? 0;
+}
+
+/// 十进制字符串 → 千分位显示
+String _fmt(String? s) {
+  if (s == null || s.isEmpty) return '0.00';
+  final v = double.tryParse(s);
+  if (v == null) return s;
+  final fixed = v.toStringAsFixed(2);
+  final parts = fixed.split('.');
+  final intPart = parts.first;
+  final buf = StringBuffer();
+  for (var i = 0; i < intPart.length; i++) {
+    if (i > 0 && (intPart.length - i) % 3 == 0) buf.write(',');
+    buf.write(intPart[i]);
+  }
+  return '${buf.toString()}.${parts.length > 1 ? parts[1] : '00'}';
+}
 
 /// 结余总览卡 (结余 + 结余率 + 收入/支出明细)
 class BalanceOverviewCard extends StatelessWidget {
@@ -179,9 +202,8 @@ class BalanceOverviewCard extends StatelessWidget {
 class _SideStat extends StatelessWidget {
   final String label;
   final String amount;
-  final String count;
+  final int count;
   final Color color;
-  final int countValue;
   final VoidCallback? onTap;
 
   const _SideStat({
@@ -189,7 +211,6 @@ class _SideStat extends StatelessWidget {
     required this.amount,
     required this.count,
     required this.color,
-    required this.countValue,
     this.onTap,
   });
 
@@ -218,7 +239,7 @@ class _SideStat extends StatelessWidget {
               amount,
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: color),
             ),
-            Text('$countValue 笔', style: const TextStyle(fontSize: 11, color: L.textTertiary)),
+            Text('$count 笔', style: const TextStyle(fontSize: 11, color: L.textTertiary)),
           ],
         ),
       ),

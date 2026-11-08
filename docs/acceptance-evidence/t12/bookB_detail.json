@@ -10,7 +10,7 @@
   },
   "meta": {
     "snapshot_version": 0,
-    "condition_key": "{\"book_id\":\"book_002beebd8317454c\",\"category_ids\":[],\"comparison_enabled\":false,\"counterparty_ids\":[],\"end_date\":\"2026-11-07\",\"expense_category_ids\":[],\"expense_category_mode\":\"ALL\",\"granularity\":\"day\",\"income_category_ids\":[],\"income_category_mode\":\"ALL\",\"sort\":\"amount\",\"sort_order\":\"desc\",\"start_date\":\"2026-11-01\",\"tag_ids\":[],\"tag_role\":\"all\",\"timezone\":\"Asia/Shanghai\",\"type\":\"expense\"}|p1:20",
-    "generated_at": "2026-11-07T15:56:13Z"
+    "condition_key": "{\"book_id\":\"book_529db1283f5a419b\",\"category_ids\":[],\"comparison_enabled\":false,\"counterparty_ids\":[],\"end_date\":\"2026-11-08\",\"expense_category_ids\":[],\"expense_category_mode\":\"ALL\",\"granularity\":\"day\",\"income_category_ids\":[],\"income_category_mode\":\"ALL\",\"sort\":\"amount\",\"sort_order\":\"desc\",\"start_date\":\"2026-11-01\",\"tag_ids\":[],\"tag_role\":\"all\",\"timezone\":\"Asia/Shanghai\",\"type\":\"expense\"}|p1:20",
+    "generated_at": "2026-11-08T01:10:53Z"
   }
 }

@@ -1,7 +1,7 @@
 {
   "meta": {
-    "started_at": "2026-11-07 23:56:12",
-    "finished_at": "2026-11-07 23:56:34",
+    "started_at": "2026-11-08 09:10:52",
+    "finished_at": "2026-11-08 09:11:13",
     "base_url": "http://127.0.0.1:8000",
     "server_up": true,
     "suite": "记账统计模块 T01–T34 验收测试",
@@ -44,7 +44,7 @@
         "docs/acceptance-evidence/t01/summary.json"
       ],
       "reason": "",
-      "duration_ms": 10.3,
+      "duration_ms": 12.7,
       "d_rule": ""
     },
     {
@@ -58,7 +58,7 @@
         "trend_non_zero": [
           "-2000.00"
         ],
-        "trend_zero_buckets": 6
+        "trend_zero_buckets": 7
       },
       "expected": {
         "balance": "-2000.00",
@@ -70,7 +70,7 @@
         "docs/acceptance-evidence/t02/trend.json"
       ],
       "reason": "",
-      "duration_ms": 13.9,
+      "duration_ms": 15.5,
       "d_rule": "D06"
     },
     {
@@ -82,6 +82,7 @@
         "balance": "0.00",
         "balance_rate": "0.00",
         "trend_balance_values": [
+          "0.00",
           "0.00",
           "0.00",
           "0.00",
@@ -100,7 +101,7 @@
         "docs/acceptance-evidence/t03/trend.json"
       ],
       "reason": "",
-      "duration_ms": 13.9,
+      "duration_ms": 12.0,
       "d_rule": ""
     },
     {
@@ -124,7 +125,7 @@
         "docs/acceptance-evidence/t04/summary.json"
       ],
       "reason": "",
-      "duration_ms": 8.0,
+      "duration_ms": 7.1,
       "d_rule": ""
     },
     {
@@ -136,7 +137,7 @@
         "income": "100.00",
         "expense": "0.00",
         "balance": "100.00",
-        "trend_points": 7
+        "trend_points": 8
       },
       "expected": {
         "汇总": "0/0/0",
@@ -149,7 +150,7 @@
         "docs/acceptance-evidence/t05/summary_empty_book.json"
       ],
       "reason": "",
-      "duration_ms": 18.2,
+      "duration_ms": 15.9,
       "d_rule": ""
     },
     {
@@ -176,7 +177,7 @@
         "docs/acceptance-evidence/t06/trend_same_condition.json"
       ],
       "reason": "",
-      "duration_ms": 36.7,
+      "duration_ms": 40.7,
       "d_rule": ""
     },
     {
@@ -199,7 +200,7 @@
         "docs/acceptance-evidence/t07/detail_parent_selected.json"
       ],
       "reason": "",
-      "duration_ms": 16.0,
+      "duration_ms": 20.0,
       "d_rule": ""
     },
     {
@@ -210,8 +211,8 @@
       "actual": {
         "balance_before": "-500.00",
         "balance_after": "-300.00",
-        "snapshot_before": "2734",
-        "snapshot_after": "3734",
+        "snapshot_before": "2843",
+        "snapshot_after": "3843",
         "stale_version_status": 409
       },
       "expected": {
@@ -228,7 +229,7 @@
         "docs/acceptance-evidence/t08/stale_version_request.json"
       ],
       "reason": "",
-      "duration_ms": 16.7,
+      "duration_ms": 17.5,
       "d_rule": ""
     },
     {
@@ -256,7 +257,7 @@
         "docs/acceptance-evidence/t09/categories_after.json"
       ],
       "reason": "",
-      "duration_ms": 31.8,
+      "duration_ms": 35.5,
       "d_rule": ""
     },
     {
@@ -298,7 +299,7 @@
         "docs/acceptance-evidence/t10/summary____-1000.json"
       ],
       "reason": "",
-      "duration_ms": 54.0,
+      "duration_ms": 31.8,
       "d_rule": "D06"
     },
     {
@@ -321,7 +322,7 @@
         "docs/acceptance-evidence/t11/detail_drilldown.json"
       ],
       "reason": "",
-      "duration_ms": 21.4,
+      "duration_ms": 20.4,
       "d_rule": "D06"
     },
     {
@@ -348,7 +349,7 @@
         "docs/acceptance-evidence/t12/unauthorized_request.json"
       ],
       "reason": "",
-      "duration_ms": 23.2,
+      "duration_ms": 21.8,
       "d_rule": ""
     },
     {
@@ -372,7 +373,7 @@
         "docs/acceptance-evidence/t13/trend_current_period.json"
       ],
       "reason": "",
-      "duration_ms": 23.8,
+      "duration_ms": 28.0,
       "d_rule": "D06"
     },
     {
@@ -382,8 +383,8 @@
       "result": "PASS",
       "actual": {
         "meta": {
-          "started_at": "2026-11-07 23:56:13",
-          "finished_at": "2026-11-07 23:56:33",
+          "started_at": "2026-11-08 09:10:53",
+          "finished_at": "2026-11-08 09:11:12",
           "base_url": "http://127.0.0.1:8000",
           "dataset_n": 50000,
           "dataset_spec": {
@@ -407,9 +408,9 @@
             "p95_limit": 2.0,
             "hot": {
               "samples": 100,
-              "p95": 0.0036,
+              "p95": 0.0035,
               "p50": 0.0025,
-              "p99": 0.0038,
+              "p99": 0.004,
               "mean": 0.0026,
               "min": 0.002,
               "max": 0.0041,
@@ -421,11 +422,11 @@
             "cold": {
               "samples": 100,
               "p95": 0.0035,
-              "p50": 0.0026,
-              "p99": 0.0041,
-              "mean": 0.0027,
-              "min": 0.0021,
-              "max": 0.0045,
+              "p50": 0.0024,
+              "p99": 0.0038,
+              "mean": 0.0026,
+              "min": 0.002,
+              "max": 0.0038,
               "status_codes": [
                 200
               ],
@@ -441,12 +442,12 @@
             "p95_limit": 3.0,
             "hot": {
               "samples": 100,
-              "p95": 0.019,
-              "p50": 0.0154,
-              "p99": 0.0244,
-              "mean": 0.0159,
-              "min": 0.0136,
-              "max": 0.0265,
+              "p95": 0.0171,
+              "p50": 0.0139,
+              "p99": 0.0218,
+              "mean": 0.0144,
+              "min": 0.0131,
+              "max": 0.0229,
               "status_codes": [
                 200
               ],
@@ -454,12 +455,12 @@
             },
             "cold": {
               "samples": 100,
-              "p95": 0.0167,
-              "p50": 0.015,
-              "p99": 0.0267,
-              "mean": 0.0157,
+              "p95": 0.0191,
+              "p50": 0.0141,
+              "p99": 0.0255,
+              "mean": 0.015,
               "min": 0.013,
-              "max": 0.0723,
+              "max": 0.0573,
               "status_codes": [
                 200
               ],
@@ -475,12 +476,12 @@
             "p95_limit": 5.0,
             "hot": {
               "samples": 100,
-              "p95": 0.0038,
-              "p50": 0.0028,
-              "p99": 0.0042,
+              "p95": 0.0037,
+              "p50": 0.0027,
+              "p99": 0.0039,
               "mean": 0.0029,
-              "min": 0.0022,
-              "max": 0.0146,
+              "min": 0.0023,
+              "max": 0.0109,
               "status_codes": [
                 200
               ],
@@ -489,9 +490,9 @@
             "cold": {
               "samples": 100,
               "p95": 0.004,
-              "p50": 0.0028,
-              "p99": 0.0045,
-              "mean": 0.003,
+              "p50": 0.0027,
+              "p99": 0.0048,
+              "mean": 0.0029,
               "min": 0.0023,
               "max": 0.0051,
               "status_codes": [
@@ -509,12 +510,12 @@
             "p95_limit": 5.0,
             "hot": {
               "samples": 100,
-              "p95": 0.0043,
+              "p95": 0.0037,
               "p50": 0.0028,
-              "p99": 0.0052,
-              "mean": 0.0031,
+              "p99": 0.004,
+              "mean": 0.0029,
               "min": 0.0024,
-              "max": 0.0068,
+              "max": 0.004,
               "status_codes": [
                 200
               ],
@@ -522,12 +523,12 @@
             },
             "cold": {
               "samples": 100,
-              "p95": 0.0042,
-              "p50": 0.003,
-              "p99": 0.0046,
-              "mean": 0.0032,
+              "p95": 0.004,
+              "p50": 0.0028,
+              "p99": 0.0042,
+              "mean": 0.0029,
               "min": 0.0024,
-              "max": 0.0053,
+              "max": 0.0044,
               "status_codes": [
                 200
               ],
@@ -543,12 +544,12 @@
             "p95_limit": 5.0,
             "hot": {
               "samples": 100,
-              "p95": 0.0036,
+              "p95": 0.0038,
               "p50": 0.0025,
-              "p99": 0.004,
-              "mean": 0.0027,
+              "p99": 0.0042,
+              "mean": 0.0026,
               "min": 0.0021,
-              "max": 0.004,
+              "max": 0.0044,
               "status_codes": [
                 200
               ],
@@ -556,12 +557,12 @@
             },
             "cold": {
               "samples": 100,
-              "p95": 0.0038,
-              "p50": 0.0026,
-              "p99": 0.005,
-              "mean": 0.0035,
-              "min": 0.0021,
-              "max": 0.0706,
+              "p95": 0.0042,
+              "p50": 0.0033,
+              "p99": 0.0051,
+              "mean": 0.0039,
+              "min": 0.0023,
+              "max": 0.0701,
               "status_codes": [
                 200
               ],
@@ -613,7 +614,7 @@
         "docs/acceptance-evidence/t14/perf_report.json"
       ],
       "reason": "",
-      "duration_ms": 20409.7,
+      "duration_ms": 19426.1,
       "d_rule": ""
     },
     {
@@ -647,7 +648,7 @@
         "docs/acceptance-evidence/t15/tags_stats.json"
       ],
       "reason": "",
-      "duration_ms": 220.3,
+      "duration_ms": 186.5,
       "d_rule": ""
     },
     {
@@ -676,7 +677,7 @@
         "环形图条目数 = 7: ['标签7', '标签6', '标签5', '标签4', '标签3', '其他', '未设置标签']"
       ],
       "reason": "",
-      "duration_ms": 212.7,
+      "duration_ms": 205.0,
       "d_rule": ""
     },
     {
@@ -707,7 +708,7 @@
         "docs/acceptance-evidence/t17/merchants_income.json"
       ],
       "reason": "",
-      "duration_ms": 22.0,
+      "duration_ms": 20.7,
       "d_rule": "D05"
     },
     {
@@ -730,7 +731,7 @@
         "docs/acceptance-evidence/t18/merchants_after.json"
       ],
       "reason": "",
-      "duration_ms": 20.3,
+      "duration_ms": 19.0,
       "d_rule": "D05"
     },
     {
@@ -758,7 +759,7 @@
         "docs/acceptance-evidence/t19/zero_amount.json"
       ],
       "reason": "",
-      "duration_ms": 13.9,
+      "duration_ms": 12.9,
       "d_rule": ""
     },
     {
@@ -793,7 +794,7 @@
         "docs/acceptance-evidence/t20/reversed_date.json"
       ],
       "reason": "",
-      "duration_ms": 23.4,
+      "duration_ms": 23.0,
       "d_rule": "D06"
     },
     {
@@ -804,12 +805,12 @@
       "actual": {
         "tz_shanghai": "100.00",
         "tz_new_york": "100.00",
-        "transaction_date": "2026-11-01"
+        "transaction_date": "2026-11-07"
       },
       "expected": {
         "上海时区": "100.00",
         "纽约时区": "100.00",
-        "业务日期": "2026-11-01"
+        "业务日期": "2026-11-07"
       },
       "evidence": [
         "docs/acceptance-evidence/t21/summary_tz_shanghai.json",
@@ -817,7 +818,7 @@
         "docs/acceptance-evidence/t21/detail.json"
       ],
       "reason": "",
-      "duration_ms": 13.9,
+      "duration_ms": 13.2,
       "d_rule": ""
     },
     {
@@ -848,7 +849,7 @@
         "docs/acceptance-evidence/t22/categories_expense.json"
       ],
       "reason": "",
-      "duration_ms": 41.8,
+      "duration_ms": 42.8,
       "d_rule": "D06"
     },
     {
@@ -875,7 +876,7 @@
         "docs/acceptance-evidence/t23/tags_after_rename.json"
       ],
       "reason": "",
-      "duration_ms": 48.3,
+      "duration_ms": 17.3,
       "d_rule": ""
     },
     {
@@ -910,7 +911,7 @@
         "docs/acceptance-evidence/t24/categories_after_delete.json"
       ],
       "reason": "",
-      "duration_ms": 32.9,
+      "duration_ms": 33.7,
       "d_rule": "D02"
     },
     {
@@ -936,7 +937,7 @@
         "docs/acceptance-evidence/t25/balance_with_tag_filter.json"
       ],
       "reason": "",
-      "duration_ms": 25.2,
+      "duration_ms": 24.8,
       "d_rule": ""
     },
     {
@@ -946,17 +947,17 @@
       "result": "PASS",
       "actual": {
         "all_ids": [
-          "tx_46199d491aee46e7",
-          "tx_9d357eb79b044b9e",
-          "tx_78959758e5c24cc3"
+          "tx_35296a142fbf4e13",
+          "tx_ecca5b527de243ef",
+          "tx_5874ff5ea92b4aef"
         ],
         "all_total": "600.00",
         "page1": [
-          "tx_46199d491aee46e7",
-          "tx_9d357eb79b044b9e"
+          "tx_35296a142fbf4e13",
+          "tx_ecca5b527de243ef"
         ],
         "page2": [
-          "tx_78959758e5c24cc3"
+          "tx_5874ff5ea92b4aef"
         ]
       },
       "expected": {
@@ -973,7 +974,7 @@
         "docs/acceptance-evidence/t26/pagination.json"
       ],
       "reason": "",
-      "duration_ms": 28.4,
+      "duration_ms": 29.2,
       "d_rule": ""
     },
     {
@@ -982,12 +983,12 @@
       "name": "快照和缓存并发",
       "result": "PASS",
       "actual": {
-        "v1": "2777",
-        "v2": "2777",
-        "v3": "3777",
+        "v1": "2886",
+        "v2": "2886",
+        "v3": "3886",
         "stale_status": 409,
-        "book_b_version_before": "1778",
-        "book_b_version_after": "1779"
+        "book_b_version_before": "1887",
+        "book_b_version_after": "1888"
       },
       "expected": {
         "同条件版本一致": "是",
@@ -1002,7 +1003,7 @@
         "docs/acceptance-evidence/t27/shared_tag_rename.json"
       ],
       "reason": "",
-      "duration_ms": 36.8,
+      "duration_ms": 32.5,
       "d_rule": ""
     },
     {
@@ -1026,7 +1027,7 @@
         "docs/acceptance-evidence/t28/categories_retry.json"
       ],
       "reason": "",
-      "duration_ms": 26.7,
+      "duration_ms": 21.0,
       "d_rule": ""
     },
     {
@@ -1049,7 +1050,7 @@
         "docs/acceptance-evidence/t29/cleared.json"
       ],
       "reason": "",
-      "duration_ms": 18.7,
+      "duration_ms": 19.0,
       "d_rule": ""
     },
     {
@@ -1080,7 +1081,7 @@
         "docs/acceptance-evidence/t30/detail.json"
       ],
       "reason": "",
-      "duration_ms": 17.3,
+      "duration_ms": 17.2,
       "d_rule": "D07"
     },
     {
@@ -1124,7 +1125,7 @@
         "docs/acceptance-evidence/t31/summary_balance.json"
       ],
       "reason": "",
-      "duration_ms": 15.2,
+      "duration_ms": 15.8,
       "d_rule": ""
     },
     {
@@ -1145,7 +1146,7 @@
         "docs/acceptance-evidence/t32/summary.json"
       ],
       "reason": "",
-      "duration_ms": 8.4,
+      "duration_ms": 11.1,
       "d_rule": "D07"
     },
     {
@@ -1163,7 +1164,7 @@
         "docs/acceptance-evidence/t33/signoff_summary.json"
       ],
       "reason": "",
-      "duration_ms": 0.8,
+      "duration_ms": 0.9,
       "d_rule": ""
     },
     {
@@ -1173,8 +1174,8 @@
       "result": "PASS",
       "actual": {
         "daily_average": "20.00",
-        "comparison_prev_start": "2026-09-09",
-        "comparison_prev_end": "2026-10-08"
+        "comparison_prev_start": "2026-09-10",
+        "comparison_prev_end": "2026-10-09"
       },
       "expected": {
         "日均": "600.00/30 = 20.00",
@@ -1186,7 +1187,7 @@
         "docs/acceptance-evidence/t34/summary_month_end.json"
       ],
       "reason": "",
-      "duration_ms": 11.6,
+      "duration_ms": 9.5,
       "d_rule": "D06"
     }
   ]

@@ -12,7 +12,7 @@
         "amount": "100.00",
         "items": [
           {
-            "id": "tx_7258356fa1254cfc",
+            "id": "tx_2f28400dff1942cb",
             "type": "expense",
             "amount": "100.00",
             "currency": "CNY",
@@ -24,8 +24,8 @@
             "counterparty_id": null,
             "counterparty_name": "未设置商户",
             "note": "acc-test",
-            "created_at": "2026-11-07T15:56:33+00:00",
-            "updated_at": "2026-11-07T15:56:33+00:00",
+            "created_at": "2026-11-08T01:11:12+00:00",
+            "updated_at": "2026-11-08T01:11:12+00:00",
             "amount_anomaly": false
           }
         ]
@@ -33,7 +33,7 @@
     ],
     "items": [
       {
-        "id": "tx_7258356fa1254cfc",
+        "id": "tx_2f28400dff1942cb",
         "type": "expense",
         "amount": "100.00",
         "currency": "CNY",
@@ -45,15 +45,15 @@
         "counterparty_id": null,
         "counterparty_name": "未设置商户",
         "note": "acc-test",
-        "created_at": "2026-11-07T15:56:33+00:00",
-        "updated_at": "2026-11-07T15:56:33+00:00",
+        "created_at": "2026-11-08T01:11:12+00:00",
+        "updated_at": "2026-11-08T01:11:12+00:00",
         "amount_anomaly": false
       }
     ]
   },
   "meta": {
     "snapshot_version": 0,
-    "condition_key": "{\"book_id\":\"book_266cb72433ab48b0\",\"category_ids\":[],\"comparison_enabled\":false,\"counterparty_ids\":[],\"end_date\":\"2026-11-07\",\"expense_category_ids\":[],\"expense_category_mode\":\"ALL\",\"granularity\":\"day\",\"income_category_ids\":[],\"income_category_mode\":\"ALL\",\"sort\":\"amount\",\"sort_order\":\"desc\",\"start_date\":\"2026-11-01\",\"tag_ids\":[\"tag_b22b0313dad84a2e\"],\"tag_role\":\"all\",\"timezone\":\"Asia/Shanghai\",\"type\":\"expense\"}|p1:20",
-    "generated_at": "2026-11-07T15:56:33Z"
+    "condition_key": "{\"book_id\":\"book_fb707fc4f07749c4\",\"category_ids\":[],\"comparison_enabled\":false,\"counterparty_ids\":[],\"end_date\":\"2026-11-08\",\"expense_category_ids\":[],\"expense_category_mode\":\"ALL\",\"granularity\":\"day\",\"income_category_ids\":[],\"income_category_mode\":\"ALL\",\"sort\":\"amount\",\"sort_order\":\"desc\",\"start_date\":\"2026-11-01\",\"tag_ids\":[\"tag_6f2c8f3e42af4fa1\"],\"tag_role\":\"all\",\"timezone\":\"Asia/Shanghai\",\"type\":\"expense\"}|p1:20",
+    "generated_at": "2026-11-08T01:11:12Z"
   }
 }

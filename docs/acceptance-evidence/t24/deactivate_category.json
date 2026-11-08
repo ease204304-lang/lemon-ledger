@@ -2,18 +2,18 @@
   "status": 200,
   "body": {
     "data": {
-      "id": "cat_56c6b0be84d047f0",
+      "id": "cat_bf39fd81fdc444e5",
       "parent_id": null,
       "type": "expense",
       "name": "停用分类",
       "status": "inactive",
-      "created_at": "2026-11-07T15:56:34+00:00",
-      "updated_at": "2026-11-07T15:56:34+00:00"
+      "created_at": "2026-11-08T01:11:13+00:00",
+      "updated_at": "2026-11-08T01:11:13+00:00"
     },
     "meta": {
       "snapshot_version": 0,
-      "condition_key": "cat:cat_56c6b0be84d047f0",
-      "generated_at": "2026-11-07T15:56:34Z"
+      "condition_key": "cat:cat_bf39fd81fdc444e5",
+      "generated_at": "2026-11-08T01:11:13Z"
     }
   }
 }

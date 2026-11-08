@@ -271,21 +271,31 @@ class StatsSummary {
     this.balanceChangeRate,
   });
 
-  factory StatsSummary.fromJson(Map<String, dynamic> j) => StatsSummary(
-        income: j['income'] as String? ?? '0.00',
-        expense: j['expense'] as String? ?? '0.00',
-        balance: j['balance'] as String? ?? '0.00',
-        balanceRate: j['balance_rate'] as String?,
-        incomeCount: (j['income_count'] as num?)?.toInt() ?? 0,
-        expenseCount: (j['expense_count'] as num?)?.toInt() ?? 0,
-        dailyAverage: j['daily_average'] as String?,
-        dailyAverageDays: (j['daily_average_days'] as num?)?.toInt() ?? 0,
-        compareIncome: j['compare_income'] as String?,
-        compareExpense: j['compare_expense'] as String?,
-        compareBalance: j['compare_balance'] as String?,
-        balanceDiff: j['balance_diff'] as String?,
-        balanceChangeRate: j['balance_change_rate'] as String?,
-      );
+  factory StatsSummary.fromJson(Map<String, dynamic> j) {
+    // 同期对比: 服务端嵌套在 comparison 对象里 (TECH 03 契约的扁平别名也兼容)
+    final cmp = (j['comparison'] as Map<String, dynamic>?) ?? const {};
+    final cmpIncome = (cmp['income'] is Map<String, dynamic>)
+        ? cmp['income'] as Map<String, dynamic>
+        : null;
+    final cmpExpense = (cmp['expense'] is Map<String, dynamic>)
+        ? cmp['expense'] as Map<String, dynamic>
+        : null;
+    return StatsSummary(
+      income: j['income'] as String? ?? '0.00',
+      expense: j['expense'] as String? ?? '0.00',
+      balance: j['balance'] as String? ?? '0.00',
+      balanceRate: j['balance_rate'] as String?,
+      incomeCount: (j['income_count'] as num?)?.toInt() ?? 0,
+      expenseCount: (j['expense_count'] as num?)?.toInt() ?? 0,
+      dailyAverage: j['daily_average'] as String?,
+      dailyAverageDays: (j['days'] as num?)?.toInt() ?? 0,
+      compareIncome: cmpIncome?['amount'] as String?,
+      compareExpense: cmpExpense?['amount'] as String?,
+      compareBalance: cmp['comparison_amount'] as String?,
+      balanceDiff: cmp['difference'] as String?,
+      balanceChangeRate: cmp['change_rate'] as String?,
+    );
+  }
 }
 
 /// 趋势点 (TECH 02 trend)
@@ -310,16 +320,20 @@ class TrendPoint {
     this.compareBalance,
   });
 
-  factory TrendPoint.fromJson(Map<String, dynamic> j) => TrendPoint(
-        bucketStart: j['bucket_start'] as String? ?? '',
-        bucketEnd: j['bucket_end'] as String? ?? '',
-        income: j['income'] as String? ?? '0.00',
-        expense: j['expense'] as String? ?? '0.00',
-        balance: j['balance'] as String? ?? '0.00',
-        compareIncome: j['compare_income'] as String?,
-        compareExpense: j['compare_expense'] as String?,
-        compareBalance: j['compare_balance'] as String?,
-      );
+  factory TrendPoint.fromJson(Map<String, dynamic> j) {
+    // 同期对比嵌套在 comparison 里
+    final cmp = (j['comparison'] as Map<String, dynamic>?) ?? const {};
+    return TrendPoint(
+      bucketStart: j['bucket_start'] as String? ?? '',
+      bucketEnd: j['bucket_end'] as String? ?? '',
+      income: j['income'] as String? ?? '0.00',
+      expense: j['expense'] as String? ?? '0.00',
+      balance: j['balance'] as String? ?? '0.00',
+      compareIncome: cmp['income'] as String?,
+      compareExpense: cmp['expense'] as String?,
+      compareBalance: cmp['balance'] as String?,
+    );
+  }
 }
 
 /// 分类/对象/标签榜单条目 (TECH 02 categories / tags / merchants)
@@ -332,7 +346,7 @@ class RankItem {
   final double progress; // 0..1 进度条
   final int level; // 1 = 一级, 2 = 二级, 0 = 特殊桶
   final String? parentId;
-  final String? drillKey; // 穿透键 (TECH 02: 榜单返回穿透键)
+  final Map<String, dynamic>? drillKey; // 穿透键 (服务端 drilldown 对象)
 
   const RankItem({
     required this.id,
@@ -346,17 +360,34 @@ class RankItem {
     this.drillKey,
   });
 
-  factory RankItem.fromJson(Map<String, dynamic> j) => RankItem(
-        id: j['id'] as String? ?? '',
-        name: j['name'] as String? ?? '',
-        amount: j['amount'] as String? ?? '0.00',
-        rate: j['rate'] as String?,
-        count: (j['count'] as num?)?.toInt() ?? 0,
-        progress: (j['progress'] as num?)?.toDouble() ?? 0,
-        level: (j['level'] as num?)?.toInt() ?? 1,
-        parentId: j['parent_id'] as String?,
-        drillKey: j['drill_key'] as String?,
-      );
+  factory RankItem.fromJson(Map<String, dynamic> j) {
+    // id 别名: 分类榜 category_id / 标签榜 tag_id / 对象榜 counterparty_id
+    final id = (j['id'] ?? j['category_id'] ?? j['tag_id'] ?? j['counterparty_id'])
+        as String? ??
+        '';
+    // 占比别名: rate (TECH 契约) / ratio (服务端实现)
+    final rate = (j['rate'] ?? j['ratio']) as String?;
+    // progress: 服务端返回 "100.00" (百分数字符串) 或数字, 统一归一到 0..1
+    double progress = 0;
+    final rawProgress = j['progress'];
+    if (rawProgress is num) {
+      progress = rawProgress.toDouble();
+    } else if (rawProgress is String) {
+      progress = double.tryParse(rawProgress) ?? 0;
+    }
+    if (progress > 1) progress = progress / 100.0;
+    return RankItem(
+      id: id,
+      name: j['name'] as String? ?? '',
+      amount: j['amount'] as String? ?? '0.00',
+      rate: rate,
+      count: (j['count'] as num?)?.toInt() ?? 0,
+      progress: progress.clamp(0, 1),
+      level: (j['level'] as num?)?.toInt() ?? 1,
+      parentId: j['parent_id'] as String?,
+      drillKey: (j['drilldown'] ?? j['drill_key']) as Map<String, dynamic>?,
+    );
+  }
 }
 
 /// 分类榜 (结余时返回两侧)
@@ -370,7 +401,7 @@ class CategoryRanking {
         items: ((j['items'] as List?) ?? const [])
             .map((e) => RankItem.fromJson(e as Map<String, dynamic>))
             .toList(),
-        total: j['total'] as String? ?? '0.00',
+        total: (j['total_amount'] ?? j['total']) as String? ?? '0.00',
       );
 }
 
@@ -389,13 +420,14 @@ class TagChart {
   });
 
   factory TagChart.fromJson(Map<String, dynamic> j) => TagChart(
-        slices: ((j['slices'] as List?) ?? const [])
+        // 服务端: chart (环形图) / leaderboard (榜单); TECH 契约: slices / ranking
+        slices: ((j['chart'] ?? j['slices']) as List? ?? const [])
             .map((e) => RankItem.fromJson(e as Map<String, dynamic>))
             .toList(),
-        ranking: ((j['ranking'] as List?) ?? const [])
+        ranking: ((j['leaderboard'] ?? j['ranking']) as List? ?? const [])
             .map((e) => RankItem.fromJson(e as Map<String, dynamic>))
             .toList(),
-        total: j['total'] as String? ?? '0.00',
+        total: (j['total_amount'] ?? j['total']) as String? ?? '0.00',
       );
 }
 
@@ -477,12 +509,14 @@ class TxDetail {
 class TxPage {
   final List<TxDetail> items;
   final String? nextCursor;
-  final String total;
+  final String total; // 明细金额合计 (total_amount)
+  final int totalCount; // 明细笔数 (服务端 total)
 
   const TxPage({
     required this.items,
     required this.nextCursor,
     required this.total,
+    this.totalCount = 0,
   });
 
   factory TxPage.fromJson(Map<String, dynamic> j) => TxPage(
@@ -490,7 +524,8 @@ class TxPage {
             .map((e) => TxDetail.fromJson(e as Map<String, dynamic>))
             .toList(),
         nextCursor: j['next_cursor'] as String?,
-        total: j['total'] as String? ?? '0.00',
+        total: (j['total_amount'] ?? j['total']) as String? ?? '0.00',
+        totalCount: (j['total'] is num) ? (j['total'] as num).toInt() : 0,
       );
 }
 
@@ -510,15 +545,19 @@ class BalanceRanking {
     required this.balance,
   });
 
-  factory BalanceRanking.fromJson(Map<String, dynamic> j) => BalanceRanking(
-        incomeContribution: CategoryRanking.fromJson(
-            (j['income_contribution'] as Map<String, dynamic>?) ?? const {}),
-        expenseImpact: CategoryRanking.fromJson(
-            (j['expense_impact'] as Map<String, dynamic>?) ?? const {}),
-        incomeTotal: j['income_total'] as String? ?? '0.00',
-        expenseTotal: j['expense_total'] as String? ?? '0.00',
-        balance: j['balance'] as String? ?? '0.00',
-      );
+  factory BalanceRanking.fromJson(Map<String, dynamic> j) {
+    // 服务端: {summary, income_contribution, expense_impact}
+    final s = (j['summary'] as Map<String, dynamic>?) ?? const {};
+    return BalanceRanking(
+      incomeContribution: CategoryRanking.fromJson(
+          (j['income_contribution'] as Map<String, dynamic>?) ?? const {}),
+      expenseImpact: CategoryRanking.fromJson(
+          (j['expense_impact'] as Map<String, dynamic>?) ?? const {}),
+      incomeTotal: s['income'] as String? ?? '0.00',
+      expenseTotal: s['expense'] as String? ?? '0.00',
+      balance: s['balance'] as String? ?? j['balance'] as String? ?? '0.00',
+    );
+  }
 }
 
 /// 统计 API 客户端
@@ -534,8 +573,8 @@ class StatsApiClient {
   })  : baseUrl = baseUrl ?? _defaultBaseUrl,
         _http = httpClient ?? http.Client();
 
-  /// 默认服务端地址 (Android 模拟器访问宿主机用 10.0.2.2)
-  static const String _defaultBaseUrl = 'http://10.0.2.2:8800';
+  /// 默认服务端地址 (Android 模拟器访问宿主机用 10.0.2.2, 端口 8000)
+  static const String _defaultBaseUrl = 'http://10.0.2.2:8000';
 
   /// 可切换的服务端地址 (设置页 / 调试)
   static String endpoint = _defaultBaseUrl;
@@ -629,6 +668,93 @@ class StatsApiClient {
       jsonDecode(r.body) as Map<String, dynamic>,
       TxDetail.fromJson,
     );
+  }
+
+  // ── 同步用写接口 (POST / GET 维度 + 交易上传) ──────────────────────────
+
+  Future<Map<String, dynamic>> _post(String path, Map<String, dynamic> body,
+      {Map<String, String>? params}) async {
+    final uri = _uri(path, params ?? const {});
+    final r = await _http.post(uri,
+        headers: const {'Content-Type': 'application/json'},
+        body: jsonEncode(body));
+    if (r.statusCode >= 300) _throw(r);
+    return jsonDecode(r.body) as Map<String, dynamic>;
+  }
+
+  /// 连接测试 — 返回 200 即服务端可用
+  Future<bool> ping() async {
+    try {
+      final base = Uri.parse(baseUrl);
+      if (!base.hasScheme || base.host.isEmpty) return false;
+      final uri = base.replace(path: '/openapi.json');
+      final r = await _http.get(uri).timeout(const Duration(seconds: 6));
+      return r.statusCode == 200;
+    } catch (_) {
+      return false;
+    }
+  }
+
+  /// GET /api/books — 账本列表 [{id, name, ...}]
+  Future<List<Map<String, dynamic>>> listBooks() async {
+    final uri = _uri('/api/books', const {});
+    final r = await _http.get(uri).timeout(timeout);
+    if (r.statusCode != 200) _throw(r);
+    final j = jsonDecode(r.body) as Map<String, dynamic>;
+    final d = j['data'];
+    final items = (d is Map ? d['items'] : d) as List? ?? const [];
+    return items.cast<Map<String, dynamic>>();
+  }
+
+  /// POST /api/books — 建账本, 返回 {id, name}
+  Future<Map<String, dynamic>> createBook(String name) async {
+    final j = await _post('/api/books', {'name': name});
+    return (j['data'] as Map<String, dynamic>).cast<String, dynamic>();
+  }
+
+  /// GET /api/categories?status=all — 全局分类 [{id, name, type, status}]
+  Future<List<Map<String, dynamic>>> listCategories({String? type}) async {
+    final params = <String, String>{'status': 'all'};
+    if (type != null) params['type'] = type;
+    final uri = _uri('/api/categories', params);
+    final r = await _http.get(uri).timeout(timeout);
+    if (r.statusCode != 200) _throw(r);
+    final j = jsonDecode(r.body) as Map<String, dynamic>;
+    final d = j['data'];
+    final items = (d is Map ? d['items'] : d) as List? ?? const [];
+    return items.cast<Map<String, dynamic>>();
+  }
+
+  /// POST /api/categories — 建分类, 返回 {id, name}
+  Future<Map<String, dynamic>> createCategory(
+      String name, String type) async {
+    final j = await _post('/api/categories', {'name': name, 'type': type});
+    return (j['data'] as Map<String, dynamic>).cast<String, dynamic>();
+  }
+
+  /// GET /api/tags — 全局标签 [{id, name}]
+  Future<List<Map<String, dynamic>>> listTags() async {
+    final uri = _uri('/api/tags', const {});
+    final r = await _http.get(uri).timeout(timeout);
+    if (r.statusCode != 200) _throw(r);
+    final j = jsonDecode(r.body) as Map<String, dynamic>;
+    final d = j['data'];
+    final items = (d is Map ? d['items'] : d) as List? ?? const [];
+    return items.cast<Map<String, dynamic>>();
+  }
+
+  /// POST /api/tags — 建标签, 返回 {id, name}
+  Future<Map<String, dynamic>> createTag(String name) async {
+    final j = await _post('/api/tags', {'name': name});
+    return (j['data'] as Map<String, dynamic>).cast<String, dynamic>();
+  }
+
+  /// POST /api/transactions — 上传一笔交易 (client_ref 幂等: 重复上传去重)
+  /// 返回 {id, deduplicated?}
+  Future<Map<String, dynamic>> createTransaction(
+      Map<String, dynamic> body) async {
+    final j = await _post('/api/transactions', body);
+    return (j['data'] as Map<String, dynamic>).cast<String, dynamic>();
   }
 
   void dispose() => _http.close();

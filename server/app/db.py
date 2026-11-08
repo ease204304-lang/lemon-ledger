@@ -88,6 +88,18 @@ def init_db() -> None:
     conn = get_conn()
     schema = SCHEMA_PATH.read_text(encoding="utf-8")
     conn.executescript(schema)
+    # 轻量列迁移: 旧库补 client_ref (schema.sql 的 CREATE TABLE IF NOT EXISTS 不会加列)
+    try:
+        conn.execute('ALTER TABLE "transaction" ADD COLUMN client_ref TEXT')
+    except sqlite3.OperationalError:
+        pass  # 列已存在
+    try:
+        conn.execute(
+            'CREATE UNIQUE INDEX IF NOT EXISTS idx_tx_client_ref '
+            'ON "transaction"(client_ref) WHERE client_ref IS NOT NULL'
+        )
+    except sqlite3.OperationalError:
+        pass
     conn.execute(
         "INSERT OR IGNORE INTO dimension_version (id, version, updated_at) VALUES (1, 1, ?)",
         (utc_now_iso(),),

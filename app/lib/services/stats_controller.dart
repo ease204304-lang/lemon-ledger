@@ -85,10 +85,14 @@ class DateRange {
           source: source,
         );
       case QuickRange.thisMonth:
+        // 本月 (1 日→今天) 对上月同期 (上月 1 日→上月同一天, 按同进度对齐)
         final pm = DateTime(start.year, start.month - 1, 1);
+        final lastDayOfPrev = DateTime(pm.year, pm.month + 1, 0);
+        final target = DateTime(pm.year, pm.month, end.day);
+        final pmEnd = target.isAfter(lastDayOfPrev) ? lastDayOfPrev : target;
         return DateRange(
           start: pm,
-          end: DateTime(pm.year, pm.month + 1, 0),
+          end: pmEnd,
           source: source,
         );
       case QuickRange.lastMonth:
@@ -99,9 +103,10 @@ class DateRange {
           source: source,
         );
       case QuickRange.thisYear:
+        // 本年 (1/1→今天) 对上年同期 (1/1→去年同一天)
         return DateRange(
           start: DateTime(start.year - 1, 1, 1),
-          end: DateTime(start.year - 1, 12, 31),
+          end: DateTime(start.year - 1, end.month, end.day),
           source: source,
         );
       case QuickRange.custom:
@@ -141,8 +146,16 @@ class CategoryDraft {
 class StatsController extends ChangeNotifier {
   final StatsApiClient api;
 
-  StatsController({StatsApiClient? api})
-      : api = api ?? StatsApiClient(baseUrl: StatsApiClient.endpoint);
+  StatsController({StatsApiClient? api, String? bookId})
+      : api = api ?? StatsApiClient(baseUrl: StatsApiClient.endpoint),
+        _bookId = bookId ?? '';
+
+  /// 当前账本 (由同步层创建/绑定; 默认占位值仅用于离线预览)
+  String _bookId;
+  String get bookId => _bookId;
+
+  /// 绑定账本 (同步完成后由外部调用; 不触发刷新, 供下次 refresh 使用)
+  set bookId(String id) => _bookId = id;
 
   // ── 持久偏好 (统计类型 + 日期选择) ──
   StatsView _view = StatsView.expense;
@@ -169,7 +182,7 @@ class StatsController extends ChangeNotifier {
 
   bool _loading = false;
   String? _error;
-  int _errorCode;
+  int _errorCode = 0;
   int _snapshotVersion = 0;
   String _conditionKey = '';
 
@@ -201,8 +214,13 @@ class StatsController extends ChangeNotifier {
   int get snapshotVersion => _snapshotVersion;
 
   /// 当前已解析的日期区间
+  ///
+  /// 口径 (PRD 03): 自然周期 (本月/本年) 的结束日不能晚于今天 ——
+  /// 服务端按 TECH 契约拒绝未来日期 (400 INVALID_FILTER)。本月取 1 日→今天,
+  /// 本年取 1 月 1 日→今天; 上月/上月是完整已结束周期。
   DateRange get dateRange {
-    final today = DateTime.now();
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
     switch (_quickRange) {
       case QuickRange.last7Days:
         return DateRange(
@@ -225,7 +243,7 @@ class StatsController extends ChangeNotifier {
       case QuickRange.thisMonth:
         return DateRange(
           start: DateTime(today.year, today.month, 1),
-          end: DateTime(today.year, today.month + 1, 0),
+          end: today,
           source: _quickRange,
         );
       case QuickRange.lastMonth:
@@ -237,7 +255,7 @@ class StatsController extends ChangeNotifier {
       case QuickRange.thisYear:
         return DateRange(
           start: DateTime(today.year, 1, 1),
-          end: DateTime(today.year, 12, 31),
+          end: today,
           source: _quickRange,
         );
       case QuickRange.custom:
@@ -248,10 +266,10 @@ class StatsController extends ChangeNotifier {
   }
 
   /// 当前查询条件 (已应用)
-  StatsQuery buildQuery({String bookId = 'book_001'}) {
+  StatsQuery buildQuery({String? bookId}) {
     final r = dateRange;
     return StatsQuery(
-      bookId: bookId,
+      bookId: bookId ?? _bookId,
       view: _view,
       startDate: DateRange._fmt(r.start),
       endDate: DateRange._fmt(r.end),
@@ -389,13 +407,14 @@ class StatsController extends ChangeNotifier {
 
   /// 切换账本 (PRD 06 R1): 保留时间范围, 清除原账本分类/标签/商户筛选
   void switchBook(String bookId) {
+    _bookId = bookId;
     _appliedIncome = const CategoryDraft.all();
     _appliedExpense = const CategoryDraft.all();
     _incomeDraft = const CategoryDraft.all();
     _expenseDraft = const CategoryDraft.all();
     _draftDirty = false;
     notifyListeners();
-    refresh(bookId: bookId);
+    refresh();
   }
 
   // ── 刷新 (渐进加载 + 版本一致性) ──
@@ -404,14 +423,15 @@ class StatsController extends ChangeNotifier {
   ///
   /// 策略 (TECH 05): 先显示同版本已返回的汇总, 再渐进显示其他模块。
   /// 单模块失败保留其他同版本结果。
-  Future<void> refresh({String bookId = 'book_001'}) async {
+  Future<void> refresh({String? bookId}) async {
+    if (bookId != null) _bookId = bookId;
     final gen = ++_requestGeneration;
     _loading = true;
     _error = null;
     _errorCode = 0;
     notifyListeners();
 
-    final q = buildQuery(bookId: bookId);
+    final q = buildQuery();
 
     try {
       // 1) 汇总 (优先)
@@ -521,7 +541,7 @@ class StatsController extends ChangeNotifier {
   /// 加载分类详情下的交易对象榜 (PRD 04: 只在分类详情显示)
   Future<void> loadMerchants({
     required String categoryId,
-    String bookId = 'book_001',
+    String? bookId,
   }) async {
     final gen = ++_requestGeneration;
     final q = buildQuery(bookId: bookId).copyWith(

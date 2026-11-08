@@ -1246,16 +1246,23 @@ def t21(ctx: CaseContext):
     res = _mk_result("T21", "零点与时区")
     fx = _seed(ctx, "t21")
     a = anchors()
-    day = a["this_month_start"]
+    # 时区安全窗口: 止于「上海昨天」— 纽约比上海晚, 任何时区下都不算未来日期
+    # (服务端按请求时区校验未来日期: 上海清晨时纽约仍是前一天, 月末窗口会 400)
+    from datetime import datetime as _dt, timedelta as _td
+    today_d = _dt.strptime(a["today"], "%Y-%m-%d").date() if isinstance(a["today"], str) else a["today"]
+    day = (today_d - _td(days=1)).isoformat()
+    win_start = (today_d - _td(days=8)).isoformat()
     tx = fx.txn("100.00", type="expense", day=day, time="23:59:00")
 
+    v1 = v2 = None
+    items = None
     try:
         r1 = ctx.client.summary(**base_params(
-            fx.book.id, a["this_month_start"], a["this_month_end"],
+            fx.book.id, win_start, day,
             type="expense", timezone="Asia/Shanghai"))
         ctx.save_evidence(r1, "summary_tz_shanghai")
         r2 = ctx.client.summary(**base_params(
-            fx.book.id, a["this_month_start"], a["this_month_end"],
+            fx.book.id, win_start, day,
             type="expense", timezone="America/New_York"))
         ctx.save_evidence(r2, "summary_tz_newyork")
         v1 = pick(_summary_of(r1), "expense", "total_expense")
@@ -1265,7 +1272,7 @@ def t21(ctx: CaseContext):
 
         # 明细中的 transaction_date 应保持原业务日
         det = ctx.client.transactions(**base_params(
-            fx.book.id, a["this_month_start"], a["this_month_end"], type="expense"))
+            fx.book.id, win_start, day, type="expense"))
         ctx.save_evidence(det, "detail")
         items = iter_items(det)
         if items:
@@ -1282,7 +1289,8 @@ def t21(ctx: CaseContext):
     return _finish(ctx, res,
                    {"上海时区": "100.00", "纽约时区": "100.00", "业务日期": day},
                    {"tz_shanghai": v1, "tz_new_york": v2,
-                    "transaction_date": str(pick(items[0], "transaction_date", "date") or "") if items else None})
+                    "transaction_date": str(pick(items[0], "transaction_date", "date") or "")
+                        if items else None})
 
 
 # ==========================================================================

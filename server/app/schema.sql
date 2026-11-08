@@ -116,11 +116,13 @@ CREATE TABLE IF NOT EXISTS "transaction" (
     counterparty_id     TEXT REFERENCES counterparty(id),
     counterparty_name_snapshot TEXT,           -- 交易侧历史名称快照 (支持拆分)
     source_counterparty_id  TEXT,               -- 合并前的源对象标识
+    client_ref          TEXT,                   -- 客户端幂等键 (本地流水 id), 重复上传返回已有记录
     note                TEXT,
     amount_anomaly      INTEGER NOT NULL DEFAULT 0, -- 1 = 历史异常金额
     created_at          TEXT NOT NULL,          -- UTC
     updated_at          TEXT NOT NULL           -- UTC
 );
+-- 唯一索引在 db.init_db 中创建 (需先对旧库做 ALTER TABLE 补列)
 -- 索引: (book_id, transaction_date, type) —— 建议的首要扫描/分页索引
 CREATE INDEX IF NOT EXISTS idx_tx_book_date_type
     ON "transaction"(book_id, transaction_date, type);

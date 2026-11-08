@@ -189,7 +189,7 @@ def main() -> int:
     server_up = wait_for_server(client, args.wait)
 
     selected = [fn for cid, fn in CASES_BY_ID.items()
-                if not only or cid in only]
+                if not only or cid.upper() in only]
     if args.skip_perf:
         selected = [fn for fn in selected if fn.__name__ != "t14"]
     # 保证 ID 顺序
@@ -249,8 +249,9 @@ def main() -> int:
         print(f"       -> {r.result}" + (f" | {r.reason}" if r.reason else ""), flush=True)
 
     summary = summarize(results)
+    meta = _meta()
     payload = {
-        "meta": _meta(),
+        "meta": meta,
         "summary": summary,
         "cases": [r.to_dict() for r in results],
     }

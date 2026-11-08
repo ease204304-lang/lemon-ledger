@@ -12,37 +12,37 @@
         "amount": "4000.00",
         "items": [
           {
-            "id": "tx_a031d9b6b0944e3c",
+            "id": "tx_758a9463c1de409a",
             "type": "expense",
             "amount": "3000.00",
             "currency": "CNY",
             "transaction_date": "2026-11-01",
             "transaction_time": "12:00:00",
-            "category_id": "cat_63f2da5bf7c24f1a",
+            "category_id": "cat_602744efe08d4b69",
             "category_name": "餐饮",
             "category_path": "餐饮",
             "counterparty_id": null,
             "counterparty_name": "未设置商户",
             "note": "acc-test",
-            "created_at": "2026-11-07T15:56:13+00:00",
-            "updated_at": "2026-11-07T15:56:13+00:00",
+            "created_at": "2026-11-08T01:10:53+00:00",
+            "updated_at": "2026-11-08T01:10:53+00:00",
             "amount_anomaly": false
           },
           {
-            "id": "tx_078418576dba4ad6",
+            "id": "tx_43e2e669f40a437c",
             "type": "income",
             "amount": "1000.00",
             "currency": "CNY",
             "transaction_date": "2026-11-01",
             "transaction_time": "12:00:00",
-            "category_id": "cat_4d12bc4ca7564ce9",
+            "category_id": "cat_47fa013af2194121",
             "category_name": "工资",
             "category_path": "工资",
             "counterparty_id": null,
             "counterparty_name": "未设置商户",
             "note": "acc-test",
-            "created_at": "2026-11-07T15:56:13+00:00",
-            "updated_at": "2026-11-07T15:56:13+00:00",
+            "created_at": "2026-11-08T01:10:53+00:00",
+            "updated_at": "2026-11-08T01:10:53+00:00",
             "amount_anomaly": false
           }
         ]
@@ -50,44 +50,44 @@
     ],
     "items": [
       {
-        "id": "tx_a031d9b6b0944e3c",
+        "id": "tx_758a9463c1de409a",
         "type": "expense",
         "amount": "3000.00",
         "currency": "CNY",
         "transaction_date": "2026-11-01",
         "transaction_time": "12:00:00",
-        "category_id": "cat_63f2da5bf7c24f1a",
+        "category_id": "cat_602744efe08d4b69",
         "category_name": "餐饮",
         "category_path": "餐饮",
         "counterparty_id": null,
         "counterparty_name": "未设置商户",
         "note": "acc-test",
-        "created_at": "2026-11-07T15:56:13+00:00",
-        "updated_at": "2026-11-07T15:56:13+00:00",
+        "created_at": "2026-11-08T01:10:53+00:00",
+        "updated_at": "2026-11-08T01:10:53+00:00",
         "amount_anomaly": false
       },
       {
-        "id": "tx_078418576dba4ad6",
+        "id": "tx_43e2e669f40a437c",
         "type": "income",
         "amount": "1000.00",
         "currency": "CNY",
         "transaction_date": "2026-11-01",
         "transaction_time": "12:00:00",
-        "category_id": "cat_4d12bc4ca7564ce9",
+        "category_id": "cat_47fa013af2194121",
         "category_name": "工资",
         "category_path": "工资",
         "counterparty_id": null,
         "counterparty_name": "未设置商户",
         "note": "acc-test",
-        "created_at": "2026-11-07T15:56:13+00:00",
-        "updated_at": "2026-11-07T15:56:13+00:00",
+        "created_at": "2026-11-08T01:10:53+00:00",
+        "updated_at": "2026-11-08T01:10:53+00:00",
         "amount_anomaly": false
       }
     ]
   },
   "meta": {
     "snapshot_version": 0,
-    "condition_key": "{\"book_id\":\"book_e6b2abf528834df5\",\"category_ids\":[],\"comparison_enabled\":false,\"counterparty_ids\":[],\"end_date\":\"2026-11-01\",\"expense_category_ids\":[],\"expense_category_mode\":\"ALL\",\"granularity\":\"day\",\"income_category_ids\":[],\"income_category_mode\":\"ALL\",\"sort\":\"amount\",\"sort_order\":\"desc\",\"start_date\":\"2026-11-01\",\"tag_ids\":[],\"tag_role\":\"all\",\"timezone\":\"Asia/Shanghai\",\"type\":\"balance\"}|p1:20",
-    "generated_at": "2026-11-07T15:56:13Z"
+    "condition_key": "{\"book_id\":\"book_15e8f9f750484cc1\",\"category_ids\":[],\"comparison_enabled\":false,\"counterparty_ids\":[],\"end_date\":\"2026-11-01\",\"expense_category_ids\":[],\"expense_category_mode\":\"ALL\",\"granularity\":\"day\",\"income_category_ids\":[],\"income_category_mode\":\"ALL\",\"sort\":\"amount\",\"sort_order\":\"desc\",\"start_date\":\"2026-11-01\",\"tag_ids\":[],\"tag_role\":\"all\",\"timezone\":\"Asia/Shanghai\",\"type\":\"balance\"}|p1:20",
+    "generated_at": "2026-11-08T01:10:53Z"
   }
 }

@@ -558,8 +558,17 @@ class QuickRangeBar extends StatelessWidget {
             ),
           Padding(
             padding: const EdgeInsets.only(right: 8),
-            child: _chip('自定义', current == QuickRange.custom,
-                () => onCustom?.call() ?? onChanged(QuickRange.custom)),
+            child: _chip(
+              '自定义',
+              current == QuickRange.custom,
+              () {
+                if (onCustom != null) {
+                  onCustom!();
+                } else {
+                  onChanged(QuickRange.custom);
+                }
+              },
+            ),
           ),
         ],
       ),

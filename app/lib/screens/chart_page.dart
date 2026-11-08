@@ -20,6 +20,7 @@ import '../widgets/category_icon.dart';
 import '../widgets/segment.dart';
 import '../widgets/top_tab_bar.dart';
 import 'quick_entry_sheet.dart';
+import 'stats_settings_page.dart';
 import 'tag_manager_page.dart';
 
 enum ChartScope { week, month, year }
@@ -206,6 +207,39 @@ class _ChartPageState extends State<ChartPage> {
               },
               view: _view,
               onViewChanged: (v) => setState(() => _view = v),
+            ),
+            // v1.12.0: 服务端统计入口 (结余/同期对比/标签分析 — PRD 完整口径)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(L.pageH, 4, L.pageH, 4),
+              child: InkWell(
+                onTap: () => Navigator.of(context).push(MaterialPageRoute(
+                    builder: (_) => const StatsSettingsPage())),
+                borderRadius: BorderRadius.circular(8),
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: L.brandYellowTrack,
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(
+                        color: L.brandYellow.withValues(alpha: 0.3), width: 0.5),
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.insights_outlined,
+                          size: 14, color: L.brandYellow),
+                      const SizedBox(width: 6),
+                      const Expanded(
+                        child: Text('服务端统计 · 结余 / 同期对比 / 标签分析',
+                            style: TextStyle(
+                                fontSize: 12, color: L.textPrimary)),
+                      ),
+                      const Icon(Icons.chevron_right,
+                          size: 14, color: L.textTertiary),
+                    ],
+                  ),
+                ),
+              ),
             ),
             Expanded(
               child: FutureBuilder<_ChartData>(

@@ -4,7 +4,7 @@
     "error": {
       "code": "INVALID_FILTER",
       "message": "交易金额必须大于零。",
-      "request_id": "req_8f1e46f59593499f",
+      "request_id": "req_dcd7eec8b5264118",
       "field": "amount",
       "reason": "non_positive_amount",
       "amount": "0"

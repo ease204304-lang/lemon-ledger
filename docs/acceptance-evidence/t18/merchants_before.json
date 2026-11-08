@@ -4,7 +4,7 @@
     "total_count": 2,
     "items": [
       {
-        "counterparty_id": "cp_ece3fcec5f9d4fbc",
+        "counterparty_id": "cp_9147d5eff96a4c06",
         "name": "星巴克咖啡店",
         "amount": "200.00",
         "ratio": "66.67",
@@ -13,18 +13,18 @@
         "progress": "66.67",
         "is_unset": false,
         "drilldown": {
-          "book_id": "book_089f82a795604c21",
+          "book_id": "book_a5699ea1e7304911",
           "start_date": "2026-11-01",
-          "end_date": "2026-11-07",
+          "end_date": "2026-11-08",
           "timezone": "Asia/Shanghai",
           "type": "expense",
           "counterparty_ids": [
-            "cp_ece3fcec5f9d4fbc"
+            "cp_9147d5eff96a4c06"
           ]
         }
       },
       {
-        "counterparty_id": "cp_3b1796886d0b4392",
+        "counterparty_id": "cp_79d2a7b4f8c74242",
         "name": "星巴克咖啡",
         "amount": "100.00",
         "ratio": "33.33",
@@ -33,13 +33,13 @@
         "progress": "33.33",
         "is_unset": false,
         "drilldown": {
-          "book_id": "book_089f82a795604c21",
+          "book_id": "book_a5699ea1e7304911",
           "start_date": "2026-11-01",
-          "end_date": "2026-11-07",
+          "end_date": "2026-11-08",
           "timezone": "Asia/Shanghai",
           "type": "expense",
           "counterparty_ids": [
-            "cp_3b1796886d0b4392"
+            "cp_79d2a7b4f8c74242"
           ]
         }
       }
@@ -48,8 +48,8 @@
     "remaining_count": 0
   },
   "meta": {
-    "snapshot_version": 3755,
-    "condition_key": "merchants|{\"book_id\":\"book_089f82a795604c21\",\"category_ids\":[],\"comparison_enabled\":false,\"counterparty_ids\":[],\"end_date\":\"2026-11-07\",\"expense_category_ids\":[],\"expense_category_mode\":\"ALL\",\"granularity\":\"day\",\"income_category_ids\":[],\"income_category_mode\":\"ALL\",\"sort\":\"amount\",\"sort_order\":\"desc\",\"start_date\":\"2026-11-01\",\"tag_ids\":[],\"tag_role\":\"all\",\"timezone\":\"Asia/Shanghai\",\"type\":\"expense\"}",
-    "generated_at": "2026-11-07T15:56:33Z"
+    "snapshot_version": 3864,
+    "condition_key": "merchants|{\"book_id\":\"book_a5699ea1e7304911\",\"category_ids\":[],\"comparison_enabled\":false,\"counterparty_ids\":[],\"end_date\":\"2026-11-08\",\"expense_category_ids\":[],\"expense_category_mode\":\"ALL\",\"granularity\":\"day\",\"income_category_ids\":[],\"income_category_mode\":\"ALL\",\"sort\":\"amount\",\"sort_order\":\"desc\",\"start_date\":\"2026-11-01\",\"tag_ids\":[],\"tag_role\":\"all\",\"timezone\":\"Asia/Shanghai\",\"type\":\"expense\"}",
+    "generated_at": "2026-11-08T01:11:13Z"
   }
 }

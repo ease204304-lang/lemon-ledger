@@ -8,18 +8,18 @@
     "income_count": 1,
     "expense_count": 1,
     "count": 2,
-    "days": 7,
-    "daily_average": "71.43",
-    "average_daily_income": "142.86",
-    "average_daily_expense": "71.43",
-    "average_daily_balance": "71.43",
+    "days": 8,
+    "daily_average": "62.50",
+    "average_daily_income": "125.00",
+    "average_daily_expense": "62.50",
+    "average_daily_balance": "62.50",
     "granularity": "day",
     "start_date": "2026-11-01",
-    "end_date": "2026-11-07"
+    "end_date": "2026-11-08"
   },
   "meta": {
-    "snapshot_version": 3740,
-    "condition_key": "summary|{\"book_id\":\"book_aaa69511a4fa4551\",\"category_ids\":[],\"comparison_enabled\":false,\"counterparty_ids\":[],\"end_date\":\"2026-11-07\",\"expense_category_ids\":[\"cat_a9c961c3d0a14ef2\"],\"expense_category_mode\":\"SELECTED\",\"granularity\":\"day\",\"income_category_ids\":[\"cat_dfcd5e27028b41f1\"],\"income_category_mode\":\"SELECTED\",\"sort\":\"amount\",\"sort_order\":\"desc\",\"start_date\":\"2026-11-01\",\"tag_ids\":[],\"tag_role\":\"all\",\"timezone\":\"Asia/Shanghai\",\"type\":\"balance\"}",
-    "generated_at": "2026-11-07T15:56:13Z"
+    "snapshot_version": 3849,
+    "condition_key": "summary|{\"book_id\":\"book_abc7b23e7a014886\",\"category_ids\":[],\"comparison_enabled\":false,\"counterparty_ids\":[],\"end_date\":\"2026-11-08\",\"expense_category_ids\":[\"cat_9519bd44cddb457d\"],\"expense_category_mode\":\"SELECTED\",\"granularity\":\"day\",\"income_category_ids\":[\"cat_ef29c1b14f8d4883\"],\"income_category_mode\":\"SELECTED\",\"sort\":\"amount\",\"sort_order\":\"desc\",\"start_date\":\"2026-11-01\",\"tag_ids\":[],\"tag_role\":\"all\",\"timezone\":\"Asia/Shanghai\",\"type\":\"balance\"}",
+    "generated_at": "2026-11-08T01:10:53Z"
   }
 }
