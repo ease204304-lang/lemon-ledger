@@ -14,6 +14,7 @@ library;
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 
+import '../data/account_service.dart';
 import '../data/models.dart';
 import '../data/repository.dart';
 import '../data/tag_service.dart';
@@ -50,6 +51,10 @@ class _EntryPageState extends State<EntryPage> {
   final _noteFocus = FocusNode(debugLabel: 'entry-note');
   bool _showAllCategories = false; // 常用 ↔ 全部
 
+  // v1.13.0 资产管理: 账户选择 + 余额联动
+  String? _accountId;
+  List<Account> _accounts = const [];
+
   @override
   void initState() {
     super.initState();
@@ -66,6 +71,66 @@ class _EntryPageState extends State<EntryPage> {
     // 页面打开后主动把焦点移出任何文本框 (系统输入法随之收起)
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) _noteFocus.unfocus();
+    });
+    _loadAccounts();
+  }
+
+  /// v1.13.0: 加载账户列表
+  Future<void> _loadAccounts() async {
+    final list = await AccountService.instance.all();
+    if (!mounted) return;
+    setState(() => _accounts = list);
+  }
+
+  /// v1.13.0: 选择账户 (资产管理联动)
+  Future<void> _pickAccount() async {
+    if (_accounts.isEmpty) {
+      _toast('还没有账户, 请先到「发现 → 资产管理」添加');
+      return;
+    }
+    final picked = await showModalBottomSheet<String?>(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) => Container(
+        decoration: const BoxDecoration(
+          color: L.surface,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        child: SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const SizedBox(height: 12),
+              const Text('选择账户',
+                  style: TextStyle(
+                      fontSize: 15, fontWeight: FontWeight.w600)),
+              const SizedBox(height: 8),
+              ListTile(
+                leading: const Icon(Icons.account_balance_wallet_outlined),
+                title: const Text('不绑定账户'),
+                onTap: () => Navigator.pop(ctx, ''),
+              ),
+              for (final a in _accounts)
+                ListTile(
+                  leading: Icon(a.kind.isLiability
+                      ? Icons.credit_card_outlined
+                      : Icons.account_balance_outlined),
+                  title: Text(a.name),
+                  trailing: Text(
+                    '${a.balanceCents < 0 ? '-' : ''}¥${(a.balanceCents.abs() / 100).toStringAsFixed(2)}',
+                    style: const TextStyle(fontSize: 13, color: L.textSecondary),
+                  ),
+                  onTap: () => Navigator.pop(ctx, a.id),
+                ),
+              const SizedBox(height: 8),
+            ],
+          ),
+        ),
+      ),
+    );
+    if (picked == null) return;
+    setState(() {
+      _accountId = picked.isEmpty ? null : picked;
     });
   }
 
@@ -106,6 +171,8 @@ class _EntryPageState extends State<EntryPage> {
       // → 把本页自带的数字键盘顶出可视区。
       _noteCtrl.selection = const TextSelection.collapsed(offset: -1);
       _date = DateTime.fromMillisecondsSinceEpoch(tx.epochDay * 86400000);
+      // v1.13.0: 编辑时恢复原账户
+      _accountId = tx.accountId;
     });
     final cat = await CategoryRepository.instance.byId(tx.categoryId);
     if (cat != null) setState(() => _selected = cat);
@@ -140,10 +207,14 @@ class _EntryPageState extends State<EntryPage> {
         categoryId: _selected!.id,
         amountCents: cents,
         note: _note,
+        accountId: _accountId,
+        clearAccount: _accountId == null,
       );
       await repo.update(updated);
       // v1.8.0: 编辑后同步标签关联
       await TagService.instance.syncForTx(updated);
+      // v1.13.0: 账户余额联动 (编辑: 先回退旧变动, 再应用新变动)
+      await _syncAccountBalance(cur, updated);
     } else {
       final tx = Tx(
         id: const Uuid().v4(),
@@ -153,16 +224,37 @@ class _EntryPageState extends State<EntryPage> {
         amountCents: cents,
         note: _note,
         createdAt: DateTime.now(),
+        accountId: _accountId,
       );
       await repo.insert(tx);
       // v1.8.0: 保存后同步标签关联 (备注整体 bump + 命中标签建 tx_tag)
       if (_note.trim().isNotEmpty) {
         await TagService.instance.syncForTx(tx);
       }
+      // v1.13.0: 账户余额联动 (收入 +, 支出 -)
+      await _syncAccountBalance(null, tx);
     }
     if (!mounted) return;
     widget.onNavigate(0); // 跳回首页 (改动 3: = = 保存 + 跳走)
   }
+
+  /// v1.13.0: 账户余额联动
+  ///
+  /// 收入 → 余额 +amount; 支出 → 余额 -amount (信用卡余额变负表示欠款)。
+  /// 编辑场景: 先回退旧流水的变动, 再应用新流水的变动。
+  Future<void> _syncAccountBalance(Tx? oldTx, Tx newTx) async {
+    final svc = AccountService.instance;
+    if (oldTx != null && oldTx.accountId != null) {
+      await svc.applyDelta(oldTx.accountId, -_deltaOf(oldTx));
+    }
+    if (newTx.accountId != null) {
+      await svc.applyDelta(newTx.accountId, _deltaOf(newTx));
+    }
+  }
+
+  /// 流水对账户余额的变动量 (收入正, 支出负)
+  static int _deltaOf(Tx tx) =>
+      tx.type == TxType.income ? tx.amountCents : -tx.amountCents;
 
   Future<void> _pickDate() async {
     // v1.8.1: 用自定义日期对话框 (双击某天 = 确定)
@@ -241,6 +333,10 @@ class _EntryPageState extends State<EntryPage> {
                   setState(() => _selected = c);
                   _loadTags(); // v1.7.0: 选分类后刷新标签
                 },
+                // v1.13.0: 账户选择 (资产管理联动)
+                accountId: _accountId,
+                accounts: _accounts,
+                onPickAccount: _pickAccount,
               ),
             ),
             // 3.5 标签行 (v1.9.0: 增强显示 — 更大字号 + 彩色 chip 背景)
@@ -621,20 +717,107 @@ class _Module1CategoriesAndNote extends StatelessWidget {
   final TxType type;
   final Category? selected;
   final ValueChanged<Category> onSelect;
+  // v1.13.0: 账户选择 (资产管理联动)
+  final String? accountId;
+  final List<Account> accounts;
+  final VoidCallback onPickAccount;
+
   const _Module1CategoriesAndNote({
     required this.type,
     required this.selected,
     required this.onSelect,
+    this.accountId,
+    this.accounts = const [],
+    required this.onPickAccount,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: L.surface,
-      child: EntrySplitCategories(
-        type: type,
-        selected: selected,
-        onSelect: onSelect,
+      // v1.13.0: 加 clipBehavior 需要用 decoration 携带颜色 (color 与 decoration 互斥)
+      decoration: const BoxDecoration(color: L.surface),
+      clipBehavior: Clip.hardEdge,
+      child: Column(
+        children: [
+          Expanded(
+            child: EntrySplitCategories(
+              type: type,
+              selected: selected,
+              onSelect: onSelect,
+            ),
+          ),
+          // v1.13.0: 账户选择行 (空间不足时可被压缩, 避免溢出)
+          Flexible(
+            child: _AccountRow(
+              accountId: accountId,
+              accounts: accounts,
+              onTap: onPickAccount,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// v1.13.0: 账户选择行 (记一笔页底部)
+class _AccountRow extends StatelessWidget {
+  final String? accountId;
+  final List<Account> accounts;
+  final VoidCallback onTap;
+
+  const _AccountRow({
+    required this.accountId,
+    required this.accounts,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    Account? acc;
+    if (accountId != null) {
+      for (final a in accounts) {
+        if (a.id == accountId) {
+          acc = a;
+          break;
+        }
+      }
+    }
+    final label = acc == null ? '不绑定账户' : acc.name;
+    final balance = acc == null
+        ? null
+        : '${acc.balanceCents < 0 ? '-' : ''}¥${(acc.balanceCents.abs() / 100).toStringAsFixed(2)}';
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
+        decoration: const BoxDecoration(
+          border: Border(top: BorderSide(color: L.dividerLight, width: 0.5)),
+        ),
+        child: Row(
+          children: [
+            Icon(
+              acc == null
+                  ? Icons.account_balance_wallet_outlined
+                  : (acc.kind.isLiability
+                      ? Icons.credit_card_outlined
+                      : Icons.account_balance_outlined),
+              size: 15,
+              color: L.textTertiary,
+            ),
+            const SizedBox(width: 6),
+            Text(label,
+                style: const TextStyle(fontSize: 12, color: L.textSecondary)),
+            if (balance != null) ...[
+              const SizedBox(width: 6),
+              Text(balance,
+                  style: const TextStyle(
+                      fontSize: 11, color: L.textTertiary)),
+            ],
+            const Spacer(),
+            const Icon(Icons.arrow_drop_down, size: 16, color: L.textSecondary),
+          ],
+        ),
       ),
     );
   }

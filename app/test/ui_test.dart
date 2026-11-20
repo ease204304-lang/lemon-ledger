@@ -95,18 +95,20 @@ void main() {
     expect(current, equals(2));
   });
 
-  testWidgets('DiscoverPage 显示 4 个占位卡片', (tester) async {
+  testWidgets('DiscoverPage 显示功能入口 (v1.13.0: 资产管理/分类预算 + 2 占位)',
+      (tester) async {
     await tester.pumpWidget(_wrap(DiscoverPage(onNavigate: (_) {})));
     await tester.pumpAndSettle();
     // AppBar 标题 与 Tab 栏标签同名, 用 findsWidgets
     expect(find.text('发现'), findsWidgets);
-    expect(find.text('理财社区'), findsOneWidget);
-    expect(find.text('预算管理'), findsOneWidget);
     expect(find.text('资产管理'), findsOneWidget);
+    expect(find.text('分类预算'), findsOneWidget);
+    expect(find.text('理财社区'), findsOneWidget);
     expect(find.text('购物返现'), findsOneWidget);
   });
 
-  testWidgets('MinePage 显示 4 个分区', (tester) async {
+  testWidgets('MinePage 显示 6 个分区 (v1.13.0 +隐私锁/记账提醒)',
+      (tester) async {
     tester.view.physicalSize = const Size(1080, 2340);
     tester.view.devicePixelRatio = 2.625;
     addTearDown(tester.view.reset);
@@ -117,11 +119,14 @@ void main() {
     expect(find.text('数据备份'), findsOneWidget);
     expect(find.text('导出 CSV'), findsOneWidget);
     expect(find.text('导出 Excel'), findsOneWidget);
-    expect(find.text('云同步'), findsOneWidget);
     expect(find.text('主题'), findsOneWidget);
     expect(find.text('字号'), findsOneWidget);
-    // 滚动到底部找到 关于/重置数据
-    await tester.scrollUntilVisible(find.text('关于'), 300);
+    // v1.13.0: 新分区 (隐私锁 / 记账提醒 / 统计服务)
+    expect(find.text('隐私锁'), findsOneWidget);
+    expect(find.text('记账提醒'), findsOneWidget);
+    // 滚动到底部找到 云同步/关于/重置数据 (新增分区后变长)
+    await tester.scrollUntilVisible(find.text('云同步'), 300);
+    expect(find.text('云同步'), findsOneWidget);
     expect(find.text('关于'), findsOneWidget);
     expect(find.text('重置数据'), findsOneWidget);
   });

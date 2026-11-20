@@ -5,7 +5,8 @@
 /// v3: + tag 表 (标签)
 /// v4: + category.pinned (常用分类)
 /// v5: + tag.category_id + tx_tag 关联表 (标签统计, U1.9 收尾)
-/// v6: 分类清单重整 (用户指定: 支出 15 类 / 收入 8 类)
+/// v6: 分类清单重整 (用户指定: 支出 14 类 / 收入 8 类)
+/// v7: + account (账户/资产) + category_budget (分类预算) + remind (记账提醒) + app_lock (隐私锁)
 library;
 
 import 'package:path/path.dart' as p;
@@ -30,7 +31,7 @@ class AppDatabase {
     final path = p.join(dir.path, 'lemon_ledger.db');
     return openDatabase(
       path,
-      version: 6,
+      version: 7,
       onCreate: _onCreate,
       onUpgrade: _onUpgrade,
     );
@@ -58,7 +59,8 @@ class AppDatabase {
         amount_cents  INTEGER NOT NULL,
         note          TEXT NOT NULL DEFAULT '',
         photo_path    TEXT,
-        created_at    INTEGER NOT NULL
+        created_at    INTEGER NOT NULL,
+        account_id    TEXT
       )
     ''');
     await db.execute(
@@ -118,6 +120,87 @@ class AppDatabase {
 
     // v5: 从种子流水备注提取演示标签 (让标签统计/饼图开箱即有数据)
     await _backfillTagsFromTxs(db);
+
+    // v7: 账户 / 分类预算 / 记账提醒 / 隐私锁
+    await _createV7Tables(db);
+    await _seedDefaultAccounts(db);
+  }
+
+  /// v7 新增表结构 (账户/分类预算/记账提醒/隐私锁)
+  Future<void> _createV7Tables(Database db) async {
+    // 账户: 现金/银行卡/信用卡/储蓄/理财 (资产与负债统一管理)
+    await db.execute('''
+      CREATE TABLE IF NOT EXISTS account (
+        id            TEXT PRIMARY KEY,
+        name          TEXT NOT NULL,
+        kind          TEXT NOT NULL DEFAULT 'cash',  -- cash/debit/credit/saving/invest
+        balance_cents INTEGER NOT NULL DEFAULT 0,   -- 当前余额 (分)
+        initial_cents INTEGER NOT NULL DEFAULT 0,   -- 初始余额 (分, 用于计算净资产变化)
+        currency      TEXT NOT NULL DEFAULT 'CNY',
+        include_net   INTEGER NOT NULL DEFAULT 1,   -- 是否计入净资产
+        archived      INTEGER NOT NULL DEFAULT 0,
+        sort_order    INTEGER NOT NULL DEFAULT 0,
+        created_at    INTEGER NOT NULL
+      )
+    ''');
+    await db.execute(
+        'CREATE INDEX IF NOT EXISTS idx_account_sort ON account(sort_order)');
+
+    // 分类预算: 按 (年, 月, 分类) 设置上限, 0 = 不设限
+    await db.execute('''
+      CREATE TABLE IF NOT EXISTS category_budget (
+        year         INTEGER NOT NULL,
+        month        INTEGER NOT NULL,
+        category_id  TEXT NOT NULL,
+        amount_cents INTEGER NOT NULL,
+        PRIMARY KEY (year, month, category_id)
+      )
+    ''');
+
+    // 记账提醒: 每日提醒时间 + 启用开关 (分钟数 0..1439)
+    await db.execute('''
+      CREATE TABLE IF NOT EXISTS remind (
+        id         INTEGER PRIMARY KEY CHECK (id = 1),
+        enabled    INTEGER NOT NULL DEFAULT 0,
+        minute     INTEGER NOT NULL DEFAULT 1320,   -- 默认 22:00
+        last_fired_epoch_day INTEGER NOT NULL DEFAULT 0
+      )
+    ''');
+
+    // 隐私锁: 应用锁 (密码哈希 + 生物识别开关)
+    await db.execute('''
+      CREATE TABLE IF NOT EXISTS app_lock (
+        id            INTEGER PRIMARY KEY CHECK (id = 1),
+        enabled       INTEGER NOT NULL DEFAULT 0,
+        password_hash TEXT,
+        biometric     INTEGER NOT NULL DEFAULT 0,
+        failed_count  INTEGER NOT NULL DEFAULT 0,
+        locked_until  INTEGER NOT NULL DEFAULT 0
+      )
+    ''');
+  }
+
+  /// 首次创建时给几个默认账户 (现金/银行卡/信用卡), 让资产管理页开箱可用
+  Future<void> _seedDefaultAccounts(Database db) async {
+    final now = DateTime.now().millisecondsSinceEpoch;
+    const defaults = <Map<String, Object?>>[
+      {'id': 'acc.cash', 'name': '现金', 'kind': 'cash', 'sort_order': 0},
+      {'id': 'acc.bank', 'name': '银行卡', 'kind': 'debit', 'sort_order': 1},
+      {'id': 'acc.credit', 'name': '信用卡', 'kind': 'credit', 'sort_order': 2},
+    ];
+    final batch = db.batch();
+    for (final a in defaults) {
+      batch.insert('account', {
+        ...a,
+        'balance_cents': 0,
+        'initial_cents': 0,
+        'currency': 'CNY',
+        'include_net': 1,
+        'archived': 0,
+        'created_at': now,
+      }, conflictAlgorithm: ConflictAlgorithm.ignore);
+    }
+    await batch.commit(noResult: true);
   }
 
   /// v5: 扫描 tx 备注, 把出现的标签词建成 tag 行 + tx_tag 关联
@@ -266,6 +349,19 @@ class AppDatabase {
     if (from < 6) {
       // v5 -> v6: 分类清单重整 (用户指定清单)
       await _migrateToV6Categories(db);
+    }
+    if (from < 7) {
+      // v6 -> v7: 资产管理 / 分类预算 / 记账提醒 / 隐私锁
+      await _createV7Tables(db);
+      await _seedDefaultAccounts(db);
+      // tx 加账户关联列 (资产管理: 流水绑定账户 → 自动增减余额)
+      try {
+        await db.execute('ALTER TABLE tx ADD COLUMN account_id TEXT');
+      } catch (_) {
+        // 列已存在 (重复迁移)
+      }
+      await db.execute(
+          'CREATE INDEX IF NOT EXISTS idx_tx_account ON tx(account_id)');
     }
   }
 

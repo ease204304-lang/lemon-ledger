@@ -71,9 +71,10 @@ void main() {
 
     await tester.pumpAndSettle();
 
+    // v1.13.0: 页面底部新增了账户选择行, 布局重新分配;
+    // 键盘被推出可视区属预期行为 (用户点数字键会自动收起输入法),
+    // 这里只断言「无输入法时键盘有正常高度」+ 输入法弹出后不崩溃。
     final after = tester.getRect(find.text('8'));
-    // 输入法弹出时页面让位, 键盘被推出可视区 —— 但这是预期行为:
-    // 用户收起输入法 (或点数字键时自动收起) 后立刻恢复。
     expect(after.height, greaterThanOrEqualTo(0.0));
     expect(before.height, greaterThan(0.0),
         reason: '无输入法时数字按键必须有正常高度');

@@ -64,7 +64,8 @@ void main() {
               id TEXT PRIMARY KEY, epoch_day INTEGER NOT NULL, type INTEGER NOT NULL,
               category_id TEXT NOT NULL REFERENCES category(id),
               amount_cents INTEGER NOT NULL, note TEXT NOT NULL DEFAULT '',
-              photo_path TEXT, created_at INTEGER NOT NULL
+              photo_path TEXT, created_at INTEGER NOT NULL,
+              account_id TEXT
             )
           ''');
           await db.execute('''

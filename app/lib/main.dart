@@ -13,7 +13,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'data/app_lock_service.dart';
 import 'providers/theme_provider.dart';
+import 'screens/app_lock_page.dart';
 import 'screens/chart_page.dart';
 import 'screens/discover_page.dart';
 import 'screens/entry_page.dart';
@@ -51,12 +53,16 @@ class LemonLedgerApp extends ConsumerStatefulWidget {
 class LemonLedgerAppState extends ConsumerState<LemonLedgerApp> {
   // S1: 加载状态还是 widget 内部 (只启动时一次, 没必要做 provider)
   bool _loaded = false;
+  // v1.13.0 隐私锁: 启动时若开启了应用锁, 先过解锁页
+  bool _lockChecked = false;
+  bool _unlocked = false;
 
   @override
   void initState() {
     super.initState();
     // 启动时从 SettingsService 把持久化值灌到 themeProvider
     _initFromSettings();
+    _checkLock();
   }
 
   Future<void> _initFromSettings() async {
@@ -65,9 +71,19 @@ class LemonLedgerAppState extends ConsumerState<LemonLedgerApp> {
     setState(() => _loaded = true);
   }
 
+  /// 检查是否开启了应用锁
+  Future<void> _checkLock() async {
+    final cfg = await AppLockService.instance.config();
+    if (!mounted) return;
+    setState(() {
+      _lockChecked = true;
+      _unlocked = !cfg.enabled;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    if (!_loaded) {
+    if (!_loaded || !_lockChecked) {
       return MaterialApp(
         theme: buildLightTheme(),
         darkTheme: buildDarkTheme(),
@@ -91,7 +107,13 @@ class LemonLedgerAppState extends ConsumerState<LemonLedgerApp> {
       // 国际化: DatePicker/Cupertino widgets 需要
       localizationsDelegates: GlobalMaterialLocalizations.delegates,
       supportedLocales: const [Locale('zh'), Locale('en')],
-      home: const RootShell(),
+      // v1.13.0 隐私锁: 开启后先过解锁页
+      home: _unlocked
+          ? const RootShell()
+          : AppLockPage(
+              unlockMode: true,
+              onUnlocked: () => setState(() => _unlocked = true),
+            ),
     );
   }
 }

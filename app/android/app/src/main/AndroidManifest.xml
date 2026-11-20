@@ -1,4 +1,4 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+﻿<manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <!-- 语音记账: 录音权限 -->
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <!-- v1.12.0 统计服务: 访问自建统计服务端 (REST API) -->
@@ -12,7 +12,7 @@
     </queries>
 
     <application
-        android:label="小猪记账 v1.12.0"
+        android:label="小猪记账 v1.13.0"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"
         android:usesCleartextTraffic="true">

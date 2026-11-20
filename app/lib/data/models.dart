@@ -26,6 +26,8 @@ class Tx {
   final String note;        // 备注/原文
   final String? photoPath;  // v1 暂未启用，预留
   final DateTime createdAt; // 创建时间（用于排序兜底）
+  /// v1.13.0: 关联账户 (资产管理)。null = 不绑定账户
+  final String? accountId;
 
   const Tx({
     required this.id,
@@ -36,6 +38,7 @@ class Tx {
     required this.note,
     this.photoPath,
     required this.createdAt,
+    this.accountId,
   });
 
   /// 金额（元，保留两位小数）。`0.05` 形式，无千分位。
@@ -50,6 +53,7 @@ class Tx {
         'note': note,
         'photo_path': photoPath,
         'created_at': createdAt.millisecondsSinceEpoch,
+        'account_id': accountId,
       };
 
   factory Tx.fromMap(Map<String, Object?> m) => Tx(
@@ -61,6 +65,7 @@ class Tx {
         note: (m['note'] as String?) ?? '',
         photoPath: m['photo_path'] as String?,
         createdAt: DateTime.fromMillisecondsSinceEpoch(m['created_at'] as int),
+        accountId: m['account_id'] as String?,
       );
 
   Tx copyWith({
@@ -70,6 +75,8 @@ class Tx {
     int? amountCents,
     String? note,
     String? photoPath,
+    String? accountId,
+    bool clearAccount = false,
   }) => Tx(
         id: id,
         epochDay: epochDay ?? this.epochDay,
@@ -79,6 +86,7 @@ class Tx {
         note: note ?? this.note,
         photoPath: photoPath ?? this.photoPath,
         createdAt: createdAt,
+        accountId: clearAccount ? null : (accountId ?? this.accountId),
       );
 }
 
@@ -120,5 +128,89 @@ class Category {
         sortOrder: m['sort_order'] as int,
         archived: (m['archived'] as int) == 1,
         pinned: (m['pinned'] as int? ?? 0) == 1,
+      );
+}
+
+/// 账户类型 (v1.13.0 资产管理)
+enum AccountKind { cash, debit, credit, saving, invest }
+
+extension AccountKindX on AccountKind {
+  String get zh => switch (this) {
+        AccountKind.cash => '现金',
+        AccountKind.debit => '储蓄卡',
+        AccountKind.credit => '信用卡',
+        AccountKind.saving => '存款',
+        AccountKind.invest => '理财',
+      };
+
+  /// 负债账户 (信用卡) — 余额为负表示欠款
+  bool get isLiability => this == AccountKind.credit;
+
+  String get dbValue => name;
+
+  static AccountKind parse(String? s) => AccountKind.values.firstWhere(
+        (e) => e.name == s,
+        orElse: () => AccountKind.cash,
+      );
+}
+
+/// 账户 (v1.13.0 资产管理)
+class Account {
+  final String id;
+  final String name;
+  final AccountKind kind;
+  final int balanceCents; // 当前余额 (分)
+  final int initialCents; // 初始余额 (分)
+  final String currency;
+  final bool includeNet; // 是否计入净资产
+  final bool archived;
+  final int sortOrder;
+
+  const Account({
+    required this.id,
+    required this.name,
+    required this.kind,
+    required this.balanceCents,
+    required this.initialCents,
+    required this.currency,
+    required this.includeNet,
+    required this.archived,
+    required this.sortOrder,
+  });
+
+  /// 净资产贡献 (分)
+  ///
+  /// 余额口径: 信用卡欠款时余额为负 (如 -20000 = 欠 200 元)。
+  /// 资产账户直接计入; 负债账户的负余额本身已体现"欠款", 取负即为负债贡献。
+  int get netCents {
+    if (!includeNet) return 0;
+    return balanceCents;
+  }
+
+  /// 相对初始余额的变化 (分)
+  int get deltaCents => balanceCents - initialCents;
+
+  Map<String, Object?> toMap() => {
+        'id': id,
+        'name': name,
+        'kind': kind.dbValue,
+        'balance_cents': balanceCents,
+        'initial_cents': initialCents,
+        'currency': currency,
+        'include_net': includeNet ? 1 : 0,
+        'archived': archived ? 1 : 0,
+        'sort_order': sortOrder,
+      };
+
+  factory Account.fromMap(Map<String, Object?> m) => Account(
+        id: m['id'] as String,
+        name: m['name'] as String,
+        kind: AccountKindX.parse(m['kind'] as String?),
+        balanceCents: (m['balance_cents'] as int?) ?? 0,
+        initialCents: (m['initial_cents'] as int?) ?? 0,
+        currency: (m['currency'] as String?) ?? 'CNY',
+        includeNet: (m['include_net'] as int? ?? 1) == 1,
+        archived: (m['archived'] as int? ?? 0) == 1,
+        sortOrder: (m['sort_order'] as int?) ?? 0,
       );
 }

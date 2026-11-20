@@ -34,6 +34,10 @@ class ImportResult {
   final int categoriesReplaced;
   final int transactionsReplaced;
   final int transactionsMerged; // merge 模式专用
+  // v1.13.0: 账户 / 分类预算 / 提醒 导入计数
+  final int accountsImported;
+  final int categoryBudgetsImported;
+  final int remindImported;
 
   ImportResult({
     required this.categoriesTotal,
@@ -43,10 +47,15 @@ class ImportResult {
     required this.categoriesReplaced,
     required this.transactionsReplaced,
     required this.transactionsMerged,
+    this.accountsImported = 0,
+    this.categoryBudgetsImported = 0,
+    this.remindImported = 0,
   });
 
   @override
-  String toString() => '导入完成: 分类 ${categoriesInserted + categoriesReplaced} 条, 流水 ${transactionsInserted + transactionsReplaced} 条 (合并 ${transactionsMerged} 条)';
+  String toString() => '导入完成: 分类 ${categoriesInserted + categoriesReplaced} 条, 流水 ${transactionsInserted + transactionsReplaced} 条 (合并 ${transactionsMerged} 条)'
+      '${accountsImported > 0 ? ", 账户 $accountsImported 个" : ""}'
+      '${categoryBudgetsImported > 0 ? ", 分类预算 $categoryBudgetsImported 条" : ""}';
 }
 
 /// 导入错误 (抛出)
@@ -98,12 +107,25 @@ class BackupService {
   Future<File> exportJson() async {
     final txs = await TxRepository.instance.all();
     final cats = await CategoryRepository.instance.all(includeArchived: true);
+    // v1.13.0: 账户 / 分类预算 / 提醒 一并导出 (隐私锁密码不导出)
+    final db = await AppDatabase.instance.db;
+    final accounts = await db.query('account', orderBy: 'sort_order ASC');
+    final catBudgets = await db.query('category_budget');
+    final remindRows = await db.query('remind', limit: 1);
     final data = {
       'version': kSupportedVersion,
       'exportedAt': DateTime.now().toIso8601String(),
       'app': '小猪记账',
       'categories': cats.map((c) => c.toMap()).toList(),
       'transactions': txs.map((t) => t.toMap()).toList(),
+      // v1.13.0 新增 (可选字段: 旧备份文件没有也能导入)
+      'accounts': accounts,
+      'categoryBudgets': catBudgets,
+      if (remindRows.isNotEmpty)
+        'remind': {
+          'enabled': remindRows.first['enabled'],
+          'minute': remindRows.first['minute'],
+        },
     };
     final f = await _writeTo('lemon_ledger', utf8.encode(jsonEncode(data)), 'json');
     await _shareOrLog(f.path, 'application/json');
@@ -267,6 +289,8 @@ class BackupService {
     // 6. 在 db.transaction 中导入 (失败自动回滚)
     int catInserted = 0, catReplaced = 0;
     int txInserted = 0, txReplaced = 0, txMerged = 0;
+    // v1.13.0: 新表导入计数
+    int accountImported = 0, catBudgetImported = 0, remindImported = 0;
 
     await db.transaction((txn) async {
       // 6a. 覆盖模式: 先清空
@@ -318,6 +342,40 @@ class BackupService {
           txInserted++;
         }
       }
+
+      // 6d. v1.13.0: 账户 / 分类预算 / 提醒 (旧备份没有这些字段时跳过)
+      final rawAccounts = data['accounts'];
+      if (rawAccounts is List) {
+        for (final a in rawAccounts) {
+          if (a is! Map) continue;
+          final m = Map<String, Object?>.from(a);
+          // created_at 缺失时补当前时间
+          m['created_at'] ??= DateTime.now().millisecondsSinceEpoch;
+          await txn.insert('account', m,
+              conflictAlgorithm: ConflictAlgorithm.replace);
+          accountImported++;
+        }
+      }
+      final rawCatBudgets = data['categoryBudgets'];
+      if (rawCatBudgets is List) {
+        for (final b in rawCatBudgets) {
+          if (b is! Map) continue;
+          await txn.insert(
+              'category_budget', Map<String, Object?>.from(b),
+              conflictAlgorithm: ConflictAlgorithm.replace);
+          catBudgetImported++;
+        }
+      }
+      final rawRemind = data['remind'];
+      if (rawRemind is Map) {
+        await txn.insert('remind', {
+          'id': 1,
+          'enabled': rawRemind['enabled'] ?? 0,
+          'minute': rawRemind['minute'] ?? 1320,
+          'last_fired_epoch_day': 0,
+        }, conflictAlgorithm: ConflictAlgorithm.replace);
+        remindImported++;
+      }
     });
 
     return ImportResult(
@@ -328,6 +386,9 @@ class BackupService {
       transactionsInserted: txInserted,
       transactionsReplaced: txReplaced,
       transactionsMerged: txMerged,
+      accountsImported: accountImported,
+      categoryBudgetsImported: catBudgetImported,
+      remindImported: remindImported,
     );
   }
 

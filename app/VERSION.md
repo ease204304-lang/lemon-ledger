@@ -1,5 +1,53 @@
 # 柠檬记账 版本历史
 
+## v1.13.0 (2026-11-20) — 资产管理 + 分类预算 + 记账提醒 + 隐私锁
+
+### 背景
+基于 2026 年同类 APP 竞品调研 (鲨鱼记账 5.88 / iCost / 钱迹 / 咔皮记账), 按用户指定优先级补齐 4 个功能:
+高优先级: ① 资产管理; 中优先级: ⑦ 分类预算+超支预警 ⑨ 记账提醒 ⑩ 隐私锁。
+
+### 新增功能
+
+#### 1. 资产管理 (对标 iCost / 钱迹)
+- 账户体系: 现金 / 储蓄卡 / 信用卡 / 存款 / 理财 5 类
+- 净资产 = Σ账户余额 (信用卡欠款以负余额体现, 合计为资产-负债)
+- 账户 CRUD + 归档 + 「计入净资产」开关
+- **记一笔可选账户**: 保存流水自动增减账户余额 (收入 + / 支出 -, 编辑时先回退旧变动)
+- 入口: 发现 → 资产管理 (原占位替换为真功能)
+- 新文件: `lib/data/account_service.dart` + `lib/screens/asset_page.dart`
+
+#### 2. 分类预算 + 超支预警
+- 按 (年, 月, 分类) 设置支出上限, 与既有月总预算并存
+- 三级状态: 安全 (<80%) / 预警 (≥80%) / 超支 (>100%), 进度条可视化
+- 入口: 发现 → 分类预算
+- 新文件: `lib/data/category_budget_service.dart` + `lib/screens/category_budget_page.dart`
+
+#### 3. 记账提醒
+- 每日定时提醒 (默认 22:00, 可自定义), 当天未记账才提醒 (防打扰)
+- Android NotificationChannel + AlarmManager (MethodChannel 调度)
+- 降级: 无通知权限时, 打开 App 检查并提示
+- 入口: 我的 → 记账提醒
+- 新文件: `lib/data/remind_service.dart` + `lib/screens/remind_settings_page.dart`
+
+#### 4. 隐私锁
+- 4 位数字密码 (SHA-256 + 盐 哈希存储, 不存明文不上传)
+- 生物识别解锁 (Android BiometricPrompt, 可开关)
+- 连续输错 5 次锁定 60 秒
+- App 启动拦截: 开锁后才能进入
+- 入口: 我的 → 隐私锁
+- 新文件: `lib/data/app_lock_service.dart` + `lib/screens/app_lock_page.dart`
+
+### 基础设施
+- DB schema v6 → **v7**: +account / category_budget / remind / app_lock 4 表 + tx.account_id 列
+- 备份导出/导入: 账户 / 分类预算 / 提醒 随 JSON 备份往返 (隐私锁密码不导出)
+- 依赖: +crypto (密码哈希) +local_auth (生物识别)
+
+### 测试
+- 全量 **230/230 通过** (+21: 资产 5 / 预算 5 / 提醒 4 / 隐私锁 7)
+- 测试基建: golden_test / db_v6_migration_test 的自建 tx 表补 account_id 列
+
+---
+
 ## v1.12.0 (2026-11-08) — 统计模块接入 App: 数据同步 + 服务端报表
 
 ### 背景

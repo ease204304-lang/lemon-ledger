@@ -1,4 +1,4 @@
-/// 我的页 — 设置、备份、导出、预算、主题、字号 (v1.2)
+﻿/// 我的页 — 设置、备份、导出、预算、主题、字号 (v1.2)
 /// S1 改造: 改成 ConsumerWidget, 通过 themeProvider 改主题/字号, 不再需要 appState prop
 library;
 
@@ -13,7 +13,9 @@ import '../services/backup.dart';
 import '../theme/tokens.dart';
 import '../widgets/top_tab_bar.dart';
 import 'import_data_dialog.dart';
+import 'app_lock_page.dart';
 import 'quick_entry_sheet.dart';
+import 'remind_settings_page.dart';
 import 'stats_settings_page.dart';
 
 
@@ -56,7 +58,7 @@ class MinePage extends ConsumerWidget {
                         Text('小猪记账', style: TextStyle(
                             fontSize: 16, fontWeight: FontWeight.w600, color: L.textPrimary)),
                         SizedBox(height: 2),
-                        Text('v1.12.0', style: TextStyle(
+                        Text('v1.13.0', style: TextStyle(
                             fontSize: 12, color: L.textTertiary)),
                       ],
                     ),
@@ -79,6 +81,18 @@ class MinePage extends ConsumerWidget {
               }),
               _Item('字号', '小 / 中 / 大', Icons.text_fields_outlined, () {
                 _setFontScale(context, ref);
+              }),
+            ]),
+            const SizedBox(height: 12),
+            // v1.13.0: 隐私锁 + 记账提醒
+            _Section(items: [
+              _Item('隐私锁', '密码 / 生物识别解锁', Icons.lock_outline, () {
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (_) => const AppLockPage()));
+              }),
+              _Item('记账提醒', '每日定时提醒记账', Icons.notifications_none_outlined, () {
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (_) => const RemindSettingsPage()));
               }),
             ]),
             const SizedBox(height: 12),
@@ -120,7 +134,7 @@ class MinePage extends ConsumerWidget {
             ]),
             const SizedBox(height: 12),
             _Section(items: [
-              _Item('关于', '小猪记账 v1.12.0', Icons.info_outline, () {
+              _Item('关于', '小猪记账 v1.13.0', Icons.info_outline, () {
                 showAboutDialog(context: context, applicationName: '小猪记账',
                     applicationVersion: '1.12.0', applicationIcon: const Icon(Icons.savings));
               }),
