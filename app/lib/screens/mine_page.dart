@@ -58,7 +58,7 @@ class MinePage extends ConsumerWidget {
                         Text('小猪记账', style: TextStyle(
                             fontSize: 16, fontWeight: FontWeight.w600, color: L.textPrimary)),
                         SizedBox(height: 2),
-                        Text('v1.13.1', style: TextStyle(
+                        Text('v1.14.0', style: TextStyle(
                             fontSize: 12, color: L.textTertiary)),
                       ],
                     ),
@@ -134,7 +134,7 @@ class MinePage extends ConsumerWidget {
             ]),
             const SizedBox(height: 12),
             _Section(items: [
-              _Item('关于', '小猪记账 v1.13.1', Icons.info_outline, () {
+              _Item('关于', '小猪记账 v1.14.0', Icons.info_outline, () {
                 showAboutDialog(context: context, applicationName: '小猪记账',
                     applicationVersion: '1.12.0', applicationIcon: const Icon(Icons.savings));
               }),

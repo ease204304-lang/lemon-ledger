@@ -31,7 +31,7 @@ class AppDatabase {
     final path = p.join(dir.path, 'lemon_ledger.db');
     return openDatabase(
       path,
-      version: 7,
+      version: 8,
       onCreate: _onCreate,
       onUpgrade: _onUpgrade,
     );
@@ -124,6 +124,50 @@ class AppDatabase {
     // v7: 账户 / 分类预算 / 记账提醒 / 隐私锁
     await _createV7Tables(db);
     await _seedDefaultAccounts(db);
+    await _createV8Tables(db);
+    await _seedIncomeTagBindings(db);
+  }
+
+  /// v8 新增表结构 (标签-分类绑定, 按收支类型独立)
+  ///
+  /// 设计说明 (v1.14.0):
+  ///   tag 表的 name 是全局主键, 无法表达「同名标签在支出/收入下
+  ///   绑定不同分类」。因此用独立关联表表达绑定关系:
+  ///     tag_binding(name, type) → category_id
+  ///   type: 0=支出, 1=收入 (与 TxType.index 一致)
+  Future<void> _createV8Tables(Database db) async {
+    await db.execute('''
+      CREATE TABLE IF NOT EXISTS tag_binding (
+        name        TEXT NOT NULL,
+        type        INTEGER NOT NULL,          -- 0=支出 1=收入
+        category_id TEXT NOT NULL,
+        PRIMARY KEY (name, type)
+      )
+    ''');
+    await db.execute(
+        'CREATE INDEX IF NOT EXISTS idx_tag_bind_cat ON tag_binding(category_id)');
+
+    // 回填: 用历史 tx_tag + tx 推导已有标签的绑定关系
+    // 规则: 同一 (name,type) 取最近一笔流水的 category_id
+    final rows = await db.rawQuery('''
+      SELECT tt.tag_name AS name, x.type AS type, x.category_id AS cid,
+             MAX(x.epoch_day) AS d
+      FROM tx_tag tt
+      JOIN tx x ON x.id = tt.tx_id
+      GROUP BY tt.tag_name, x.type
+    ''');
+    final batch = db.batch();
+    for (final r in rows) {
+      final name = r['name'] as String?;
+      final cid = r['cid'] as String?;
+      if (name == null || cid == null) continue;
+      batch.insert(
+        'tag_binding',
+        {'name': name, 'type': r['type'] as int, 'category_id': cid},
+        conflictAlgorithm: ConflictAlgorithm.ignore,
+      );
+    }
+    await batch.commit(noResult: true);
   }
 
   /// v7 新增表结构 (账户/分类预算/记账提醒/隐私锁)
@@ -198,6 +242,43 @@ class AppDatabase {
         'include_net': 1,
         'archived': 0,
         'created_at': now,
+      }, conflictAlgorithm: ConflictAlgorithm.ignore);
+    }
+    await batch.commit(noResult: true);
+  }
+
+  /// v1.14.0: 种子标签-分类绑定 (收入侧)
+  ///
+  /// 支出侧的绑定由 _backfillTagsFromTxs 从历史流水自动推导;
+  /// 收入侧种子流水少, 这里显式给出常见收入标签的绑定,
+  /// 让「切到收入 → 标签内容不同」首次安装即可感知。
+  Future<void> _seedIncomeTagBindings(Database db) async {
+    const incomeBindings = <List<String>>[
+      ['工资', 'cat.salary'],       // 工资 → 工资
+      ['奖金', 'cat.bonus'],       // 奖金 → 奖金
+      ['补贴', 'cat.allowance'],   // 补贴 → 补贴
+      ['兼职', 'cat.parttime'],    // 兼职 → 兼职
+      ['年终奖', 'cat.bonus'],     // 年终奖 → 奖金
+      ['报销', 'cat.refund'],      // 报销 → 退款
+      ['退款', 'cat.refund'],      // 退款 → 退款
+      ['收礼', 'cat.gift'],        // 收礼 → 收礼
+      ['投资收益', 'cat.invest'],   // 投资收益 → 投资
+    ];
+    final now = DateTime.now().millisecondsSinceEpoch;
+    final batch = db.batch();
+    for (final b in incomeBindings) {
+      // 保证 tag 行存在 (标签库要有这个标签, 否则标签行显示不出来)
+      batch.insert('tag', {
+        'name': b[0],
+        'use_count': 1,
+        'last_used_at': now,
+        'category_id': b[1],
+      }, conflictAlgorithm: ConflictAlgorithm.ignore);
+      // 收入类型 = 1
+      batch.insert('tag_binding', {
+        'name': b[0],
+        'type': 1,
+        'category_id': b[1],
       }, conflictAlgorithm: ConflictAlgorithm.ignore);
     }
     await batch.commit(noResult: true);
@@ -362,6 +443,11 @@ class AppDatabase {
       }
       await db.execute(
           'CREATE INDEX IF NOT EXISTS idx_tx_account ON tx(account_id)');
+    }
+    if (from < 8) {
+      // v7 -> v8: 标签-分类绑定 (按收支类型独立)
+      await _createV8Tables(db);
+      await _seedIncomeTagBindings(db);
     }
   }
 

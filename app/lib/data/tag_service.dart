@@ -139,6 +139,172 @@ class TagService {
     for (final name in matched) {
       await addOrBump(name, categoryId: tx.categoryId);
     }
+    // 4. v1.14.0: 同步「标签→分类」绑定 (按收支类型独立)
+    //    记一笔时选了分类, 备注里命中的标签就绑定到该分类,
+    //    以后点标签即可自动选中分类 (快速记账)。
+    for (final name in matched) {
+      await bindCategory(name, tx.type, tx.categoryId);
+    }
+    // 备注整体若整体等于某个已有标签, 也建立绑定
+    final whole = await db.query('tag',
+        where: 'name = ?', whereArgs: [note], limit: 1);
+    if (whole.isNotEmpty) {
+      await bindCategory(note, tx.type, tx.categoryId);
+    }
+  }
+
+  /// v1.14.0: 设置标签→分类绑定 (按收支类型独立)
+  ///
+  /// 同一个标签名在支出和收入下可以绑定到不同分类:
+  ///   「停车费」→ 支出·交通 / 收入·其他 (举例)
+  Future<void> bindCategory(
+    String name,
+    TxType type,
+    String categoryId,
+  ) async {
+    final n = name.trim();
+    if (n.isEmpty || categoryId.isEmpty) return;
+    final db = await AppDatabase.instance.db;
+    await db.insert(
+      'tag_binding',
+      {'name': n, 'type': type.index, 'category_id': categoryId},
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+    // 同步 tag 表的 category_id (历史兼容字段: 最近一次使用所在分类)
+    await db.rawUpdate(
+      'UPDATE tag SET category_id = ? WHERE name = ?',
+      [categoryId, n],
+    );
+  }
+
+  /// v1.14.0: 查询标签→分类绑定
+  Future<String?> categoryOf(String name, TxType type) async {
+    final db = await AppDatabase.instance.db;
+    final rows = await db.query(
+      'tag_binding',
+      where: 'name = ? AND type = ?',
+      whereArgs: [name.trim(), type.index],
+      limit: 1,
+    );
+    if (rows.isEmpty) return null;
+    return rows.first['category_id'] as String?;
+  }
+
+  /// v1.14.0: 某分类下的标签 (按绑定的收支类型)
+  ///
+  /// 优先走 tag_binding (显式绑定), 没有绑定的回退到 tag 表的
+  /// category_id (历史数据兼容)。
+  Future<List<Tag>> byBoundCategory(
+    TxType type,
+    String categoryId, {
+    int limit = 8,
+  }) async {
+    final db = await AppDatabase.instance.db;
+    final rows = await db.rawQuery('''
+      SELECT t.name, t.use_count, t.last_used_at, t.category_id
+      FROM tag t
+      JOIN tag_binding b ON b.name = t.name AND b.type = ?
+      WHERE b.category_id = ?
+      GROUP BY t.name
+      ORDER BY t.use_count DESC, t.last_used_at DESC
+      LIMIT ?
+    ''', [type.index, categoryId, limit]);
+    if (rows.isNotEmpty) return rows.map(Tag.fromMap).toList();
+
+    // 回退: 无显式绑定 → 用历史 category_id 字段 (限定同类型)
+    final rows2 = await db.rawQuery('''
+      SELECT t.name, t.use_count, t.last_used_at, t.category_id
+      FROM tag t
+      JOIN tx_tag tt ON tt.tag_name = t.name
+      JOIN tx x ON x.id = tt.tx_id
+      WHERE x.category_id = ? AND x.type = ?
+      GROUP BY t.name
+      ORDER BY t.use_count DESC, t.last_used_at DESC
+      LIMIT ?
+    ''', [categoryId, type.index, limit]);
+    return rows2.map(Tag.fromMap).toList();
+  }
+
+  /// v1.14.0: 按收支类型取标签 (绑定优先, 同类型历史次之)
+  ///
+  /// 记一笔页用: 切换支出/收入时标签内容必须不同。
+  /// 严格隔离原则: 收入侧只显示收入标签, 支出侧只显示支出标签;
+  /// 宁可某侧为空, 也不混入另一类型的标签。
+  Future<List<Tag>> recentByType(TxType type, {int limit = 8}) async {
+    final db = await AppDatabase.instance.db;
+    // 1) 有绑定的标签 (按绑定的分类聚合, 频次优先)
+    final bound = await db.rawQuery('''
+      SELECT t.name, t.use_count, t.last_used_at,
+             MAX(tb.category_id) AS category_id
+      FROM tag_binding tb
+      JOIN tag t ON t.name = tb.name
+      WHERE tb.type = ?
+      GROUP BY t.name
+      ORDER BY t.use_count DESC, t.last_used_at DESC
+      LIMIT ?
+    ''', [type.index, limit]);
+    if (bound.isNotEmpty) return bound.map(Tag.fromMap).toList();
+
+    // 2) 同类型历史用过的标签 (走 tx_tag, 限定同类型)
+    final used = await db.rawQuery('''
+      SELECT t.name, t.use_count, t.last_used_at, t.category_id
+      FROM tag t
+      JOIN tx_tag tt ON tt.tag_name = t.name
+      JOIN tx x ON x.id = tt.tx_id
+      WHERE x.type = ?
+      GROUP BY t.name
+      ORDER BY t.use_count DESC, t.last_used_at DESC
+      LIMIT ?
+    ''', [type.index, limit]);
+    if (used.isNotEmpty) return used.map(Tag.fromMap).toList();
+
+    // 3) 无同类型标签 → 返回空 (严格隔离, 不混入另一类型)
+    return const [];
+  }
+
+  /// v1.14.0: 某标签在某类型下的绑定分类 (批量查, 避免 N 次查询)
+  Future<Map<String, String>> bindingsOf(
+    List<String> names,
+    TxType type,
+  ) async {
+    if (names.isEmpty) return {};
+    final db = await AppDatabase.instance.db;
+    final out = <String, String>{};
+    // SQLite 变量上限 999, 分块查询
+    for (var i = 0; i < names.length; i += 900) {
+      final chunk = names.sublist(
+          i, i + 900 > names.length ? names.length : i + 900);
+      final placeholders = List.filled(chunk.length, '?').join(',');
+      final rows = await db.rawQuery('''
+        SELECT name, category_id FROM tag_binding
+        WHERE type = ? AND name IN ($placeholders)
+      ''', [type.index, ...chunk]);
+      for (final r in rows) {
+        out[r['name'] as String] = r['category_id'] as String;
+      }
+    }
+    return out;
+  }
+
+  /// v1.14.0: 某类型下所有绑定 (分类 → 标签列表)
+  Future<List<Tag>> allBound(TxType type) async {
+    final db = await AppDatabase.instance.db;
+    final rows = await db.rawQuery('''
+      SELECT t.name, t.use_count, t.last_used_at, MAX(tb.category_id) AS category_id
+      FROM tag_binding tb
+      JOIN tag t ON t.name = tb.name
+      WHERE tb.type = ?
+      GROUP BY t.name
+      ORDER BY t.use_count DESC, t.last_used_at DESC
+    ''', [type.index]);
+    return rows.map(Tag.fromMap).toList();
+  }
+
+  /// v1.14.0: 解除标签绑定
+  Future<void> unbind(String name, TxType type) async {
+    final db = await AppDatabase.instance.db;
+    await db.delete('tag_binding',
+        where: 'name = ? AND type = ?', whereArgs: [name.trim(), type.index]);
   }
 
   /// v1.8.0: 周期内按标签聚合 (图表"标签"视图 / 饼图数据源)

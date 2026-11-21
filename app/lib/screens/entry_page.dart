@@ -142,21 +142,54 @@ class _EntryPageState extends State<EntryPage> {
   }
 
   Future<void> _loadTags() async {
-    // v1.7.0: 选分类时, 显示该分类的标签 (按 use_count 排序)
-    // 没选分类时, 显示全局最近标签
+    // v1.14.0: 标签按「收支类型 + 分类」区分
+    //   - 已选分类 → 该分类下、当前类型的标签
+    //   - 未选分类 → 当前类型下的常用标签 (支出/收入 内容不同)
     try {
       if (_selected != null) {
-        final ts = await TagService.instance.byCategory(_selected!.id, limit: 8);
+        final ts = await TagService.instance
+            .byBoundCategory(_type, _selected!.id, limit: 8);
         if (!mounted) return;
         setState(() => _tags = ts);
       } else {
-        final ts = await TagService.instance.recent(5);
+        final ts = await TagService.instance.recentByType(_type, limit: 8);
         if (!mounted) return;
         setState(() => _tags = ts);
       }
-    } catch (_) {
+    } catch (e) {
       // v1.7.0: 测试 tearDown 时 DB 已关, 静默忽略
+      // v1.14.0: 记录异常便于排查 (不再完全静默)
+      debugPrint('[EntryPage] _loadTags 失败: $e');
     }
+  }
+
+  /// v1.14.0: 点击标签 → 自动选中绑定分类 + 追加到备注
+  ///
+  /// 目标: 「点标签 → 输金额 → =」三步完成记账。
+  /// 标签绑定了分类时, 点击即自动切换到该分类 (若当前类型下无绑定则不切换)。
+  Future<void> _onTagTap(Tag tag) async {
+    // 1. 自动选中绑定分类
+    final boundCat = await TagService.instance.categoryOf(tag.name, _type);
+    if (boundCat != null && _selected?.id != boundCat) {
+      final cat = await CategoryRepository.instance.byId(boundCat);
+      if (cat != null && mounted) {
+        setState(() {
+          _selected = cat;
+          // 分类可能与当前类型不一致 → 跟随切换
+          if (cat.type != _type) _type = cat.type;
+        });
+        _loadTags();
+      }
+    }
+    if (!mounted) return;
+    // 2. 追加到备注
+    final cur = _noteCtrl.text.trim();
+    _noteCtrl.text = cur.isEmpty ? tag.name : '$cur ${tag.name}';
+    _note = _noteCtrl.text;
+    // v1.11.0: 写完备注立刻让备注框失焦, 否则系统输入法会弹出
+    // 把本页自带的数字键盘顶掉 (用户表现为「数字键盘点了没反应」)。
+    _noteCtrl.selection = const TextSelection.collapsed(offset: -1);
+    FocusManager.instance.primaryFocus?.unfocus();
   }
 
   Future<void> _loadForEdit(String id) async {
@@ -328,7 +361,16 @@ class _EntryPageState extends State<EntryPage> {
                 _TypeAndDateRow(
                   type: _type,
                   date: _date,
-                  onType: (t) => setState(() => _type = t),
+                  // v1.14.0: 切换支出/收入 → 标签集切换 (绑定的分类不同),
+                  // 同时清空已选分类 (分类按类型分组, 不能跨类型沿用)
+                  onType: (t) {
+                    if (t == _type) return;
+                    setState(() {
+                      _type = t;
+                      _selected = null;
+                    });
+                    _loadTags();
+                  },
                   onPickDate: _pickDate,
                 ),
                 // 3. 模块一: 分类区 (v1.13.1: 吸收除键盘外的全部剩余空间)
@@ -351,16 +393,8 @@ class _EntryPageState extends State<EntryPage> {
                 // 3.5 标签行 (v1.9.0: 增强显示 — 更大字号 + 彩色 chip 背景)
                 _TagRow(
                   tags: _tags,
-                  onTap: (name) {
-                    // 点标签: 追加到备注 (空格衔接; _note 由 controller listener 同步)
-                    final cur = _noteCtrl.text.trim();
-                    _noteCtrl.text = cur.isEmpty ? name : '$cur $name';
-                    // v1.11.0: 写完备注立刻让备注框失焦, 否则系统输入法会弹出
-                    // 把本页自带的数字键盘顶掉 (用户表现为「数字键盘点了没反应」)。
-                    _noteCtrl.selection =
-                        const TextSelection.collapsed(offset: -1);
-                    FocusManager.instance.primaryFocus?.unfocus();
-                  },
+                  // v1.14.0: 点标签 → 自动选中绑定分类 + 追加备注
+                  onTap: _onTagTap,
                 ),
                 // 4. 备注 (1 行, 30px)
                 EntryShortNote(
@@ -608,7 +642,7 @@ class _TypeChip extends StatelessWidget {
 /// v1.7.0: 按 use_count 排序, 末尾加"全部"入口
 class _TagRow extends StatelessWidget {
   final List<Tag> tags;
-  final ValueChanged<String> onTap;
+  final ValueChanged<Tag> onTap; // v1.14.0: 传 Tag (需要 name + 绑定分类)
   const _TagRow({required this.tags, required this.onTap});
 
   @override
@@ -629,7 +663,7 @@ class _TagRow extends StatelessWidget {
               child: Material(
                 color: Colors.transparent,
                 child: InkWell(
-                  onTap: () => onTap(t.name),
+                  onTap: () => onTap(t),
                   borderRadius: BorderRadius.circular(16),
                   child: Container(
                     padding:

@@ -2,7 +2,7 @@
 //
 // 覆盖:
 //   - DB v5 schema (tx_tag 关联表 + tag.category_id)
-//   - 种子回填 (11 个演示标签 + 关联正确)
+//   - 种子回填 (20 个演示标签 [11 支出 + 9 收入] + 关联正确)
 //   - statsByTag 聚合 (按金额 / 按时间排序)
 //   - syncForTx (保存流水同步关联: 整体 bump + 子串命中)
 //   - byCategory (走 tx_tag 精确匹配)
@@ -77,9 +77,10 @@ void main() {
       expect(names, contains('category_id'));
     });
 
-    test('种子回填: 11 个演示标签', () async {
+    test('种子回填: 11 个支出演示标签 + 9 个收入种子标签 = 20', () async {
       final tags = await TagService.instance.recent(50);
-      expect(tags.length, 11);
+      // v1.14.0: 增加 9 个收入侧种子标签 (工资/奖金/补贴/兼职/年终奖/报销/退款/收礼/投资收益)
+      expect(tags.length, 20);
       expect(tags.map((t) => t.name),
           containsAll(['餐饮', '交通', '信托', '停车费']));
       // 不含 "收入" — 避免与记帐页类型 chip 撞名
