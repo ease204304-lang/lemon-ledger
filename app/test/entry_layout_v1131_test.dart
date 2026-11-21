@@ -1,4 +1,4 @@
-// v1.13.1 记一笔界面修复测试
+﻿// v1.13.1 记一笔界面修复测试
 //
 // 用户反馈 (截图):
 //   1. 金额显示屏数字超长时被垂直截断 (¥06660588800.00 只显示一半)
@@ -18,6 +18,7 @@ import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:lemon_ledger/data/database.dart';
 import 'package:lemon_ledger/screens/entry_page.dart';
 import 'package:lemon_ledger/widgets/entry_keypad.dart';
+import 'package:lemon_ledger/widgets/entry_split_categories.dart';
 
 class _MockPathProvider extends PathProviderPlatform
     with MockPlatformInterfaceMixin {
@@ -170,13 +171,17 @@ void main() {
       final keypadFinder = find.byType(EntryKeypad);
       final keypadRect = tester.getRect(keypadFinder);
       // getRect 返回逻辑像素: 屏幕逻辑高 = 2340/2.625 ≈ 891
-      // v1.13.1 最终方案: 键盘固定 340 逻辑像素 (上限可用 48%), 远大于修复前的 ~15%
+      // v1.15.1: 分类区与键盘对半分 (用户要求扩大分类展示),
+      // 键盘 = 平分剩余空间, 约 26% 屏高, 仍完整可见
       final logicalScreenHeight = 2340 / 2.625;
-      expect(keypadRect.height, greaterThan(logicalScreenHeight * 0.3),
-          reason: '用户反馈键盘过小 (截图仅 ~15%), 固定 340 逻辑高后应 ≥ 屏幕的 30%');
+      expect(keypadRect.height, greaterThan(logicalScreenHeight * 0.2),
+          reason: '对半分布局后键盘仍应 ≥ 屏幕的 20% (4 行 + 金额屏完整)');
       // 4 行按键 + 金额显示屏必须完整在可视区内 (浮点容差 0.5)
       expect(keypadRect.bottom, lessThanOrEqualTo(logicalScreenHeight + 0.5),
           reason: '键盘不得超出屏幕 (第 4 行 . 0 del = 必须可见)');
+      // 分类区与键盘对半分: 两者高度差不超过 20%
+      final catArea = find.byType(EntrySplitCategories);
+      expect(catArea, findsOneWidget);
     });
   });
 }

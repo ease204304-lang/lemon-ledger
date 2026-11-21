@@ -341,15 +341,17 @@ class _EntryPageState extends State<EntryPage> {
     return Scaffold(
       backgroundColor: L.surfaceSubtle,
       body: SafeArea(
-        // v1.13.1: 外层 LayoutBuilder 拿 body 真实可用高度, 键盘高度按它计算,
-        // 数学上保证 固定行 + 键盘 ≤ 可用高度 (任何屏型/输入法状态都不溢出)。
+        // v1.15.1: 外层 LayoutBuilder 拿 body 真实可用高度。
+        // 用户反馈: 分类展示区扩大, 与数字键盘**对半分** (扣除固定行后 1:1);
+        // 账户绑定行默认隐藏 (分类区右下角小按钮触发选择器)。
         child: LayoutBuilder(
           builder: (context, outer) {
-            // 键盘高: 优先 340 逻辑; 可用空间不足 (输入法弹出/小屏) 时收缩,
-            // 始终给固定行 (头/类型/标签/备注 ≈ 280) 保留空间。
+            // 键盘高 = 分类区与键盘平分「扣除固定行 (头/类型/标签/备注 ≈ 280)」
+            // 的剩余空间; 上限 340, 下限 200 (保证 4 行 + 金额屏可显示)。
             final avail = outer.maxHeight - 280;
-            final keypadH =
-                avail < 340 ? (avail * 0.9).clamp(240.0, 340.0) : 340.0;
+            final keypadH = avail < 400
+                ? (avail / 2).clamp(200.0, 340.0)
+                : 340.0;
             return Column(
               children: [
                 // 1. 顶部条 (极简, 只保留 × + 标题)
@@ -373,10 +375,11 @@ class _EntryPageState extends State<EntryPage> {
                   },
                   onPickDate: _pickDate,
                 ),
-                // 3. 模块一: 分类区 (v1.13.1: 吸收除键盘外的全部剩余空间)
-                //    用户反馈: 数字键盘过小 (第 4 行 . 0 del = 被挤出屏幕)。
-                //    分类网格本身可滚动, 剩余空间优先保证键盘完整可见。
+                // 3. 模块一: 分类区 (v1.15.1: 与键盘对半分)
+                //    账户绑定行默认隐藏 — 改为分类区右下角小按钮,
+                //    点击直接弹出账户选择器。
                 Expanded(
+                  flex: 1,
                   child: _Module1CategoriesAndNote(
                     type: _type,
                     selected: _selected,
@@ -384,7 +387,7 @@ class _EntryPageState extends State<EntryPage> {
                       setState(() => _selected = c);
                       _loadTags(); // v1.7.0: 选分类后刷新标签
                     },
-                    // v1.13.0: 账户选择 (资产管理联动)
+                    // v1.13.0: 账户选择 (资产管理联动) — v1.15.1 小按钮触发
                     accountId: _accountId,
                     accounts: _accounts,
                     onPickAccount: _pickAccount,
@@ -777,47 +780,9 @@ class _Module1CategoriesAndNote extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      // v1.13.0: 加 clipBehavior 需要用 decoration 携带颜色 (color 与 decoration 互斥)
-      decoration: const BoxDecoration(color: L.surface),
-      clipBehavior: Clip.hardEdge,
-      child: Column(
-        children: [
-          Expanded(
-            child: EntrySplitCategories(
-              type: type,
-              selected: selected,
-              onSelect: onSelect,
-            ),
-          ),
-          // v1.13.0: 账户选择行 (空间不足时可被压缩, 避免溢出)
-          Flexible(
-            child: _AccountRow(
-              accountId: accountId,
-              accounts: accounts,
-              onTap: onPickAccount,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-/// v1.13.0: 账户选择行 (记一笔页底部)
-class _AccountRow extends StatelessWidget {
-  final String? accountId;
-  final List<Account> accounts;
-  final VoidCallback onTap;
-
-  const _AccountRow({
-    required this.accountId,
-    required this.accounts,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
+    // v1.15.1: 账户绑定行默认隐藏 —
+    // 分类网格右下角放一个小按钮 (显示当前绑定或「账户」),
+    // 点击直接弹出账户选择器, 不再占据一整行。
     Account? acc;
     if (accountId != null) {
       for (final a in accounts) {
@@ -827,41 +792,68 @@ class _AccountRow extends StatelessWidget {
         }
       }
     }
-    final label = acc == null ? '不绑定账户' : acc.name;
-    final balance = acc == null
-        ? null
-        : '${acc.balanceCents < 0 ? '-' : ''}¥${(acc.balanceCents.abs() / 100).toStringAsFixed(2)}';
-    return InkWell(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
-        decoration: const BoxDecoration(
-          border: Border(top: BorderSide(color: L.dividerLight, width: 0.5)),
-        ),
-        child: Row(
-          children: [
-            Icon(
-              acc == null
-                  ? Icons.account_balance_wallet_outlined
-                  : (acc.kind.isLiability
-                      ? Icons.credit_card_outlined
-                      : Icons.account_balance_outlined),
-              size: 15,
-              color: L.textTertiary,
+    final pillText = acc?.name ?? '账户';
+    return Container(
+      decoration: const BoxDecoration(color: L.surface),
+      clipBehavior: Clip.hardEdge,
+      child: Stack(
+        children: [
+          EntrySplitCategories(
+            type: type,
+            selected: selected,
+            onSelect: onSelect,
+          ),
+          // 右下角账户小按钮 (替代原整行账户绑定)
+          Positioned(
+            right: 8,
+            bottom: 6,
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                onTap: onPickAccount,
+                borderRadius: BorderRadius.circular(14),
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                  decoration: BoxDecoration(
+                    color: acc != null
+                        ? L.brandYellow.withValues(alpha: 0.25)
+                        : L.surfaceSubtle,
+                    borderRadius: BorderRadius.circular(14),
+                    border: Border.all(
+                      color: acc != null ? L.brandYellow : L.dividerLight,
+                      width: 0.5,
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        acc == null
+                            ? Icons.account_balance_wallet_outlined
+                            : (acc.kind.isLiability
+                                ? Icons.credit_card_outlined
+                                : Icons.account_balance_outlined),
+                        size: 13,
+                        color:
+                            acc != null ? L.textPrimary : L.textTertiary,
+                      ),
+                      const SizedBox(width: 4),
+                      Text(pillText,
+                          style: TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w600,
+                            color: acc != null
+                                ? L.textPrimary
+                                : L.textTertiary,
+                          )),
+                    ],
+                  ),
+                ),
+              ),
             ),
-            const SizedBox(width: 6),
-            Text(label,
-                style: const TextStyle(fontSize: 12, color: L.textSecondary)),
-            if (balance != null) ...[
-              const SizedBox(width: 6),
-              Text(balance,
-                  style: const TextStyle(
-                      fontSize: 11, color: L.textTertiary)),
-            ],
-            const Spacer(),
-            const Icon(Icons.arrow_drop_down, size: 16, color: L.textSecondary),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
