@@ -5,42 +5,50 @@ library seed;
 
 import 'models.dart';
 
-/// 初始分类 (v1.10.0 按用户清单重整: 支出 14 类 / 收入 8 类)
+/// 初始分类 (v1.15.0 按用户清单重定义: 支出 24 类 / 收入 4 类)
 ///
-/// v1.10.0 变更:
-///   - 支出按用户指定清单重整为 14 类 (原 22 类)
-///     用户清单 11 类: 信用卡 餐饮 娱乐 零食 交通 住房 旅游 医疗 运动 汽车 孩子
-///     + 用户后续追加: 日用 投资
-///     + 保留: 其他
-///   - 改名: 旅行→旅游, 车费→汽车
-///   - 移除: 超市 水果 饮品 服饰 美妆 通讯 居家 学习 教育 宠物 数码
-///   - 收入 8 类维持不变
+/// v1.15.0 变更 (用户指定清单与顺序):
+///   支出 24 类:
+///     信用卡 住房 亲友 孩子 餐饮 旅行 汽车 投资 烟酒 娱乐 通讯 零食
+///     交通 学习 日用 运动 医疗 美容 书籍 水果 购物 捐赠 礼金 其他
+///     - 改名: 旅游→旅行 (cat.travel), 教育→学习 (cat.education),
+///             美妆→美容 (cat.beauty), 学习(旧cat.book)→书籍, 超市→购物 (cat.market)
+///     - 复活: 通讯/学习/美容/书籍/水果/购物 (v6 归档的分类重新启用)
+///     - 新增: 亲友 (cat.relative) 烟酒 (cat.smoke) 捐赠 (cat.donate) 礼金 (cat.cashgift)
+///   收入 4 类: 工资 理财 礼金 其他
+///     - 改名: 投资→理财 (cat.invest), 收礼→礼金 (cat.receive)
+///     - 归档: 奖金 补贴 兼职 退款 (历史流水迁到 工资/其他)
 List<Category> seedCategories() => [
-      // ── 支出 (14 类, 按用户清单顺序) ──
-      const Category(id: 'cat.credit',    name: '信用卡', iconKey: 'credit',   type: TxType.expense, sortOrder: 0),
-      const Category(id: 'cat.food',      name: '餐饮',   iconKey: 'food',     type: TxType.expense, sortOrder: 1),
-      const Category(id: 'cat.entertain', name: '娱乐',   iconKey: 'entertain',type: TxType.expense, sortOrder: 2),
-      const Category(id: 'cat.snack',     name: '零食',   iconKey: 'snack',    type: TxType.expense, sortOrder: 3),
-      const Category(id: 'cat.transport', name: '交通',   iconKey: 'transport',type: TxType.expense, sortOrder: 4),
-      const Category(id: 'cat.housing',   name: '住房',   iconKey: 'housing',  type: TxType.expense, sortOrder: 5),
-      const Category(id: 'cat.travel',    name: '旅游',   iconKey: 'travel',   type: TxType.expense, sortOrder: 6),
-      const Category(id: 'cat.medical',   name: '医疗',   iconKey: 'medical',  type: TxType.expense, sortOrder: 7),
-      const Category(id: 'cat.sport',     name: '运动',   iconKey: 'sport',    type: TxType.expense, sortOrder: 8),
-      const Category(id: 'cat.car',       name: '汽车',   iconKey: 'car',      type: TxType.expense, sortOrder: 9),
-      const Category(id: 'cat.kid',       name: '孩子',   iconKey: 'kid',      type: TxType.expense, sortOrder: 10),
-      const Category(id: 'cat.daily',     name: '日用',   iconKey: 'daily',    type: TxType.expense, sortOrder: 11),
-      // 支出「投资」与收入「投资」同名不同类 → 用独立 id
-      const Category(id: 'cat.invest_exp', name: '投资',  iconKey: 'invest',   type: TxType.expense, sortOrder: 12),
-      const Category(id: 'cat.else',      name: '其他',   iconKey: 'else',     type: TxType.expense, sortOrder: 13),
-      // ── 收入 (8 类, v1.10.0 不变) ──
-      const Category(id: 'cat.salary',    name: '工资',   iconKey: 'salary',   type: TxType.income,  sortOrder: 100),
-      const Category(id: 'cat.bonus',     name: '奖金',   iconKey: 'bonus',    type: TxType.income,  sortOrder: 101),
-      const Category(id: 'cat.subsidy',   name: '补贴',   iconKey: 'subsidy',  type: TxType.income,  sortOrder: 102),
-      const Category(id: 'cat.parttime',  name: '兼职',   iconKey: 'parttime', type: TxType.income,  sortOrder: 103),
-      const Category(id: 'cat.invest',    name: '投资',   iconKey: 'invest',   type: TxType.income,  sortOrder: 104),
-      const Category(id: 'cat.refund',    name: '退款',   iconKey: 'refund',   type: TxType.income,  sortOrder: 105),
-      const Category(id: 'cat.receive',   name: '收礼',   iconKey: 'receive',  type: TxType.income,  sortOrder: 106),
-      const Category(id: 'cat.in_else',   name: '其他',   iconKey: 'else',     type: TxType.income,  sortOrder: 107),
+      // ── 支出 (24 类, 按用户指定顺序) ──
+      const Category(id: 'cat.credit',     name: '信用卡', iconKey: 'credit',    type: TxType.expense, sortOrder: 0),
+      const Category(id: 'cat.housing',    name: '住房',   iconKey: 'housing',   type: TxType.expense, sortOrder: 1),
+      const Category(id: 'cat.relative',   name: '亲友',   iconKey: 'relative',  type: TxType.expense, sortOrder: 2),
+      const Category(id: 'cat.kid',        name: '孩子',   iconKey: 'kid',       type: TxType.expense, sortOrder: 3),
+      const Category(id: 'cat.food',       name: '餐饮',   iconKey: 'food',      type: TxType.expense, sortOrder: 4),
+      const Category(id: 'cat.travel',     name: '旅行',   iconKey: 'travel',    type: TxType.expense, sortOrder: 5),
+      const Category(id: 'cat.car',        name: '汽车',   iconKey: 'car',       type: TxType.expense, sortOrder: 6),
+      const Category(id: 'cat.invest_exp', name: '投资',   iconKey: 'invest',    type: TxType.expense, sortOrder: 7),
+      const Category(id: 'cat.smoke',      name: '烟酒',   iconKey: 'smoke',     type: TxType.expense, sortOrder: 8),
+      const Category(id: 'cat.entertain',  name: '娱乐',   iconKey: 'entertain', type: TxType.expense, sortOrder: 9),
+      const Category(id: 'cat.phone',      name: '通讯',   iconKey: 'phone',     type: TxType.expense, sortOrder: 10),
+      const Category(id: 'cat.snack',      name: '零食',   iconKey: 'snack',     type: TxType.expense, sortOrder: 11),
+      const Category(id: 'cat.transport',  name: '交通',   iconKey: 'transport', type: TxType.expense, sortOrder: 12),
+      const Category(id: 'cat.education',  name: '学习',   iconKey: 'education', type: TxType.expense, sortOrder: 13),
+      const Category(id: 'cat.daily',      name: '日用',   iconKey: 'daily',     type: TxType.expense, sortOrder: 14),
+      const Category(id: 'cat.sport',      name: '运动',   iconKey: 'sport',     type: TxType.expense, sortOrder: 15),
+      const Category(id: 'cat.medical',    name: '医疗',   iconKey: 'medical',   type: TxType.expense, sortOrder: 16),
+      const Category(id: 'cat.beauty',     name: '美容',   iconKey: 'beauty',    type: TxType.expense, sortOrder: 17),
+      const Category(id: 'cat.book',       name: '书籍',   iconKey: 'book',      type: TxType.expense, sortOrder: 18),
+      const Category(id: 'cat.fruit',      name: '水果',   iconKey: 'fruit',     type: TxType.expense, sortOrder: 19),
+      const Category(id: 'cat.market',     name: '购物',   iconKey: 'market',    type: TxType.expense, sortOrder: 20),
+      const Category(id: 'cat.donate',     name: '捐赠',   iconKey: 'donate',    type: TxType.expense, sortOrder: 21),
+      const Category(id: 'cat.cashgift',   name: '礼金',   iconKey: 'cashgift',  type: TxType.expense, sortOrder: 22),
+      const Category(id: 'cat.else',       name: '其他',   iconKey: 'else',      type: TxType.expense, sortOrder: 23),
+      // ── 收入 (4 类) ──
+      const Category(id: 'cat.salary',  name: '工资', iconKey: 'salary',  type: TxType.income, sortOrder: 100),
+      const Category(id: 'cat.invest',  name: '理财', iconKey: 'invest',  type: TxType.income, sortOrder: 101),
+      const Category(id: 'cat.receive', name: '礼金', iconKey: 'receive', type: TxType.income, sortOrder: 102),
+      const Category(id: 'cat.in_else', name: '其他', iconKey: 'else',    type: TxType.income, sortOrder: 103),
     ];
 
 /// 种子流水（2026-10-05..10-09, 与原型/基线一致）

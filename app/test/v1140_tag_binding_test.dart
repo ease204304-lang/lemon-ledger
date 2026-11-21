@@ -205,10 +205,12 @@ void main() {
       expect(cid, 'cat.car');
     });
 
-    test('种子数据: 收入侧有绑定 (工资 → 工资 / 年终奖 → 奖金)', () async {
+    test('种子数据: 收入侧有绑定 (工资 → 工资 / 年终奖 → 工资 / 投资收益 → 理财)', () async {
       final svc = TagService.instance;
       expect(await svc.categoryOf('工资', TxType.income), 'cat.salary');
-      expect(await svc.categoryOf('年终奖', TxType.income), 'cat.bonus');
+      // v1.15.0: 奖金类收入分类归档 → 年终奖改绑到 工资
+      expect(await svc.categoryOf('年终奖', TxType.income), 'cat.salary');
+      expect(await svc.categoryOf('投资收益', TxType.income), 'cat.invest');
     });
 
     test('严格隔离: 收入侧标签不混入支出侧', () async {

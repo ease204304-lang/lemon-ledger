@@ -216,47 +216,71 @@ void main() {
       expect(rows.length, equals(1));
     });
 
-    test('v6 分类清单: 支出 14 类 + 收入 8 类', () async {
+    test('v9 分类清单: 支出 24 类 + 收入 4 类', () async {
       final rows = await db.rawQuery(
           "SELECT id FROM category WHERE archived = 0 ORDER BY type, sort_order");
       final ids = rows.map((r) => r['id'] as String).toList();
 
-      // 支出 14 类 (按用户清单顺序)
+      // 支出 24 类 (v1.15.0 用户清单顺序)
       const expenseIds = [
-        'cat.credit', 'cat.food', 'cat.entertain', 'cat.snack', 'cat.transport',
-        'cat.housing', 'cat.travel', 'cat.medical', 'cat.sport', 'cat.car',
-        'cat.kid', 'cat.daily', 'cat.invest_exp', 'cat.else',
+        'cat.credit', 'cat.housing', 'cat.relative', 'cat.kid', 'cat.food',
+        'cat.travel', 'cat.car', 'cat.invest_exp', 'cat.smoke', 'cat.entertain',
+        'cat.phone', 'cat.snack', 'cat.transport', 'cat.education', 'cat.daily',
+        'cat.sport', 'cat.medical', 'cat.beauty', 'cat.book', 'cat.fruit',
+        'cat.market', 'cat.donate', 'cat.cashgift', 'cat.else',
       ];
       for (final id in expenseIds) {
         expect(ids, contains(id), reason: '支出分类 $id 应存在');
       }
-      // 收入 8 类
-      const incomeIds = [
-        'cat.salary', 'cat.bonus', 'cat.subsidy', 'cat.parttime',
-        'cat.invest', 'cat.refund', 'cat.receive', 'cat.in_else',
-      ];
+      // 收入 4 类
+      const incomeIds = ['cat.salary', 'cat.invest', 'cat.receive', 'cat.in_else'];
       for (final id in incomeIds) {
         expect(ids, contains(id), reason: '收入分类 $id 应存在');
       }
-      // 合计 22 个活跃分类
-      expect(ids.length, equals(22));
-      // 被移除的分类应归档 (不删除, 保护历史流水)
+      // 合计 28 个活跃分类
+      expect(ids.length, equals(28));
+      // 不再使用的分类应归档 (不删除, 保护历史流水)
       const removed = [
-        'cat.market', 'cat.fruit', 'cat.drink', 'cat.dress', 'cat.beauty',
-        'cat.phone', 'cat.house', 'cat.book', 'cat.education', 'cat.pet',
-        'cat.digital',
+        'cat.bonus', 'cat.subsidy', 'cat.parttime', 'cat.refund',
+        'cat.drink', 'cat.dress', 'cat.house', 'cat.pet', 'cat.digital',
       ];
       for (final id in removed) {
         expect(ids, isNot(contains(id)), reason: '$id 应已归档');
       }
+      // 支出顺序按用户清单 (前 8 个)
+      final expenseOrdered =
+          ids.where((id) => expenseIds.contains(id)).toList();
+      expect(expenseOrdered.take(8).toList(), [
+        'cat.credit', 'cat.housing', 'cat.relative', 'cat.kid',
+        'cat.food', 'cat.travel', 'cat.car', 'cat.invest_exp',
+      ]);
     });
 
-    test('v6 改名: 旅行→旅游, 车费→汽车 (id 不变)', () async {
+    test('v9 改名: 旅游→旅行, 收礼→礼金, 投资收入→理财 (id 不变)', () async {
       final rows = await db.rawQuery(
-          "SELECT id, name FROM category WHERE id IN ('cat.travel', 'cat.car')");
+          "SELECT id, name FROM category WHERE id IN "
+          "('cat.travel', 'cat.receive', 'cat.invest')");
       final m = {for (final r in rows) r['id'] as String: r['name'] as String};
-      expect(m['cat.travel'], equals('旅游'));
-      expect(m['cat.car'], equals('汽车'));
+      expect(m['cat.travel'], equals('旅行'));
+      expect(m['cat.receive'], equals('礼金'));
+      expect(m['cat.invest'], equals('理财'));
+    });
+
+    test('v9 复活: v6 归档的分类重新启用', () async {
+      final rows = await db.rawQuery(
+          "SELECT id, name, archived FROM category WHERE id IN "
+          "('cat.phone', 'cat.education', 'cat.beauty', 'cat.book', "
+          "'cat.fruit', 'cat.market')");
+      final m = {
+        for (final r in rows)
+          r['id'] as String: (r['name'] as String, r['archived'] as int),
+      };
+      expect(m['cat.phone'], ('通讯', 0));
+      expect(m['cat.education'], ('学习', 0));
+      expect(m['cat.beauty'], ('美容', 0));
+      expect(m['cat.book'], ('书籍', 0));
+      expect(m['cat.fruit'], ('水果', 0));
+      expect(m['cat.market'], ('购物', 0));
     });
 
     test('v6 常用分类: 支出 4 + 收入 1', () async {

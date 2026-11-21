@@ -31,7 +31,7 @@ class AppDatabase {
     final path = p.join(dir.path, 'lemon_ledger.db');
     return openDatabase(
       path,
-      version: 8,
+      version: 9,
       onCreate: _onCreate,
       onUpgrade: _onUpgrade,
     );
@@ -253,16 +253,20 @@ class AppDatabase {
   /// 收入侧种子流水少, 这里显式给出常见收入标签的绑定,
   /// 让「切到收入 → 标签内容不同」首次安装即可感知。
   Future<void> _seedIncomeTagBindings(Database db) async {
+    // v1.15.0: 收入分类精简为 工资/理财/礼金/其他,
+    // 标签绑定指向新的收入分类 id (旧 cat.bonus 等已不存在/归档)
     const incomeBindings = <List<String>>[
       ['工资', 'cat.salary'],       // 工资 → 工资
-      ['奖金', 'cat.bonus'],       // 奖金 → 奖金
-      ['补贴', 'cat.allowance'],   // 补贴 → 补贴
-      ['兼职', 'cat.parttime'],    // 兼职 → 兼职
-      ['年终奖', 'cat.bonus'],     // 年终奖 → 奖金
-      ['报销', 'cat.refund'],      // 报销 → 退款
-      ['退款', 'cat.refund'],      // 退款 → 退款
-      ['收礼', 'cat.gift'],        // 收礼 → 收礼
-      ['投资收益', 'cat.invest'],   // 投资收益 → 投资
+      ['奖金', 'cat.salary'],       // 奖金 → 工资 (奖金类归档后归并)
+      ['补贴', 'cat.salary'],       // 补贴 → 工资
+      ['兼职', 'cat.salary'],       // 兼职 → 工资
+      ['年终奖', 'cat.salary'],     // 年终奖 → 工资
+      ['报销', 'cat.in_else'],      // 报销 → 其他
+      ['退款', 'cat.in_else'],      // 退款 → 其他
+      ['收礼', 'cat.receive'],      // 收礼 → 礼金
+      ['礼金', 'cat.receive'],      // 礼金 → 礼金
+      ['投资收益', 'cat.invest'],   // 投资收益 → 理财
+      ['理财', 'cat.invest'],       // 理财 → 理财
     ];
     final now = DateTime.now().millisecondsSinceEpoch;
     final batch = db.batch();
@@ -449,6 +453,83 @@ class AppDatabase {
       await _createV8Tables(db);
       await _seedIncomeTagBindings(db);
     }
+    if (from < 9) {
+      // v8 -> v9: 分类重定义 (支出 24 类 / 收入 4 类)
+      await _migrateToV9Categories(db);
+    }
+  }
+
+  /// v8 -> v9: 分类重定义 (用户指定清单, 2026-11-21)
+  ///
+  /// 目标:
+  ///   支出 24 类: 信用卡 住房 亲友 孩子 餐饮 旅行 汽车 投资 烟酒 娱乐 通讯
+  ///              零食 交通 学习 日用 运动 医疗 美容 书籍 水果 购物 捐赠 礼金 其他
+  ///   收入  4 类: 工资 理财 礼金 其他
+  ///
+  /// 原则 (延续 v6, 保护用户数据):
+  ///   1. **不删任何分类** — 不再使用的收入分类只置 archived=1
+  ///   2. 改名走 UPDATE 保留 id → 历史流水自动跟着变
+  ///      (旅游→旅行, 教育→学习, 美妆→美容, 旧学习(cat.book)→书籍, 超市→购物,
+  ///       投资(收入)→理财, 收礼→礼金)
+  ///   3. 复活 v6 归档的分类: 通讯/学习/美容/书籍/水果/购物
+  ///   4. 新增: 亲友 烟酒 捐赠 礼金(支出)
+  ///   5. 归档收入分类的历史流水迁到合理分类:
+  ///      奖金/补贴/兼职 → 工资; 退款 → 其他(收入)
+  ///   6. 指向归档分类的标签绑定重映射到新分类
+  Future<void> _migrateToV9Categories(Database db) async {
+    // 1) 新增分类 (必须在 sort 对齐之前)
+    const newCats = <Map<String, Object?>>[
+      {'id': 'cat.relative', 'name': '亲友', 'icon_key': 'relative', 'type': 0, 'sort_order': 2,  'archived': 0},
+      {'id': 'cat.smoke',    'name': '烟酒', 'icon_key': 'smoke',    'type': 0, 'sort_order': 8,  'archived': 0},
+      {'id': 'cat.donate',   'name': '捐赠', 'icon_key': 'donate',   'type': 0, 'sort_order': 21, 'archived': 0},
+      {'id': 'cat.cashgift', 'name': '礼金', 'icon_key': 'cashgift', 'type': 0, 'sort_order': 22, 'archived': 0},
+    ];
+    for (final c in newCats) {
+      await db.insert('category', {
+        ...c, 'pinned': 0,
+      }, conflictAlgorithm: ConflictAlgorithm.ignore);
+    }
+
+    // 2) 全量对齐 name + sort_order + icon + archived=0 (改名/重排/复活一次做完)
+    //    依据 seedCategories() 当前顺序, 保证新旧库显示一致
+    for (final c in seedCategories()) {
+      if (c.archived) continue;
+      await db.rawUpdate(
+          'UPDATE category SET name = ?, sort_order = ?, icon_key = ?, archived = 0 '
+          'WHERE id = ?',
+          [c.name, c.sortOrder, c.iconKey, c.id]);
+    }
+
+    // 3) 归档不再使用的收入分类 (软删, 保留历史流水可查)
+    const archivedIncome = ['cat.bonus', 'cat.subsidy', 'cat.parttime', 'cat.refund'];
+    for (final id in archivedIncome) {
+      await db.rawUpdate(
+          'UPDATE category SET archived = 1, pinned = 0 WHERE id = ?', [id]);
+    }
+
+    // 4) 归档收入分类的历史流水迁到合理分类
+    await db.rawUpdate(
+        "UPDATE tx SET category_id = 'cat.salary' "
+        "WHERE category_id IN ('cat.bonus', 'cat.subsidy', 'cat.parttime') AND type = 1");
+    await db.rawUpdate(
+        "UPDATE tx SET category_id = 'cat.in_else' "
+        "WHERE category_id = 'cat.refund' AND type = 1");
+
+    // 5) 指向归档分类的标签绑定重映射
+    await db.rawUpdate(
+        "UPDATE tag_binding SET category_id = 'cat.salary' "
+        "WHERE type = 1 AND category_id IN ('cat.bonus', 'cat.subsidy', 'cat.parttime', 'cat.allowance')");
+    await db.rawUpdate(
+        "UPDATE tag_binding SET category_id = 'cat.in_else' "
+        "WHERE type = 1 AND category_id = 'cat.refund'");
+    await db.rawUpdate(
+        "UPDATE tag_binding SET category_id = 'cat.receive' "
+        "WHERE type = 1 AND category_id = 'cat.gift'");
+    // 归档分类上的标签归属置空 (与 v6 一致, 让标签行回退到历史查询)
+    await db.rawUpdate('''
+      UPDATE tag SET category_id = NULL
+      WHERE category_id IN (${archivedIncome.map((_) => '?').join(',')})
+    ''', archivedIncome);
   }
 
   /// v5 -> v6: 分类清单重整

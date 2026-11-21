@@ -1,4 +1,4 @@
-// 重置数据 (U3) 行为测试
+﻿// 重置数据 (U3) 行为测试
 //
 // 验证 AppDatabase.resetForDebug() 后:
 //   - DB 文件被删除
@@ -50,8 +50,8 @@ void main() {
   test('重置前 DB 有种子 (22 分类 + 18 流水)', () async {
     final cats = await CategoryRepository.instance.all();
     final txs = await TxRepository.instance.all();
-    // v6: 分类清单重整 → 支出 14 + 收入 8 = 22
-    expect(cats.length, 22);
+    // v9: 分类重定义 → 支出 24 + 收入 4 = 28
+    expect(cats.length, 28);
     expect(txs.length, 18);
   });
 
@@ -100,7 +100,7 @@ void main() {
     await AppDatabase.instance.resetForDebug();
     await AppDatabase.instance.resetForDebug();
     final cats = await CategoryRepository.instance.all();
-    expect(cats.length, 22);
+    expect(cats.length, 28);
   });
 
   // ----- U3 二次确认对话框: ValueListenableBuilder 行为 -----

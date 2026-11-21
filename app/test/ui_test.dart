@@ -131,7 +131,7 @@ void main() {
     expect(find.text('重置数据'), findsOneWidget);
   });
 
-  testWidgets('EntryPage 启动: 19 个支出分类 + 数字键盘', (tester) async {
+  testWidgets('EntryPage 启动: 24 个支出分类 + 数字键盘 (v1.15.0)', (tester) async {
     tester.view.physicalSize = const Size(1080, 2340);
     tester.view.devicePixelRatio = 2.625;
     addTearDown(tester.view.reset);
@@ -144,7 +144,7 @@ void main() {
     await tester.pump();
     expect(find.text('支出'), findsOneWidget);
     expect(find.text('收入'), findsOneWidget);
-    // v1.6.0 U1.5: 分类区分两部分, 左侧 14 网格 + 右侧 4 常用
+    // v1.6.0 U1.5: 分类区分两部分, 左侧网格 (v1.15.0: 24 类) + 右侧常用
     // 常用 (4 pinned) 同时出现在"全部分类"和"常用"列, 所以 findsWidgets
     expect(find.text('信用卡'), findsWidgets);
     expect(find.text('餐饮'), findsWidgets);
@@ -164,7 +164,7 @@ void main() {
     expect(find.text('='), findsOneWidget);
   });
 
-  testWidgets('EntryPage 点 收入 切到收入分类 (工资/奖金/...)', (tester) async {
+  testWidgets('EntryPage 点 收入 切到收入分类 (工资/理财/礼金/其他)', (tester) async {
     tester.view.physicalSize = const Size(1080, 2340);
     tester.view.devicePixelRatio = 2.625;
     addTearDown(tester.view.reset);

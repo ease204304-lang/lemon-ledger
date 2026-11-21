@@ -1,7 +1,7 @@
 ﻿name: lemon_ledger
 description: "小猪记账 — 个人记账 Android 应用 v1.5"
 publish_to: 'none'
-version: 1.14.0+33
+version: 1.15.0+34
 
 environment:
   sdk: ^3.13.5

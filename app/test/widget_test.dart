@@ -83,20 +83,29 @@ void main() {
       expect(sum, closeTo(100.0, 0.1));
     });
 
-    test('seed 包含 14 支出 + 8 收入 分类 (v6 按用户清单重整)', () {
-      expect(cats.where((c) => c.type == TxType.expense).length, equals(14));
-      expect(cats.where((c) => c.type == TxType.income).length, equals(8));
+    test('seed 包含 24 支出 + 4 收入 分类 (v1.15.0 按用户清单重定义)', () {
+      expect(cats.where((c) => c.type == TxType.expense).length, equals(24));
+      expect(cats.where((c) => c.type == TxType.income).length, equals(4));
     });
 
-    test('v6 支出分类名 = 用户清单顺序', () {
+    test('v9 支出分类名 = 用户清单顺序', () {
       final names = cats
           .where((c) => c.type == TxType.expense)
           .map((c) => c.name)
           .toList();
       expect(names, equals([
-        '信用卡', '餐饮', '娱乐', '零食', '交通', '住房', '旅游',
-        '医疗', '运动', '汽车', '孩子', '日用', '投资', '其他',
+        '信用卡', '住房', '亲友', '孩子', '餐饮', '旅行', '汽车', '投资',
+        '烟酒', '娱乐', '通讯', '零食', '交通', '学习', '日用', '运动',
+        '医疗', '美容', '书籍', '水果', '购物', '捐赠', '礼金', '其他',
       ]));
+    });
+
+    test('v9 收入分类名 = 用户清单顺序', () {
+      final names = cats
+          .where((c) => c.type == TxType.income)
+          .map((c) => c.name)
+          .toList();
+      expect(names, equals(['工资', '理财', '礼金', '其他']));
     });
   });
 
