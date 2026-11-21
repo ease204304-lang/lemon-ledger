@@ -308,93 +308,103 @@ class _EntryPageState extends State<EntryPage> {
     return Scaffold(
       backgroundColor: L.surfaceSubtle,
       body: SafeArea(
-        child: Column(
-          children: [
-            // 1. 顶部条 (极简, 只保留 × + 标题)
-            _MiniHeader(
-              title: widget.editTxId == null ? '记一笔' : '编辑',
-              onClose: () => widget.onNavigate(0),
-            ),
-            // 2. 类型 chips + 日期 (1 行, v1.9.0: 金额移到键盘顶部)
-            _TypeAndDateRow(
-              type: _type,
-              date: _date,
-              onType: (t) => setState(() => _type = t),
-              onPickDate: _pickDate,
-            ),
-            // 3. 模块一: 分类区 (v1.9.0: Expanded flex 2, 占约 2/3 剩余空间)
-            //    5×N 网格可滚动, 包含 14 网格 + 4 常用
-            Expanded(
-              flex: 2,
-              child: _Module1CategoriesAndNote(
-                type: _type,
-                selected: _selected,
-                onSelect: (c) {
-                  setState(() => _selected = c);
-                  _loadTags(); // v1.7.0: 选分类后刷新标签
-                },
-                // v1.13.0: 账户选择 (资产管理联动)
-                accountId: _accountId,
-                accounts: _accounts,
-                onPickAccount: _pickAccount,
-              ),
-            ),
-            // 3.5 标签行 (v1.9.0: 增强显示 — 更大字号 + 彩色 chip 背景)
-            _TagRow(
-              tags: _tags,
-              onTap: (name) {
-                // 点标签: 追加到备注 (空格衔接; _note 由 controller listener 同步)
-                final cur = _noteCtrl.text.trim();
-                _noteCtrl.text = cur.isEmpty ? name : '$cur $name';
-                // v1.11.0: 写完备注立刻让备注框失焦, 否则系统输入法会弹出
-                // 把本页自带的数字键盘顶掉 (用户表现为「数字键盘点了没反应」)。
-                _noteCtrl.selection = const TextSelection.collapsed(offset: -1);
-                FocusManager.instance.primaryFocus?.unfocus();
-              },
-            ),
-            // 4. 备注 (1 行, 30px)
-            EntryShortNote(
-              controller: _noteCtrl,
-              focusNode: _noteFocus,
-              onAddTag: () async {
-                final t = _note.trim();
-                if (t.isEmpty) {
-                  _toast('请先在备注里输入标签名');
-                  return;
-                }
-                await TagService.instance.addOrBump(t);
-                _toast('已添加标签: $t');
-                _loadTags();
-              },
-            ),
-            // 5. 模块二: 数字键盘 4×4 (v1.9.0: 固定高度 ~1/3 屏, 顶部含大字金额显示屏)
-            //    金额显示屏替代原来 _TypeAndDateRow 里的金额预览
-            //    用 Expanded(flex: 1) 让键盘占剩余约 1/3
-            Expanded(
-              flex: 1,
-              child: EntryKeypad(
-                amount: _amount,
-                onChange: (s) {
-                  // U2: 实时求值预览
-                  setState(() {
-                    _amount = s;
-                  });
-                },
-                onDelete: () => setState(() {
-                  if (_amount.length <= 1) {
-                    _amount = '0';
-                  } else {
-                    _amount = _amount.substring(0, _amount.length - 1);
-                    if (_amount.isEmpty) _amount = '0';
-                  }
-                }),
-                onEqualsAndSave: _onEqualsAndSave,
-                onLongPressMic: widget.editTxId == null ? _onMic : null,
-                showSaveButton: widget.editTxId != null,
-                onSave: widget.editTxId != null ? _onEqualsAndSave : null,
-              ),
-            ),
-          ],
+        // v1.13.1: 外层 LayoutBuilder 拿 body 真实可用高度, 键盘高度按它计算,
+        // 数学上保证 固定行 + 键盘 ≤ 可用高度 (任何屏型/输入法状态都不溢出)。
+        child: LayoutBuilder(
+          builder: (context, outer) {
+            // 键盘高: 优先 340 逻辑; 可用空间不足 (输入法弹出/小屏) 时收缩,
+            // 始终给固定行 (头/类型/标签/备注 ≈ 280) 保留空间。
+            final avail = outer.maxHeight - 280;
+            final keypadH =
+                avail < 340 ? (avail * 0.9).clamp(240.0, 340.0) : 340.0;
+            return Column(
+              children: [
+                // 1. 顶部条 (极简, 只保留 × + 标题)
+                _MiniHeader(
+                  title: widget.editTxId == null ? '记一笔' : '编辑',
+                  onClose: () => widget.onNavigate(0),
+                ),
+                // 2. 类型 chips + 日期 (1 行, v1.9.0: 金额移到键盘顶部)
+                _TypeAndDateRow(
+                  type: _type,
+                  date: _date,
+                  onType: (t) => setState(() => _type = t),
+                  onPickDate: _pickDate,
+                ),
+                // 3. 模块一: 分类区 (v1.13.1: 吸收除键盘外的全部剩余空间)
+                //    用户反馈: 数字键盘过小 (第 4 行 . 0 del = 被挤出屏幕)。
+                //    分类网格本身可滚动, 剩余空间优先保证键盘完整可见。
+                Expanded(
+                  child: _Module1CategoriesAndNote(
+                    type: _type,
+                    selected: _selected,
+                    onSelect: (c) {
+                      setState(() => _selected = c);
+                      _loadTags(); // v1.7.0: 选分类后刷新标签
+                    },
+                    // v1.13.0: 账户选择 (资产管理联动)
+                    accountId: _accountId,
+                    accounts: _accounts,
+                    onPickAccount: _pickAccount,
+                  ),
+                ),
+                // 3.5 标签行 (v1.9.0: 增强显示 — 更大字号 + 彩色 chip 背景)
+                _TagRow(
+                  tags: _tags,
+                  onTap: (name) {
+                    // 点标签: 追加到备注 (空格衔接; _note 由 controller listener 同步)
+                    final cur = _noteCtrl.text.trim();
+                    _noteCtrl.text = cur.isEmpty ? name : '$cur $name';
+                    // v1.11.0: 写完备注立刻让备注框失焦, 否则系统输入法会弹出
+                    // 把本页自带的数字键盘顶掉 (用户表现为「数字键盘点了没反应」)。
+                    _noteCtrl.selection =
+                        const TextSelection.collapsed(offset: -1);
+                    FocusManager.instance.primaryFocus?.unfocus();
+                  },
+                ),
+                // 4. 备注 (1 行, 30px)
+                EntryShortNote(
+                  controller: _noteCtrl,
+                  focusNode: _noteFocus,
+                  onAddTag: () async {
+                    final t = _note.trim();
+                    if (t.isEmpty) {
+                      _toast('请先在备注里输入标签名');
+                      return;
+                    }
+                    await TagService.instance.addOrBump(t);
+                    _toast('已添加标签: $t');
+                    _loadTags();
+                  },
+                ),
+                // 5. 模块二: 数字键盘 4×4 (v1.13.1: 固定 keypadH, 完整可见)
+                SizedBox(
+                  height: keypadH,
+                  child: EntryKeypad(
+                    amount: _amount,
+                    onChange: (s) {
+                      // U2: 实时求值预览
+                      setState(() {
+                        _amount = s;
+                      });
+                    },
+                    onDelete: () => setState(() {
+                      if (_amount.length <= 1) {
+                        _amount = '0';
+                      } else {
+                        _amount = _amount.substring(0, _amount.length - 1);
+                        if (_amount.isEmpty) _amount = '0';
+                      }
+                    }),
+                    onEqualsAndSave: _onEqualsAndSave,
+                    onLongPressMic: widget.editTxId == null ? _onMic : null,
+                    showSaveButton: widget.editTxId != null,
+                    onSave: widget.editTxId != null ? _onEqualsAndSave : null,
+                  ),
+                ),
+              ],
+            );
+          },
         ),
       ),
     );

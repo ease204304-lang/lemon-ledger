@@ -12,7 +12,7 @@
     </queries>
 
     <application
-        android:label="小猪记账 v1.13.0"
+        android:label="小猪记账 v1.13.1"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"
         android:usesCleartextTraffic="true">

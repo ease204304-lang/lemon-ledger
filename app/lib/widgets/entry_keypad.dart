@@ -163,6 +163,9 @@ class EntryKeypad extends StatelessWidget {
     }
     // 数字
     final last = amount.isNotEmpty ? amount[amount.length - 1] : '';
+    // v1.13.1: 限制总长度 (金额上限 999,999,999.99 — 12 字符足够),
+    // 防止超长数字撑爆金额显示屏
+    if (amount.length >= 12 && !isOp(k)) return;
     if (amount == '0' && !isOp(k)) {
       onChange(k);
     } else if (isOp(last)) {
@@ -189,34 +192,39 @@ class _AmountDisplay extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
         color: L.surfaceSubtle,
         border: Border(
           bottom: BorderSide(color: L.dividerLight, width: 0.5),
         ),
       ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          const Text('¥',
-              style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                  color: L.textTertiary)),
-          const SizedBox(width: 4),
-          Text(
-            _fmtAmount(amount),
-            style: const TextStyle(
-              fontSize: 28,
-              fontWeight: FontWeight.w700,
-              color: L.textPrimary,
+      alignment: Alignment.centerRight,
+      // v1.13.1 修复: 金额过长时被垂直截断 (截图中 ¥06660588800.00 只显示一半)。
+      // 用 FittedBox 让整行 (¥ + 金额) 自动缩放适配宽度, 长金额缩字号而不是裁切。
+      child: FittedBox(
+        fit: BoxFit.scaleDown,
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text('¥',
+                style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                    color: L.textTertiary)),
+            const SizedBox(width: 4),
+            Text(
+              _fmtAmount(amount),
+              style: const TextStyle(
+                fontSize: 28,
+                fontWeight: FontWeight.w700,
+                color: L.textPrimary,
+              ),
+              maxLines: 1,
             ),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

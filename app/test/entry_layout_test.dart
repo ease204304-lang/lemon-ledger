@@ -65,18 +65,19 @@ void main() {
     expect(eight, findsOneWidget);
     final before = tester.getRect(eight);
 
-    // 模拟系统输入法弹出 (Flutter: MediaQuery viewInsets.bottom 变化)
-    tester.view.viewInsets = const FakeViewPadding(bottom: 1200);
+    // 模拟系统输入法弹出 (真实输入法约占屏 40% ≈ 350 逻辑像素;
+    // 1200 这种超过屏高的极端值在现实中不存在, 固定行必然溢出)
+    tester.view.viewInsets = const FakeViewPadding(bottom: 350);
     addTearDown(tester.view.reset);
 
     await tester.pumpAndSettle();
 
-    // v1.13.0: 页面底部新增了账户选择行, 布局重新分配;
-    // 键盘被推出可视区属预期行为 (用户点数字键会自动收起输入法),
-    // 这里只断言「无输入法时键盘有正常高度」+ 输入法弹出后不崩溃。
-    final after = tester.getRect(find.text('8'));
-    expect(after.height, greaterThanOrEqualTo(0.0));
-    expect(before.height, greaterThan(0.0),
+    // v1.13.1: 键盘高度 = min(340, 可视高度 55%), 输入法弹出时按比例收缩,
+    // 但第 4 行按键仍应有可见高度 (不消失)
+    final after = tester.getRect(find.byIcon(Icons.backspace_outlined));
+    expect(after.height, greaterThan(0),
+        reason: '输入法弹出后键盘收缩, 但第 4 行 (del 键) 仍应可见');
+    expect(before.height, greaterThan(0),
         reason: '无输入法时数字按键必须有正常高度');
   });
 
